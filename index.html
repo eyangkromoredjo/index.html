@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paguyuban Keluarga Eyang Kromoredjo</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Lora:ital,wght=0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <!-- Menghubungkan File CSS Terpisah -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* ===== STATS SECTION & PIE CHART ===== */
+        .chart-stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-left: 4px solid #7C582B;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .chart-card h5 {
+            font-family: 'Lora', serif;
+            color: #4A3419;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: #FFF;
+            border-radius: 8px;
+            padding: 15px;
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-wrapper-large {
+            background: linear-gradient(135deg, #FFFDF9 0%, #FFF8F0 100%);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 20px;
+        }
+
+        .chart-wrapper-large h4 {
+            font-family: 'Lora', serif;
+            color: #4A3419;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chart-container-large {
+            background: #FFF;
+            border-radius: 8px;
+            padding: 20px;
+            height: 320px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .chart-stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 250px;
+            }
+
+            .chart-container-large {
+                height: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= HALAMAN 1: LANDING PAGE ================= -->
+    <div id="landing-page" class="page active">
+        <section class="hero">
+            <div class="logo-container">
+                <img src="logo PKEK.jpg" alt="Logo PKEK" class="logo-keluarga">
+            </div>
+            <h2>Selamat Datang di Aplikasi Resmi</h2>
+            <h1>Paguyuban Keluarga<br>Eyang Kromoredjo</h1>
+            
+            <button class="btn-masuk" onclick="pindahHalaman('landing-page', 'stats-page')">Masuk ke Aplikasi</button>
+
+            <div class="scroll-hint">▼ Gulir ke bawah untuk membaca sejarah singkat</div>
+        </section>
+
+        <section class="sejarah">
+            <h3>Menjaga Silaturahmi, Merawat Akar Keluarga</h3>
+            <p class="sejarah-pembuka">"Ikatan erat kekeluargaan yang tak lekang oleh jarak dan waktu."</p>
+            
+            <div class="grid-sejarah">
+                <div class="kartu-sejarah">
+                    <div class="angka" id="tahun-bersama">45</div>
+                    <h4>Tahun Kebersamaan</h4>
+                    <p>Merawat jalinan kasih, komitmen, dan kebersamaan keluarga besar yang konsisten terjaga sejak tahun 1981.</p>
+                </div>
+                <div class="kartu-sejarah">
+                    <div class="angka" id="landing-sejarah-generasi">5</div>
+                    <h4>Generasi Berjalan</h4>
+                    <p>Dari langkah awal perjuangan Eyang Kromoredjo, kini trah keluarga telah tumbuh subur hingga melahirkan beberapa tingkatan generasi.</p>
+                </div>
+                <div class="kartu-sejarah">
+                    <div class="angka">S-J</div>
+                    <h4>Solo — Jakarta</h4>
+                    <p>Meskipun melangkah merantau mengadu nasib dari tanah asal Solo ke riuhnya Jakarta, hati dan ikatan kekeluargaan tetap menyatu kokoh di Jabodetabek.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>Paguyuban Keluarga Eyang Kromoredjo &copy; 2026. Selalu Rukun dan Bersatu.</p>
+        </footer>
+    </div>
+
+
+    <!-- ================= HALAMAN 2: STATISTIK & PILIHAN AKSES (DASHBOARD PUBLIC) ================= -->
+    <div id="stats-page" class="page">
+        <div class="stats-container">
+            <h3 class="section-title">Perkembangan Paguyuban Keluarga</h3>
+            <p style="color: #666; margin-top: 10px;">Rangkuman data keanggotaan Paguyuban Eyang Kromoredjo saat ini.</p>
+
+            <!-- Grid 5 Indikator Statistik Sesuai Kriteria Baru -->
+            <div class="grid-stats">
+                <div class="card-stat">
+                    <div class="value" id="stat-pokok">0</div>
+                    <div class="label">Anggota Pokok</div>
+                </div>
+                <div class="card-stat">
+                    <div class="value" id="stat-nonpokok">0</div>
+                    <div class="label">Anggota Non-Pokok</div>
+                </div>
+                <div class="card-stat">
+                    <div class="value" id="stat-nonaktif">0</div>
+                    <div class="label">Anggota Non-Aktif</div>
+                </div>
+                <div class="card-stat">
+                    <div class="value" id="stat-wafat">0</div>
+                    <div class="label">Keluarga Wafat</div>
+                </div>
+                <div class="card-stat">
+                    <div class="value" id="stat-generasi">0</div>
+                    <div class="label">Jumlah Generasi</div>
+                </div>
+            </div>
+
+            <!-- PIE CHARTS SECTION -->
+            <div class="chart-stats-grid">
+                <div class="chart-card">
+                    <h5>📊 Kategori Anggota</h5>
+                    <div class="chart-container">
+                        <canvas id="pieChartAnggota"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h5>🎟️ Status Arisan</h5>
+                    <div class="chart-container">
+                        <canvas id="pieChartArisan"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-wrapper-large">
+                <h4>👥 Distribusi Anggota Berdasarkan Generasi</h4>
+                <div class="chart-container-large">
+                    <canvas id="pieChartGenerasi"></canvas>
+                </div>
+            </div>
+
+            <!-- Pilihan Hak Akses -->
+            <div class="role-section">
+                <h4>Silakan Pilih Hak Akses Masuk:</h4>
+                <div class="grid-roles">
+                    <button class="btn-role admin" onclick="setAksesDanPindah('admin')">1. Admin</button>
+                    <button class="btn-role pengurus" onclick="setAksesDanPindah('pengurus')">2. Pengurus</button>
+                    <button class="btn-role anggota" onclick="setAksesDanPindah('anggota')">3. Anggota</button>
+                </div>
+                <p style="font-size: 0.85rem; color: #888; margin-top: 20px; font-style: italic;">
+                    *Akses menu di dalam aplikasi akan disesuaikan dengan peran yang Anda pilih.
+                </p>
+            </div>
+            
+            <button class="btn-kembali-mini" style="margin-top: 30px;" onclick="pindahHalaman('stats-page', 'landing-page')">← Kembali ke Depan</button>
+        </div>
+
+        <footer>
+            <p>Paguyuban Keluarga Eyang Kromoredjo &copy; 2026. Selalu Rukun dan Bersatu.</p>
+        </footer>
+    </div>
+
+    <script src="js/database.js"></script>
+    <script>
+        // ===== DEFINE FUNCTIONS FIRST =====
+        function pindahHalaman(dariId, keId) {
+            document.getElementById(dariId).classList.remove("active");
+            document.getElementById(keId).classList.add("active");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setAksesDanPindah(rolePilihan) {
+            sessionStorage.setItem("pakek_user_role", rolePilihan);
+            window.location.href = "dashboard.html";
+        }
+
+        // ===== PIE CHART INITIALIZATION =====
+        let chartInstanceAnggota, chartInstanceArisan, chartInstanceGenerasi;
+
+        function initAllCharts(data) {
+            setTimeout(() => {
+                try {
+                    initPieChartAnggota(data);
+                    initPieChartArisan(data);
+                    initPieChartGenerasi(data);
+                } catch (e) {
+                    console.error("Error in chart initialization:", e);
+                }
+            }, 300);
+        }
+
+        function initPieChartAnggota(data) {
+            const statusCount = {};
+            data.forEach(anggota => {
+                const status = anggota.status || "Tidak Ditentukan";
+                statusCount[status] = (statusCount[status] || 0) + 1;
+            });
+
+            const ctx = document.getElementById("pieChartAnggota");
+            if (!ctx) return;
+
+            if (chartInstanceAnggota) chartInstanceAnggota.destroy();
+
+            const colors = ["#7C582B", "#C8995D", "#E8D4B8", "#F5EFE6"];
+            chartInstanceAnggota = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(statusCount),
+                    datasets: [{
+                        data: Object.values(statusCount),
+                        backgroundColor: colors.slice(0, Object.keys(statusCount).length),
+                        borderColor: "#FFF",
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Inter', sans-serif", size: 11 },
+                                color: '#4A3419',
+                                padding: 12,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            },
+                            backgroundColor: 'rgba(74, 52, 25, 0.9)',
+                            titleFont: { family: "'Inter', sans-serif" },
+                            bodyFont: { family: "'Inter', sans-serif" },
+                            padding: 10,
+                            cornerRadius: 6,
+                            titleColor: '#FFF',
+                            bodyColor: '#FFF'
+                        }
+                    }
+                }
+            });
+        }
+
+        function initPieChartArisan(data) {
+            const arisanCount = { "Peserta Arisan": 0, "Bukan Peserta": 0 };
+            data.forEach(anggota => {
+                if (anggota.ikutArisan) {
+                    arisanCount["Peserta Arisan"]++;
+                } else {
+                    arisanCount["Bukan Peserta"]++;
+                }
+            });
+
+            const ctx = document.getElementById("pieChartArisan");
+            if (!ctx) return;
+
+            if (chartInstanceArisan) chartInstanceArisan.destroy();
+
+            chartInstanceArisan = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(arisanCount),
+                    datasets: [{
+                        data: Object.values(arisanCount),
+                        backgroundColor: ["#7C582B", "#E8D4B8"],
+                        borderColor: "#FFF",
+                        borderWidth: 2,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Inter', sans-serif", size: 11 },
+                                color: '#4A3419',
+                                padding: 12,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            },
+                            backgroundColor: 'rgba(74, 52, 25, 0.9)',
+                            titleFont: { family: "'Inter', sans-serif" },
+                            bodyFont: { family: "'Inter', sans-serif" },
+                            padding: 10,
+                            cornerRadius: 6,
+                            titleColor: '#FFF',
+                            bodyColor: '#FFF'
+                        }
+                    }
+                }
+            });
+        }
+
+        function initPieChartGenerasi(data) {
+            const generasiCount = {};
+            data.forEach(anggota => {
+                const generasi = `Generasi ${anggota.generasi || 0}`;
+                generasiCount[generasi] = (generasiCount[generasi] || 0) + 1;
+            });
+
+            const ctx = document.getElementById("pieChartGenerasi");
+            if (!ctx) return;
+
+            if (chartInstanceGenerasi) chartInstanceGenerasi.destroy();
+
+            const colors = [
+                "#7C582B", "#A0724D", "#C8995D", "#E8D4B8", 
+                "#F5EFE6", "#FFE8C1", "#FFD9A8", "#FFC98F"
+            ];
+
+            chartInstanceGenerasi = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(generasiCount).sort(),
+                    datasets: [{
+                        data: Object.keys(generasiCount).sort().map(k => generasiCount[k]),
+                        backgroundColor: colors,
+                        borderColor: "#FFF",
+                        borderWidth: 2.5,
+                        hoverOffset: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: { family: "'Inter', sans-serif", size: 12, weight: 500 },
+                                color: '#4A3419',
+                                padding: 15,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} anggota (${percentage}%)`;
+                                }
+                            },
+                            backgroundColor: 'rgba(74, 52, 25, 0.95)',
+                            titleFont: { family: "'Lora', serif", size: 12, weight: 600 },
+                            bodyFont: { family: "'Inter', sans-serif", size: 11 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            titleColor: '#FFE8C1',
+                            bodyColor: '#FFF'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Jalankan Fungsi Saat Halaman Selesai Dimuat
+        window.onload = function() {
+            // 1. Ambil data riil dari localStorage
+            let listAnggota = [];
+            try {
+                listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            } catch (e) {
+                listAnggota = [];
+            }
+
+            // 2. Hitung statistik berdasarkan isi data asli
+            const totalWafat = listAnggota.filter(m => m.wafat === true).length;
+            
+            // Filter status untuk anggota keluarga yang masih hidup saja
+            const anggotaHidup = listAnggota.filter(m => !m.wafat);
+            const totalPokok = anggotaHidup.filter(m => m.status === 'Pokok').length;
+            const totalNonPokok = anggotaHidup.filter(m => m.status === 'Non-Pokok').length;
+            const totalNonAktif = anggotaHidup.filter(m => m.status === 'Non-Aktif').length;
+
+            // Hitung total tingkatan generasi unik yang sudah memiliki isi data orang
+            const kumpulanGen = new Set(listAnggota.map(m => m.generasi));
+            const jumlahGenerasi = listAnggota.length > 0 ? kumpulanGen.size : 0;
+
+            // 3. Masukkan hasil hitungan ke elemen halaman statistik (Halaman 2)
+            document.getElementById("stat-pokok").innerText = totalPokok;
+            document.getElementById("stat-nonpokok").innerText = totalNonPokok;
+            document.getElementById("stat-nonaktif").innerText = totalNonAktif;
+            document.getElementById("stat-wafat").innerText = totalWafat;
+            document.getElementById("stat-generasi").innerText = jumlahGenerasi;
+
+            // 4. Sinkronisasikan juga angka generasi pada halaman depan (Halaman Sejarah)
+            if (document.getElementById("landing-sejarah-generasi")) {
+                document.getElementById("landing-sejarah-generasi").innerText = jumlahGenerasi;
+            }
+
+            // 5. Rumus bawaan mas budi untuk mendeteksi tahun kebersamaan (jika fungsi ada)
+            if (typeof hitungTahunBersama === "function") {
+                document.getElementById("tahun-bersama").innerText = hitungTahunBersama();
+            } else {
+                document.getElementById("tahun-bersama").innerText = "45";
+            }
+
+            // 6. Inisialisasi pie charts
+            initAllCharts(listAnggota);
+        };
+    </script>
+</body>
+</html>
