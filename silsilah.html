@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Silsilah Keluarga - Eyang Kromoredjo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ct:#3B1F0E;--cs:#6B3A1F;--cm:#A0622A;--cb:#C8894E;--kr:#F5ECD7;--km:#FDF6E9;--em:#C9A84C;--el:#E8C97A}
+    body{font-family:'Lora',serif;background:var(--ct);color:var(--kr);min-height:100vh;overflow-x:hidden}
+    
+    /* Sidebar & Layout Styles (Seragam dengan Dashboard) */
+    .sidebar{width:240px;min-height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
+    .sidebar-header{padding:1.8rem 1.5rem 1.2rem;border-bottom:1px solid rgba(201,168,76,.12)}
+    .sidebar-logo{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem}
+    .sidebar-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.3}
+    .sidebar-nav{flex:1;padding:1rem 0}
+    .nav-label{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.35em;color:rgba(201,168,76,.4);text-transform:uppercase;padding:.8rem 1.5rem .4rem}
+    .nav-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.5rem;cursor:pointer;color:rgba(245,236,215,.6);font-size:.85rem;transition:all .25s;border-left:2px solid transparent}
+    .nav-item:hover{color:var(--kr);background:rgba(201,168,76,.06)}
+    .nav-item.aktif{color:var(--em);border-left-color:var(--em);background:rgba(201,168,76,.08)}
+    .nav-item .ni{font-size:1rem;width:1.2rem;text-align:center}
+    .konten-utama{margin-left:240px;flex:1;min-height:100vh;padding:2rem}
+    .topbar{padding:1.2rem 2rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50;margin:-2rem -2rem 2rem -2rem}
+    .topbar-judul{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase}
+
+    /* SILSILAH TREE STYLES */
+    .silsilah-container { overflow-x: auto; padding: 2rem 1rem; background: rgba(0,0,0,0.1); border: 1px solid rgba(201,168,76,0.1); text-align: center; }
+    .tree ul { padding-top: 20px; position: relative; transition: all 0.5s; display: flex; justify-content: center; }
+    .tree li { float: left; text-align: center; list-style-type: none; position: relative; padding: 20px 5px 0 5px; transition: all 0.5s; }
+    .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 1px solid rgba(201,168,76,0.3); width: 50%; height: 20px; }
+    .tree li::after { right: auto; left: 50%; border-left: 1px solid rgba(201,168,76,0.3); }
+    .tree li:only-child::after, .tree li:only-child::before { display: none; }
+    .tree li:only-child { padding-top: 0; }
+    .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+    .tree li:last-child::before { border-right: 1px solid rgba(201,168,76,0.3); border-radius: 0 5px 0 0; }
+    .tree li:first-child::after { border-radius: 5px 0 0 0; }
+    .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 1px solid rgba(201,168,76,0.3); width: 0; height: 20px; }
+    .tree-node { border: 1px solid rgba(201,168,76,0.4); padding: 0.8rem; text-decoration: none; color: var(--kr); font-family: 'Lora', serif; font-size: 0.75rem; display: inline-block; background: var(--cs); transition: all 0.5s; position: relative; min-width: 160px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+    .tree-node:hover { background: var(--cm); border-color: var(--em); transform: translateY(-3px); }
+    .tree-node .node-panggilan { display: block; font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--em); margin-top: 4px; border-top: 1px solid rgba(201,168,76,0.2); padding-top: 4px; }
+    .tree-node.active-arisan::after { content: '💰'; position: absolute; top: -10px; right: -10px; font-size: 1rem; filter: drop-shadow(0 0 2px black); }
+    .tree-node.wafat { border-style: dashed; opacity: 0.7; }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <p class="sidebar-logo">Paguyuban Keluarga</p>
+      <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
+    </div>
+    <div class="sidebar-nav">
+      <p class="nav-label">Menu Utama</p>
+      <div class="nav-item" onclick="location.href='dashboard.html'"><span class="ni">🏠</span> Beranda</div>
+      <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
+      <div class="nav-item" onclick="location.href='dashboard.html#arisan'"><span class="ni">💰</span> Arisan</div>
+      <div class="nav-item aktif"><span class="ni">🌳</span> Silsilah</div>
+    </div>
+  </nav>
+
+  <main class="konten-utama">
+    <div class="topbar">
+      <p class="topbar-judul">Pohon Silsilah <em>Keluarga</em></p>
+      <a href="dashboard.html" style="color:var(--em); text-decoration:none; font-size:0.7rem; font-family:'Cinzel'">← Kembali ke Dashboard</a>
+    </div>
+
+    <div class="silsilah-container">
+      <div class="tree" id="tree-container">
+        <p style="color:var(--cb)">Memuat Silsilah...</p>
+      </div>
+    </div>
+  </main>
+
+<script type="module">
+  import { db } from './js/firebase-config.js';
+  import { ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  // Proteksi Halaman
+  window.addEventListener('load', () => {
+    const saved = sessionStorage.getItem('kromoredjo_user');
+    if (!saved) {
+      location.href = 'dashboard.html';
+    } else {
+      window.penggunaLogin = JSON.parse(saved);
+      startRealtimeSilsilah();
+    }
+  });
+
+  function startRealtimeSilsilah() {
+    // Ambil data arisan untuk ikon 💰
+    const now = new Date();
+    const currentKey = `${now.getFullYear()}_${now.getMonth() + 1}`;
+    
+    onValue(ref(db, "anggota"), (snapAnggota) => {
+      onValue(ref(db, "arisan/" + currentKey), (snapArisan) => {
+        const anggota = snapAnggota.exists() ? Object.values(snapAnggota.val()) : [];
+        const arisan = snapArisan.exists() ? snapArisan.val().pembayaran : [];
+        renderTree(anggota, arisan);
+      });
+    });
+  }
+
+  function renderTree(data, arisanData) {
+    const lunasIds = arisanData ? arisanData.filter(p => p.lunas).map(p => p.id) : [];
+    
+    // Map untuk mencari pasangan dengan cepat
+    const spouseMap = {};
+    data.forEach(a => { if(a.idPasangan) spouseMap[a.idPasangan] = a; });
+
+    const buildBranch = (parentId) => {
+      const children = data.filter(a => a.idOrangTua === parentId)
+                           .sort((a, b) => (parseInt(a.urutan) || 0) - (parseInt(b.urutan) || 0));
+      
+      if (children.length === 0) return '';
+      
+      return `<ul>${children.map(child => {
+        const isLunas = lunasIds.includes(child.id);
+        const isWafat = child.kehidupan === 'wafat';
+        const spouse = spouseMap[child.id];
+        const label = child.gender === 'P' ? 'Istri dari' : 'Suami dari';
+        
+        return `
+          <li>
+            <div class="tree-node ${isLunas ? 'active-arisan' : ''} ${isWafat ? 'wafat' : ''}">
+              ${isWafat ? '🪦 ' : ''}${child.nama} 
+              ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.nama}</small>` : ''}
+              <span class="node-panggilan">${child.panggilan ? child.panggilan : 'Gen ' + child.generasi}</span>
+            </div>
+            ${buildBranch(child.id)}
+          </li>`;
+      }).join('')}</ul>`;
+    };
+
+    const container = document.getElementById('tree-container');
+    
+    // Akar adalah yang tidak punya orang tua DAN bukan merupakan pasangan dari orang lain 
+    // (supaya pasangan tidak muncul dua kali sebagai akar)
+    const roots = data.filter(a => (!a.idOrangTua || a.idOrangTua === "") && !a.idPasangan);
+
+    if (data.length === 0) {
+      container.innerHTML = '<p class="kosong-info">Belum ada data keluarga.</p>';
+      return;
+    }
+
+    container.innerHTML = `<ul>${roots.map(root => {
+      const isLunas = lunasIds.includes(root.id);
+      return `
+        <li>
+          <div class="tree-node ${isLunas ? 'active-arisan' : ''}">${root.nama}</div>
+          ${buildBranch(root.id)}
+        </li>`;
+    }).join('')}</ul>`;
+  }
+</script>
+</body>
+</html>
