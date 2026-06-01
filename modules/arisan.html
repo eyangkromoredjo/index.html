@@ -1,0 +1,874 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arisan Keluarga - PKEK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #FBF9F6; color: #4A4A4A; margin: 0; padding: 24px; }
+        .container { max-width: 1180px; margin: auto; }
+        .page-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 18px; margin-bottom: 24px; }
+        .page-header h2 { margin: 0; font-size: 1.9rem; color: #4A3419; }
+        .page-header p { margin: 6px 0 0; color: #8B7C6A; font-size: 0.95rem; }
+        .grid-2 { display: grid; gap: 24px; grid-template-columns: 1fr; }
+        @media (min-width: 980px) { .grid-2 { grid-template-columns: 360px 1fr; } }
+        .panel { background: white; border-radius: 16px; box-shadow: 0 18px 40px rgba(79,69,61,0.08); padding: 26px; }
+        .panel h3 { margin-top: 0; color: #4A3419; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; color: #4A3419; }
+        .form-control, .form-control-small { width: 100%; padding: 12px 14px; border: 1px solid #E2DDD4; border-radius: 10px; background: #FCFBF8; color: #3E3A37; font-size: 0.95rem; }
+        .form-control-small { max-width: 160px; }
+        .checkbox-group { display: grid; gap: 12px; }
+        .checkbox-item { display: flex; align-items: center; gap: 12px; }
+        .checkbox-item input { width: 18px; height: 18px; accent-color: #4A3419; }
+        .checkbox-item label { font-size: 0.95rem; color: #5E5348; }
+        .status-pill { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 7px 14px; font-size: 0.82rem; font-weight: 700; }
+        .status-pokok { background: #F0E1D1; color: #7E5539; }
+        .status-non { background: #E8F1EA; color: #356244; }
+        .status-bukan { background: #F7E8EB; color: #A03843; }
+        .btn-primary { background: #4A3419; color: white; border: none; padding: 13px 18px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: 700; font-size: 0.95rem; }
+        .btn-secondary { background: #D9C2A5; color: #4A3419; border: none; padding: 12px 18px; border-radius: 10px; cursor: pointer; font-weight: 700; }
+        .note { font-size: 0.85rem; color: #766856; margin-top: 8px; }
+        .note.warning { color: #A8391B; }
+        .table-wrapper { overflow-x: auto; margin-top: 14px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th, td { padding: 14px 12px; text-align: left; border-bottom: 1px solid #ECE7DD; }
+        th { color: #4A3419; font-weight: 700; background: #F8EFE3; letter-spacing: 0.3px; }
+        tbody tr { transition: background-color 0.2s ease; }
+        tbody tr:hover { background: #F8F4ED; }
+        tbody tr:nth-child(even) { background: #FDFCFB; }
+        .badge { padding: 6px 12px; border-radius: 999px; font-size: 0.82rem; font-weight: 700; display: inline-block; }
+        .badge-sudah { background: #DDEEDC; color: #2E5A33; }
+        .badge-belum { background: #FBE6D8; color: #974B22; }
+        .badge-info { background: #E8F1EA; color: #33654B; }
+        .helper-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; }
+        .helper-row .small { color: #7B6D5E; font-size: 0.88rem; }
+        .history-grid { display: grid; gap: 24px; margin-top: 18px; }
+        @media (min-width: 980px) { .history-grid { grid-template-columns: 1fr 1fr; } }
+        .history-card { background: #FCFBF8; border: 1px solid #ECE7DD; border-radius: 16px; padding: 20px; }
+        .history-card h4 { margin-top: 0; margin-bottom: 12px; color: #4A3419; font-size: 1.1rem; }
+        .history-card .table-wrapper { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="app-header"></div>
+
+    <div class="arisan-layout">
+        <aside class="arisan-sidebar" aria-label="Arisan controls">
+            <button id="btn-show-atur-anggota" class="side-btn active" data-target="panel-atur-anggota" type="button" onclick="showPanel('panel-atur-anggota')">Atur Anggota</button>
+            <button id="btn-show-cek-pembayaran" class="side-btn" data-target="panel-cek-pembayaran" type="button" onclick="showPanel('panel-cek-pembayaran')">Cek Pembayaran</button>
+            <button id="btn-show-pengeluaran" class="side-btn" data-target="panel-pengeluaran" type="button" onclick="showPanel('panel-pengeluaran')">Pengeluaran</button>
+            <button id="btn-show-riwayat" class="side-btn" data-target="panel-riwayat" type="button" onclick="showPanel('panel-riwayat')">Riwayat</button>
+            <button id="btn-show-jadwal" class="side-btn" data-target="panel-jadwal" type="button" onclick="showPanel('panel-jadwal')">Jadwal</button>
+            <button id="btn-show-peserta" class="side-btn" data-target="panel-daftar-peserta" type="button" onclick="showPanel('panel-daftar-peserta')">Peserta</button>
+            <button id="btn-clear-arisan" class="side-btn" type="button" onclick="clearArisanData()" style="background:#F7D5D0; color:#A03843;">Reset Arisan</button>
+        </aside>
+        <main class="arisan-main">
+            <div class="panel panel-active" id="panel-atur-anggota">
+            <h3 style="margin:0;">Atur Anggota Arisan</h3>
+            <div class="form-group">
+                <label for="select-anggota">Pilih Anggota</label>
+                <select id="select-anggota" class="form-control" onchange="isiAnggota()">
+                    <option value="">-- Pilih Anggota Keluarga --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Komponen Iuran</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item" style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                        <input type="checkbox" id="chk-arisan" onchange="updateKategori()">
+                        <label for="chk-arisan" style="margin:0; flex:1;">Arisan Pokok</label>
+                        <input type="number" id="nominal-arisan" class="form-control" placeholder="55000" value="55000" style="width:100px; padding:12px 10px; font-size:1rem;" min="0">
+                    </div>
+                    <div class="checkbox-item" style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                        <input type="checkbox" id="chk-sosial" onchange="updateKategori()">
+                        <label for="chk-sosial" style="margin:0; flex:1;">Dana Sosial</label>
+                        <input type="number" id="nominal-sosial" class="form-control" placeholder="40000" value="40000" style="width:100px; padding:12px 10px; font-size:1rem;" min="0">
+                    </div>
+                    <div class="checkbox-item" style="display:flex; align-items:center; gap:6px;">
+                        <input type="checkbox" id="chk-tabungan" onchange="updateKategori()">
+                        <label for="chk-tabungan" style="margin:0; flex:1;">Tabungan</label>
+                        <input type="number" id="nominal-tabungan" class="form-control" placeholder="5000" value="5000" style="width:100px; padding:12px 10px; font-size:1rem;" min="0">
+                    </div>
+                </div>
+                <div id="pesan-validasi" class="note warning" style="display:none;"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Kategori Otomatis</label>
+                <div id="label-kategori" class="status-pill status-bukan">Bukan Peserta</div>
+            </div>
+
+            <div class="form-group">
+                <label for="input-catatan">Catatan singkat</label>
+                <input id="input-catatan" class="form-control" placeholder="Contoh: setor tanggal 5, bawa makanan kecil...">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:8px;">
+                <button class="btn-primary" onclick="simpanAnggota()">Simpan Data Anggota</button>
+                <button class="btn-secondary" onclick="batalSimpanAnggota()" id="btn-batal-simpan">Batal</button>
+            </div>
+            <p class="note">Jika hanya centang Tabungan tanpa Sosial, sistem akan menolak karena harus ada Dana Sosial.</p>
+        </div>
+
+            <!-- PANEL: CEK PEMBAYARAN -->
+            <div class="panel" id="panel-cek-pembayaran" style="margin-top:18px; display:none;">
+                <div class="helper-row">
+                    <h3>✅ Cek Pembayaran Periode</h3>
+                    <span class="small">Hanya anggota Pokok dan Non-Pokok akan tampil di sini dan di daftar peserta.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Periode Pembayaran</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="select-month-pay" class="form-control-small" onchange="renderPaymentChecklist()"></select>
+                        <select id="select-year-pay" class="form-control-small" onchange="renderPaymentChecklist()"></select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="display:flex; gap:8px;">
+                    <button class="btn-secondary" style="flex:1;" onclick="toggleAllPayments(true)">Tandai Semua</button>
+                    <button class="btn-secondary" style="flex:1;" onclick="toggleAllPayments(false)">Bersihkan Semua</button>
+                </div>
+
+                <div class="table-wrapper" style="overflow-x:auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nama</th>
+                                <th style="width:140px; text-align:right;">Nominal</th>
+                                <th style="width:120px; text-align:center;">Sudah Bayar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-pembayaran"></tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top:12px; display:flex; gap:10px;">
+                    <button class="btn-primary" style="flex:1;" onclick="savePayments()">Simpan Pembayaran</button>
+                </div>
+            </div>
+
+            <div class="panel" id="panel-pengeluaran" style="margin-top:24px; display:none;">
+                <div class="helper-row">
+                    <h3>Input Pengeluaran</h3>
+                    <span class="small">Catat pengeluaran sosial atau inventaris per periode.</span>
+                </div>
+                <div class="form-group">
+                    <label>Periode Pengeluaran</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="select-month-expense" class="form-control-small"></select>
+                        <select id="select-year-expense" class="form-control-small"></select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="input-expense-type">Jenis Pengeluaran</label>
+                    <select id="input-expense-type" class="form-control">
+                        <option value="sosial">Sosial</option>
+                        <option value="inventaris">Inventaris</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="input-expense-desc">Uraian / Keterangan</label>
+                    <input id="input-expense-desc" class="form-control" placeholder="Contoh: Bantuan sakit Pak Budi" />
+                </div>
+                <div class="form-group">
+                    <label for="input-expense-amount">Nominal Pengeluaran</label>
+                    <input id="input-expense-amount" type="number" class="form-control" placeholder="0" min="0" />
+                </div>
+                <div style="display:flex; gap:10px; margin-top:8px;">
+                    <button class="btn-primary" style="flex:1;" onclick="simpanPengeluaran()">Simpan Pengeluaran</button>
+                </div>
+                <p class="note">Pengeluaran akan tersimpan per periode dan direkap di tabel di bawah.</p>
+                <div class="table-wrapper" style="margin-top:16px;">
+                    <table>
+                        <thead>
+                            <tr><th>Periode</th><th>Jenis</th><th>Uraian</th><th style="text-align:right;">Nominal</th></tr>
+                        </thead>
+                        <tbody id="tabel-pengeluaran"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel" id="panel-jadwal" style="display:none;">
+                <div class="helper-row">
+                    <h3>Jadwal Arisan Periode Berikutnya</h3>
+                    <span class="small">Input penerima & lokasi ketempatan untuk periode berikutnya.</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Periode</label>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="select-month-jadwal" class="form-control-small"></select>
+                        <select id="select-year-jadwal" class="form-control-small"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-penerima">Penerima Arisan</label>
+                    <select id="input-penerima" class="form-control"></select>
+                </div>
+
+                <div class="form-group">
+                    <label for="input-rumah">Rumah Ketempatan</label>
+                    <input id="input-rumah" class="form-control" placeholder="Contoh: Rumah Pak Budi, Jl. Merdeka 12">
+                </div>
+
+                <div class="form-group">
+                    <label for="input-ruangan">Catatan Lokasi / Keterangan</label>
+                    <input id="input-ruangan" class="form-control" placeholder="Contoh: ruang tamu besar, bawa makanan kecil...">
+                </div>
+
+                <button class="btn-secondary" onclick="simpanJadwal()">Simpan Jadwal Manual</button>
+            </div>
+
+            <div class="panel" id="panel-riwayat" style="margin-top:24px; display:none;">
+                <div class="helper-row">
+                    <h3>Riwayat Arisan</h3>
+                    <span class="small" id="badge-jumlah-jadwal">0 entri jadwal</span>
+                </div>
+                <div class="history-grid">
+                    <div class="history-card">
+                        <div class="helper-row">
+                            <h4>Riwayat Jadwal</h4>
+                            <span class="small" id="badge-jumlah-jadwal-card">0 entri</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr><th>Periode</th><th>Penerima</th><th>Ketempatan</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="tabel-jadwal"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="history-card">
+                        <div class="helper-row">
+                            <h4>Riwayat Nominal Periode</h4>
+                            <span class="small" id="badge-jumlah-periode">0 periode</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr><th>Periode</th><th style="text-align:center;">Jumlah Anggota</th><th style="text-align:right;">Total Nominal</th></tr>
+                                </thead>
+                                <tbody id="tabel-iuran-periode"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel" id="panel-daftar-peserta" style="margin-top:24px; display:none;">
+                <div class="helper-row">
+                    <h3>Daftar Peserta Arisan</h3>
+                    <span class="small">Hanya anggota Pokok dan Non-Pokok yang ditampilkan.</span>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr><th>Nama</th><th>Jenis</th><th>Komponen</th><th style="text-align:right;">Nominal</th></tr>
+                        </thead>
+                        <tbody id="tabel-peserta"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="../js/database.js"></script>
+<script>
+const STORAGE_KEY = "kromoredjo_keluarga";
+const ARISAN_KEY = "kromoredjo_arisan";
+let semuaAnggota = [];
+let storageArisan = { jadwal: [] };
+
+function initArisanPage() {
+    cekDanInisialisasiDatabase();
+    // render shared header consistent dengan halaman anggota/pohon
+    if (typeof renderAppHeader === 'function') renderAppHeader('#app-header');
+    // remove pohon button on arisan page to keep focus on arisan
+    const pohonBtn = document.querySelector('#app-header .btn-kembali-mini[onclick*="pohon.html"]');
+    if (pohonBtn) pohonBtn.remove();
+    semuaAnggota = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const rawArisan = JSON.parse(localStorage.getItem(ARISAN_KEY)) || {};
+    storageArisan = {
+        ...rawArisan,
+        jadwal: Array.isArray(rawArisan.jadwal) ? rawArisan.jadwal : [],
+        pengeluaran: Array.isArray(rawArisan.pengeluaran) ? rawArisan.pengeluaran : []
+    };
+
+    renderPesertaDropdown();
+    renderPenerimaDropdown();
+    renderPesertaTable();
+    renderJadwalTable();
+    renderIuranHistory();
+    renderExpenseTable();
+    updateKategori();
+    renderPaymentChecklist();
+
+    populatePeriodeSelectors();
+}
+
+function showPanel(panelId) {
+    const target = document.getElementById(panelId);
+    if (!target) return;
+    document.querySelectorAll('.arisan-main .panel').forEach(p => {
+        p.classList.remove('panel-active');
+        p.style.display = 'none';
+    });
+    document.querySelectorAll('.arisan-sidebar .side-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.target === panelId));
+    target.style.display = '';
+    target.classList.add('panel-active');
+}
+
+function hidePanel(panelId) {
+    const target = document.getElementById(panelId);
+    if (!target) return;
+    target.classList.remove('panel-active');
+    target.style.display = 'none';
+    const btn = document.querySelector(`.arisan-sidebar .side-btn[data-target="${panelId}"]`);
+    if (btn) btn.classList.remove('active');
+}
+
+function renderPesertaDropdown() {
+    const sel = document.getElementById("select-anggota");
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Pilih Anggota Keluarga --</option>';
+    semuaAnggota.filter(m => !m.wafat && m.ikutArisan === true).sort((a, b) => a.nama.localeCompare(b.nama)).forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = m.nama;
+        sel.appendChild(opt);
+    });
+}
+
+function renderPenerimaDropdown() {
+    const sel = document.getElementById("input-penerima");
+    if (!sel) return;
+    sel.innerHTML = '<option value="">-- Pilih Penerima --</option>';
+    semuaAnggota.filter(m => !m.wafat).forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = m.id;
+        opt.textContent = m.nama;
+        sel.appendChild(opt);
+    });
+}
+
+function isiAnggota() {
+    const id = document.getElementById("select-anggota").value;
+    const anggota = semuaAnggota.find(m => String(m.id) === String(id));
+    const inputCatatan = document.getElementById("input-catatan");
+
+    if (!anggota) {
+        document.getElementById("chk-arisan").checked = false;
+        document.getElementById("chk-sosial").checked = false;
+        document.getElementById("chk-tabungan").checked = false;
+        document.getElementById("nominal-arisan").value = "55000";
+        document.getElementById("nominal-sosial").value = "40000";
+        document.getElementById("nominal-tabungan").value = "5000";
+        inputCatatan.value = "";
+        updateKategori();
+        return;
+    }
+
+    const komponen = anggota.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
+    const nominal = anggota.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+    document.getElementById("chk-arisan").checked = Boolean(komponen.arisan);
+    document.getElementById("chk-sosial").checked = Boolean(komponen.sosial);
+    document.getElementById("chk-tabungan").checked = Boolean(komponen.tabungan);
+    document.getElementById("nominal-arisan").value = nominal.arisan || 55000;
+    document.getElementById("nominal-sosial").value = nominal.sosial || 40000;
+    document.getElementById("nominal-tabungan").value = nominal.tabungan || 5000;
+    inputCatatan.value = anggota.catatanArisan || "";
+    updateKategori();
+
+}
+
+function updateKategori() {
+    const arisan = document.getElementById("chk-arisan").checked;
+    const sosial = document.getElementById("chk-sosial").checked;
+    const tabungan = document.getElementById("chk-tabungan").checked;
+    const pesan = document.getElementById("pesan-validasi");
+    const label = document.getElementById("label-kategori");
+    let kategori = "bukan-peserta";
+    let pesanText = "";
+
+    if (arisan) {
+        if (!sosial) document.getElementById("chk-sosial").checked = true;
+        if (!tabungan) document.getElementById("chk-tabungan").checked = true;
+    }
+
+    const finalSosial = document.getElementById("chk-sosial").checked;
+    const finalTabungan = document.getElementById("chk-tabungan").checked;
+    const finalArisan = document.getElementById("chk-arisan").checked;
+
+    if (finalTabungan && !finalSosial) {
+        kategori = "bukan-peserta";
+        pesanText = "Tabungan hanya tidak boleh dipilih tanpa Dana Sosial.";
+    } else if (finalArisan) {
+        kategori = "pokok";
+    } else if (finalSosial) {
+        kategori = "non-pokok";
+    }
+
+    label.textContent = kategori === "pokok" ? "Anggota Pokok" : kategori === "non-pokok" ? "Anggota Non-Pokok" : "Bukan Peserta";
+    label.className = `status-pill ${kategori === 'pokok' ? 'status-pokok' : kategori === 'non-pokok' ? 'status-non' : 'status-bukan'}`;
+
+    // Enable/disable input nominal berdasarkan checkbox state
+    const nominalArisan = document.getElementById("nominal-arisan");
+    const nominalSosial = document.getElementById("nominal-sosial");
+    const nominalTabungan = document.getElementById("nominal-tabungan");
+    
+    if (nominalArisan) nominalArisan.disabled = !arisan;
+    if (nominalSosial) nominalSosial.disabled = !sosial;
+    if (nominalTabungan) nominalTabungan.disabled = !tabungan;
+
+    if (pesanText) {
+        pesan.textContent = pesanText;
+        pesan.style.display = "block";
+    } else {
+        pesan.style.display = "none";
+    }
+
+    return !pesanText;
+}
+
+function simpanAnggota() {
+    const id = document.getElementById("select-anggota").value;
+    if (!id) {
+        showToast("Pilih anggota terlebih dahulu.", "error", 1600);
+        return;
+    }
+
+    if (!updateKategori()) {
+        showToast("Periksa kembali komponen iuran: Tabungan harus selalu disertai Dana Sosial.", "error", 1800);
+        return;
+    }
+
+    const anggota = semuaAnggota.find(m => String(m.id) === String(id));
+    if (!anggota) return;
+
+    const arisan = document.getElementById("chk-arisan").checked;
+    const sosial = document.getElementById("chk-sosial").checked;
+    const tabungan = document.getElementById("chk-tabungan").checked;
+    const catatan = document.getElementById("input-catatan").value.trim();
+    const nominalArisan = parseInt(document.getElementById("nominal-arisan").value) || 55000;
+    const nominalSosial = parseInt(document.getElementById("nominal-sosial").value) || 40000;
+    const nominalTabungan = parseInt(document.getElementById("nominal-tabungan").value) || 5000;
+
+    let tipe = "bukan-peserta";
+    if (arisan) tipe = "pokok";
+    else if (sosial) tipe = "non-pokok";
+
+    anggota.tipeArisan = tipe;
+    anggota.statusArisan = anggota.statusArisan || "belum";
+    anggota.iuranKomponen = { arisan, sosial, tabungan };
+    anggota.nominalIuran = { arisan: nominalArisan, sosial: nominalSosial, tabungan: nominalTabungan };
+    anggota.catatanArisan = catatan;
+    anggota.ikutArisan = Boolean(arisan || sosial || tabungan);
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(semuaAnggota));
+    renderPesertaTable();
+    renderPaymentChecklist();
+    renderPenerimaDropdown();
+    showToast("Data anggota arisan berhasil diperbarui.", "success", 1200);
+}
+
+function renderPesertaTable() {
+    const tbody = document.getElementById("tabel-peserta");
+    if (!tbody) return;
+
+    const rows = semuaAnggota
+        .filter(m => !m.wafat && (m.tipeArisan === 'pokok' || m.tipeArisan === 'non-pokok'))
+        .map(m => {
+            const tipe = m.tipeArisan || "bukan-peserta";
+            const komponen = m.iuranKomponen || { arisan:false, sosial:false, tabungan:false };
+            const nominal = m.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+            
+            // Hitung total nominal
+            let totalNominal = 0;
+            if (komponen.arisan) totalNominal += nominal.arisan || 55000;
+            if (komponen.sosial) totalNominal += nominal.sosial || 40000;
+            if (komponen.tabungan) totalNominal += nominal.tabungan || 5000;
+            
+            const totalNominalText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+            const tipeText = tipe === 'pokok' ? 'Pokok' : tipe === 'non-pokok' ? 'Non-Pokok' : 'Bukan Peserta';
+            const komponenText = [
+                komponen.arisan ? 'Arisan Pokok' : null,
+                komponen.sosial ? 'Dana Sosial' : null,
+                komponen.tabungan ? 'Tabungan' : null
+            ].filter(Boolean).join(', ') || '-';
+
+            return `
+                <tr>
+                    <td>${m.nama}</td>
+                    <td>${tipeText}</td>
+                    <td>${komponenText}</td>
+                    <td style="text-align:right;">${totalNominalText}</td>
+                </tr>`;
+        }).join('');
+
+    tbody.innerHTML = rows || '<tr><td colspan="4" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada peserta arisan.</td></tr>';
+}
+
+function simpanJadwal() {
+    const periode = getPeriodeFromSelectors('jadwal');
+    const penerimaId = document.getElementById('input-penerima').value;
+    const rumah = document.getElementById('input-rumah').value.trim();
+    const keterangan = document.getElementById('input-ruangan').value.trim();
+
+    if (!periode || !penerimaId || !rumah) {
+        showToast("Lengkapi periode, penerima, dan rumah ketempatan.", "error", 1600);
+        return;
+    }
+
+    const penerima = semuaAnggota.find(m => String(m.id) === String(penerimaId));
+    const entri = {
+        id: Date.now(),
+        periode,
+        penerimaId,
+        penerimaNama: penerima ? penerima.nama : "-",
+        rumah,
+        keterangan,
+        statusBayar: penerima ? (penerima.statusArisan || 'belum') : 'belum'
+    };
+
+    storageArisan.jadwal.unshift(entri);
+    localStorage.setItem(ARISAN_KEY, JSON.stringify(storageArisan));
+    renderJadwalTable();
+    // reset to current
+    const now = new Date();
+    const mEl = document.getElementById('select-month-jadwal');
+    const yEl = document.getElementById('select-year-jadwal');
+    if (mEl && yEl) { mEl.value = String(now.getMonth()+1).padStart(2,'0'); yEl.value = String(now.getFullYear()); }
+    document.getElementById("input-penerima").value = "";
+    document.getElementById("input-rumah").value = "";
+    document.getElementById("input-ruangan").value = "";
+    showToast("Jadwal arisan manual berhasil disimpan.", "success", 1200);
+}
+
+function renderJadwalTable() {
+    const tbody = document.getElementById("tabel-jadwal");
+    const badge = document.getElementById("badge-jumlah-jadwal");
+    const badgeCard = document.getElementById("badge-jumlah-jadwal-card");
+    if (!tbody) return;
+    const text = `${storageArisan.jadwal.length} entri`;
+    if (badge) badge.textContent = text;
+    if (badgeCard) badgeCard.textContent = text;
+
+    if (!storageArisan.jadwal.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada jadwal arisan tersimpan.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = storageArisan.jadwal.map(item => `
+        <tr>
+            <td>${item.periode}</td>
+            <td>${item.penerimaNama}</td>
+            <td>${item.rumah}${item.keterangan ? ' / ' + item.keterangan : ''}</td>
+            <td><span class="badge ${item.statusBayar === 'sudah' ? 'badge-sudah' : 'badge-belum'}">${item.statusBayar === 'sudah' ? 'Sudah Bayar' : 'Belum Bayar'}</span></td>
+        </tr>`).join('');
+}
+
+function renderIuranHistory() {
+    const tbody = document.getElementById('tabel-iuran-periode');
+    const badge = document.getElementById('badge-jumlah-periode');
+    if (!tbody || !badge) return;
+
+    storageArisan.iuran_bulanan = Array.isArray(storageArisan.iuran_bulanan) ? storageArisan.iuran_bulanan : [];
+    if (!storageArisan.iuran_bulanan.length) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada pembayaran periode yang disimpan.</td></tr>';
+        badge.textContent = '0 periode';
+        return;
+    }
+
+    const periods = [...storageArisan.iuran_bulanan].sort((a, b) => b.periode.localeCompare(a.periode));
+    badge.textContent = `${periods.length} periode`;
+
+    const rows = periods.map(entry => {
+        const pembayaranBayar = Array.isArray(entry.pembayaran) ? entry.pembayaran.filter(p => p.paid) : [];
+        const jumlahAnggota = pembayaranBayar.length;
+        const totalNominal = pembayaranBayar.reduce((sum, pembayaran) => {
+            const member = semuaAnggota.find(m => String(m.id) === String(pembayaran.memberId));
+            if (!member) return sum;
+            const komponen = member.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
+            const nominal = member.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+            let memberTotal = 0;
+            if (komponen.arisan) memberTotal += nominal.arisan || 55000;
+            if (komponen.sosial) memberTotal += nominal.sosial || 40000;
+            if (komponen.tabungan) memberTotal += nominal.tabungan || 5000;
+            return sum + memberTotal;
+        }, 0);
+        const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+        return `
+            <tr>
+                <td>${entry.periode}</td>
+                <td style="text-align:center;">${jumlahAnggota}</td>
+                <td style="text-align:right; font-weight:600; color:#3E7F4C;">${formattedTotal}</td>
+            </tr>`;
+    }).join('');
+
+    tbody.innerHTML = rows;
+}
+
+function simpanPengeluaran() {
+    const periode = getPeriodeFromSelectors('expense');
+    const tipe = document.getElementById('input-expense-type').value;
+    const desc = document.getElementById('input-expense-desc').value.trim();
+    const amount = parseInt(document.getElementById('input-expense-amount').value, 10) || 0;
+
+    if (!periode || !desc || amount <= 0) {
+        showToast('Lengkapi periode, jenis, uraian, dan nominal pengeluaran.', 'error', 1800);
+        return;
+    }
+
+    storageArisan.pengeluaran = Array.isArray(storageArisan.pengeluaran) ? storageArisan.pengeluaran : [];
+    storageArisan.pengeluaran.unshift({
+        id: Date.now(),
+        periode,
+        tipe,
+        desc,
+        amount,
+        createdAt: Date.now()
+    });
+
+    localStorage.setItem(ARISAN_KEY, JSON.stringify(storageArisan));
+    renderExpenseTable();
+    document.getElementById('input-expense-desc').value = '';
+    document.getElementById('input-expense-amount').value = '';
+    showToast('Pengeluaran tersimpan.', 'success', 1200);
+}
+
+function renderExpenseTable() {
+    const tbody = document.getElementById('tabel-pengeluaran');
+    if (!tbody) return;
+    storageArisan.pengeluaran = Array.isArray(storageArisan.pengeluaran) ? storageArisan.pengeluaran : [];
+    if (!storageArisan.pengeluaran.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada data pengeluaran.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = storageArisan.pengeluaran.map(item => `
+        <tr>
+            <td>${item.periode}</td>
+            <td>${item.tipe === 'sosial' ? 'Sosial' : item.tipe === 'inventaris' ? 'Inventaris' : 'Lainnya'}</td>
+            <td>${item.desc}</td>
+            <td style="text-align:right; font-weight:600; color:#A8391B;">${new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(item.amount)}</td>
+        </tr>`).join('');
+}
+
+// =========================================================
+// PANEL PEMBAYARAN - Load / Toggle / Save
+// =========================================================
+function renderPaymentChecklist() {
+    const periode = getPeriodeFromSelectors('pay') || getPeriodeFromSelectors('jadwal');
+    const tbody = document.getElementById("tabel-pembayaran");
+    if (!tbody) return;
+
+    // Pastikan storageArisan.iuran_bulanan ada
+    storageArisan.iuran_bulanan = Array.isArray(storageArisan.iuran_bulanan) ? storageArisan.iuran_bulanan : [];
+
+    // Temukan entri untuk periode
+    let entri = storageArisan.iuran_bulanan.find(e => e.periode === periode);
+    if (!entri) {
+        entri = { periode: periode || '', pembayaran: [] };
+        // don't push default here; only save when user clicks save
+    }
+
+    // Daftar peserta aktif (pokok + non-pokok) urut ascending berdasarkan nama
+    const peserta = semuaAnggota
+        .filter(m => !m.wafat && (m.tipeArisan === 'pokok' || m.tipeArisan === 'non-pokok'))
+        .sort((a, b) => a.nama.localeCompare(b.nama));
+
+    if (!peserta.length) {
+        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8A7B6C; padding:18px;">Tidak ada peserta aktif.</td></tr>';
+        return;
+    }
+
+    const mapPaid = new Map((entri.pembayaran || []).map(p => [String(p.memberId), Boolean(p.paid)]));
+
+    const rows = peserta.map(p => {
+        const paid = mapPaid.get(String(p.id)) || false;
+        const komponen = p.iuranKomponen || { arisan:false, sosial:false, tabungan:false };
+        const nominal = p.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+        let totalNominal = 0;
+        if (komponen.arisan) totalNominal += nominal.arisan || 55000;
+        if (komponen.sosial) totalNominal += nominal.sosial || 40000;
+        if (komponen.tabungan) totalNominal += nominal.tabungan || 5000;
+        const nominalText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+        return `
+            <tr>
+                <td style="font-weight:600;">${p.nama}</td>
+                <td style="text-align:right;">${nominalText}</td>
+                <td style="text-align:center;"><input type="checkbox" data-member="${p.id}" ${paid ? 'checked' : ''} onchange="handlePaymentToggle(event)"></td>
+            </tr>`;
+    }).join('');
+    tbody.innerHTML = rows;
+
+    renderPesertaTable();
+}
+
+function getPeriodeFromSelectors(prefix) {
+    // prefix: 'pay' or 'jadwal'
+    const mEl = document.getElementById(`select-month-${prefix}`);
+    const yEl = document.getElementById(`select-year-${prefix}`);
+    if (!mEl || !yEl) return '';
+    const mm = (String(mEl.value).padStart(2, '0'));
+    const yy = String(yEl.value);
+    if (!mm || !yy) return '';
+    return `${yy}-${mm}`;
+}
+
+function getCurrentPaymentPeriode() {
+    return getPeriodeFromSelectors('pay') || getPeriodeFromSelectors('jadwal');
+}
+
+function getPaymentStatusForMember(memberId) {
+    const periode = getCurrentPaymentPeriode();
+    if (!Array.isArray(storageArisan.iuran_bulanan)) storageArisan.iuran_bulanan = [];
+    const entri = storageArisan.iuran_bulanan.find(e => e.periode === periode);
+    if (entri && Array.isArray(entri.pembayaran)) {
+        const pembayaran = entri.pembayaran.find(p => String(p.memberId) === String(memberId));
+        if (pembayaran) return pembayaran.paid ? 'sudah' : 'belum';
+    }
+    const member = semuaAnggota.find(m => String(m.id) === String(memberId));
+    return member && member.statusArisan === 'sudah' ? 'sudah' : 'belum';
+}
+
+function populatePeriodeSelectors() {
+    const monthNames = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const years = [];
+    for (let y = currentYear - 1; y <= currentYear + 2; y++) years.push(y);
+
+    ['pay','jadwal','expense'].forEach(prefix => {
+        const mEl = document.getElementById(`select-month-${prefix}`);
+        const yEl = document.getElementById(`select-year-${prefix}`);
+        if (!mEl || !yEl) return;
+        mEl.innerHTML = '';
+        monthNames.forEach((num, idx) => {
+            const opt = document.createElement('option'); opt.value = String(idx+1).padStart(2,'0'); opt.textContent = `${num}`; mEl.appendChild(opt);
+        });
+        yEl.innerHTML = '';
+        years.forEach(y => { const opt = document.createElement('option'); opt.value = String(y); opt.textContent = String(y); yEl.appendChild(opt); });
+
+        // set defaults
+        mEl.value = String(now.getMonth()+1).padStart(2,'0');
+        yEl.value = String(currentYear);
+    });
+
+    // initial render
+    renderPaymentChecklist();
+    renderExpenseTable();
+}
+
+function handlePaymentToggle(e) {
+    // placeholder for future live summary; no-op for now
+}
+
+function toggleAllPayments(setChecked) {
+    document.querySelectorAll('#tabel-pembayaran input[type=checkbox]').forEach(cb => cb.checked = !!setChecked);
+}
+
+function savePayments() {
+    const periode = getPeriodeFromSelectors('pay') || getPeriodeFromSelectors('jadwal');
+    if (!periode) { alert('Pilih periode terlebih dahulu.'); return; }
+
+    storageArisan.iuran_bulanan = Array.isArray(storageArisan.iuran_bulanan) ? storageArisan.iuran_bulanan : [];
+
+    const checkboxes = Array.from(document.querySelectorAll('#tabel-pembayaran input[type=checkbox]'));
+    const pembayaran = checkboxes.map(cb => ({ memberId: cb.getAttribute('data-member'), paid: cb.checked, time: cb.checked ? Date.now() : null }));
+
+    // replace or add
+    const idx = storageArisan.iuran_bulanan.findIndex(e => e.periode === periode);
+    const entri = { periode, pembayaran };
+    if (idx === -1) storageArisan.iuran_bulanan.unshift(entri); else storageArisan.iuran_bulanan[idx] = entri;
+
+    localStorage.setItem(ARISAN_KEY, JSON.stringify(storageArisan));
+    renderPesertaTable();
+    renderPaymentChecklist();
+    renderIuranHistory();
+    showToast('Status pembayaran disimpan.', 'success', 1200);
+}
+
+function clearArisanData() {
+    if (!confirm('Yakin ingin menghapus semua data Arisan?')) return;
+    localStorage.removeItem(ARISAN_KEY);
+    semuaAnggota.forEach(member => {
+        delete member.tipeArisan;
+        delete member.statusArisan;
+        delete member.iuranKomponen;
+        delete member.catatanArisan;
+        member.ikutArisan = false;
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(semuaAnggota));
+    storageArisan = { jadwal: [], pengeluaran: [] };
+    renderPesertaDropdown();
+    renderPenerimaDropdown();
+    renderPesertaTable();
+    renderJadwalTable();
+    renderPaymentChecklist();
+    renderExpenseTable();
+    updateKategori();
+    showPanel('panel-atur-anggota');
+    showToast('Semua data Arisan telah dibersihkan.', 'success', 1200);
+}
+
+function toggleAturAnggota(show) {
+    if (show) showPanel('panel-atur-anggota');
+    else hidePanel('panel-atur-anggota');
+}
+
+function toggleCekPembayaran(show) {
+    if (show) showPanel('panel-cek-pembayaran');
+    else hidePanel('panel-cek-pembayaran');
+}
+
+function toggleJadwal(show) {
+    if (show) showPanel('panel-jadwal');
+    else hidePanel('panel-jadwal');
+}
+
+function toggleRiwayat(show) {
+    if (show) showPanel('panel-riwayat');
+    else hidePanel('panel-riwayat');
+}
+
+function togglePeserta(show) {
+    if (show) showPanel('panel-daftar-peserta');
+    else hidePanel('panel-daftar-peserta');
+}
+
+document.addEventListener('DOMContentLoaded', initArisanPage);
+
+function resetAturAnggotaForm() {
+    const sel = document.getElementById('select-anggota');
+    if (sel) sel.value = '';
+    const chkAr = document.getElementById('chk-arisan'); if (chkAr) chkAr.checked = false;
+    const chkSo = document.getElementById('chk-sosial'); if (chkSo) chkSo.checked = false;
+    const chkTa = document.getElementById('chk-tabungan'); if (chkTa) chkTa.checked = false;
+    const nominalAr = document.getElementById('nominal-arisan'); if (nominalAr) nominalAr.value = '55000';
+    const nominalSo = document.getElementById('nominal-sosial'); if (nominalSo) nominalSo.value = '40000';
+    const nominalTa = document.getElementById('nominal-tabungan'); if (nominalTa) nominalTa.value = '5000';
+    const inputCat = document.getElementById('input-catatan'); if (inputCat) inputCat.value = '';
+    updateKategori();
+}
+
+function batalSimpanAnggota() {
+    resetAturAnggotaForm();
+    hidePanel('panel-atur-anggota');
+}
+</script>
+</body>
+</html>

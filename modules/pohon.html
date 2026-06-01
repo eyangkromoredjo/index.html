@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pohon Silsilah Interaktif - PKEK</title>
+    
+    <!-- Google Fonts: Inter & Lora agar senada dengan modul anggota -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600&family=Lora:wght=400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- Memanggil Library D3.js via CDN -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="../js/database.js"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FBF9F6;
+            color: #4A4A4A;
+            margin: 0;
+            overflow: hidden; /* Supaya geser pohon tidak merusak scrollbar utama */
+        }
+
+        .pohon-header {
+            background-color: #FFF;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            border-bottom: 1px solid #EAE5DC;
+        }
+
+        .pohon-title h2 {
+            font-family: 'Lora', serif;
+            font-weight: 500;
+            color: var(--cokelat-tua);
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        .pohon-title p {
+            font-size: 0.85rem;
+            color: #888;
+            margin: 4px 0 0 0;
+        }
+
+        .pohon-instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.94);
+            padding: 14px 18px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            font-size: 0.82rem;
+            line-height: 1.7;
+            pointer-events: none; /* Supaya tidak mengganggu klik canvas */
+            border-left: 4px solid var(--cokelat-sogan);
+            z-index: 5;
+            max-width: 280px;
+        }
+
+        .pohon-legend {
+            position: absolute;
+            top: 120px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.94);
+            padding: 14px 16px;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            font-size: 0.82rem;
+            line-height: 1.8;
+            border-left: 4px solid var(--emas-redup);
+            z-index: 5;
+            max-width: 280px;
+        }
+
+        .pohon-legend .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .pohon-legend .legend-chip {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            border: 2px solid;
+        }
+
+        .pohon-legend .legend-chip.male { background: #E3F2FD; border-color: #1E88E5; }
+        .pohon-legend .legend-chip.female { background: #FCE4EC; border-color: #EC407A; }
+        .pohon-legend .legend-chip.wafat { background: #F5F5F5; border-color: #999; }
+
+        /* Area Canvas Tempat Pohon Digambar */
+        #canvas-pohon {
+            width: 100vw;
+            height: calc(100vh - 80px);
+            cursor: grab;
+            background: linear-gradient(135deg, #F8F6F3 0%, #F0EBE5 50%, #EDE6DD 100%);
+        }
+
+        #canvas-pohon:active {
+            cursor: grabbing;
+        }
+
+        /* Gaya Garis Penghubung (Links) - modern color */
+        .link {
+            fill: none;
+            stroke: #C5C5C5;
+            stroke-width: 2.5px;
+            transition: stroke 0.2s ease;
+            opacity: 0.6;
+        }
+
+        /* Gaya Kotak Anggota Keluarga (Nodes) - MODERN DESIGN */
+        .node {
+            cursor: pointer;
+        }
+
+        .node-card {
+            fill: #FFF;
+            stroke-width: 2.5px;
+            rx: 16px;
+            ry: 16px;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0px 4px 12px rgba(0,0,0,0.08));
+        }
+
+        .node-card.male {
+            stroke: #1E88E5;
+            fill: #E3F2FD;
+        }
+
+        .node-card.female {
+            stroke: #EC407A;
+            fill: #FCE4EC;
+        }
+
+        .node-card.wafat {
+            stroke: #999;
+            fill: #F5F5F5;
+            opacity: 0.85;
+        }
+
+        .node:hover .node-card {
+            filter: drop-shadow(0px 6px 16px rgba(0,0,0,0.12));
+            stroke-width: 3px;
+        }
+
+        .node text {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            fill: #222222;
+            pointer-events: none;
+        }
+
+        .node .nama-utama {
+            font-family: 'calibri', serif;
+            font-weight: 1000;
+            fill: #111111;
+            font-size: 18px;
+        }
+
+        .node .nama-utama.male { fill: #1E88E5; }
+        .node .nama-utama.female { fill: #EC407A; }
+
+        .node .hati {
+            font-size: 16px;
+            fill: #FF4081;
+        }
+
+        .node .nama-pasangan {
+            font-family: 'calibri', serif;
+            font-weight: 1000;
+            font-size: 18px;
+        }
+
+        .node .nama-pasangan.male { fill: #1E88E5; }
+        .node .nama-pasangan.female { fill: #EC407A; }
+
+        .node .label-gen {
+            font-size: 11px;
+            fill: #888;
+            font-weight: 600;
+        }
+
+        .node .collapse-indicator {
+            fill: #FFF;
+            stroke: #000;
+            stroke-width: 1.5px;
+        }
+
+        .node .collapse-indicator.collapsed {
+            fill: #FFC107;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="app-title-container">
+            <img src="../logo PKEK.jpg" alt="Logo PKEK" class="logo-mini">
+            <h2 style="font-family: 'Lora', serif; font-weight: 500;">Bagan Pohon Silsilah Keluarga Besar</h2>
+        </div>
+       <div class="header-right">
+    <span id="user-role-badge" class="badge-user-role">Role</span>
+    <button class="btn-kembali-mini" style="background-color: var(--emas-redup); color: #332200; margin-right: 10px; border: none;" onclick="window.location.href='anggota.html'">← Kembali ke Tabel</button>
+    <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup);" onclick="window.location.href='../dashboard.html'">← Dashboard</button>
+</div>
+    </header>
+
+    <!-- Instruksi Melayang Ringan -->
+    <div class="pohon-instructions">
+        💡 <strong>Panduan Navigasi:</strong><br>
+        • <strong>Geser:</strong> Klik & seret untuk bergerak<br>
+        • <strong>Zoom:</strong> Scroll mouse untuk zoom in/out<br>
+        • <strong>Collapse:</strong> Klik kartu untuk sembunyikan/tampilkan keturunan
+    </div>
+
+    <div class="pohon-legend">
+        <div style="font-weight:600; margin-bottom:8px;">Keterangan Bagan</div>
+        <div class="legend-item"><span class="legend-chip male"></span> Anggota Laki-Laki</div>
+        <div class="legend-item"><span class="legend-chip female"></span> Anggota Perempuan</div>
+        <div class="legend-item"><span class="legend-chip wafat"></span> Anggota Wafat ⚰️</div>
+    </div>
+
+    <!-- Wadah SVG D3.js -->
+    <svg id="canvas-pohon"></svg>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            muatDanBangunPohon();
+        });
+
+        function splitTextLines(text, maxChars) {
+            const words = text.split(' ');
+            const lines = [];
+            let current = '';
+            words.forEach(word => {
+                const test = current ? `${current} ${word}` : word;
+                if (test.length > maxChars) {
+                    if (current) lines.push(current);
+                    current = word;
+                } else {
+                    current = test;
+                }
+            });
+            if (current) lines.push(current);
+            return lines;
+        }
+
+        function muatDanBangunPohon() {
+            // 1. Ambil data mentah dari LocalStorage
+            let listAnggota = [];
+            try {
+                listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            } catch (e) {
+                listAnggota = [];
+            }
+
+            if (listAnggota.length === 0) {
+                // Tampilkan contoh preview pasangan Kromoredjo dan Juwer jika belum ada data
+                listAnggota = [
+                    { id: 1, nama: "Kromoredjo", generasi: 0, wafat: false, jenisKelamin: "Laki-Laki", parentId: null, spouseId: 2 },
+                    { id: 2, nama: "Juwer", generasi: 0, wafat: false, jenisKelamin: "Perempuan", parentId: null, spouseId: 1 }
+                ];
+            }
+
+            // 2. Transformasi relasi tabel flat menjadi Relasi Struktur Hierarki (Tree JSON)
+            // Kita cari dulu Eyang / Gen 0 sebagai akar teratas
+            let dataEyang = listAnggota.find(m => m.generasi === 0 && !m.spouseId);
+            
+            if (!dataEyang) {
+                // Jika eyang belum diinput, pakai dummy root atau item pertama agar tidak crash
+                dataEyang = listAnggota[0];
+            }
+
+            function bangunHierarkiKeluarga(nodeSekarang) {
+                let nodeD3 = {
+                    id: nodeSekarang.id,
+                    nama: nodeSekarang.nama,
+                    generasi: nodeSekarang.generasi,
+                    wafat: nodeSekarang.wafat,
+                    spouseId: nodeSekarang.spouseId,
+                    pasangan: null,
+                    children: []
+                };
+
+                // Cari apakah orang ini punya pasangan (menantu) di generasi yang sama.
+                // Periksa kedua arah: partner bisa menyimpan spouseId ke orang ini, atau orang ini menyimpan spouseId ke partner.
+                let jodoh = listAnggota.find(m => parseInt(m.spouseId) === nodeSekarang.id);
+                if (!jodoh && nodeSekarang.spouseId) {
+                    jodoh = listAnggota.find(m => m.id === parseInt(nodeSekarang.spouseId));
+                }
+                if (jodoh) {
+                    nodeD3.pasangan = {
+                        nama: jodoh.nama,
+                        wafat: jodoh.wafat,
+                        jenisKelamin: jodoh.jenisKelamin || null
+                    };
+                }
+
+                // Cari semua anak kandung yang memiliki parentId merujuk ke id orang ini
+                let daftarAnak = listAnggota.filter(m => parseInt(m.parentId) === nodeSekarang.id && !m.spouseId);
+                daftarAnak.forEach(anak => {
+                    nodeD3.children.push(bangunHierarkiKeluarga(anak));
+                });
+
+                if (nodeD3.children.length === 0) {
+                    delete nodeD3.children; // D3 butuh undefined/null jika tidak ada child
+                }
+
+                return nodeD3;
+            }
+
+            const dataPohonStruktur = bangunHierarkiKeluarga(dataEyang);
+
+            // 3. Setup Canvas SVG dan Fitur Zoom/Pan Dragging
+            const svg = d3.select("#canvas-pohon");
+            const width = window.innerWidth;
+            const height = window.innerHeight - 80;
+            
+            svg.attr("width", width).attr("height", height);
+            
+            // Bersihkan SVG jika ada rendering sisa sebelumnya
+            svg.selectAll("*").remove();
+
+            const containerG = svg.append("g").attr("class", "pohon-container-group");
+
+            // Mekanisme Zooming & Panning cerdas
+            const fungsiZoom = d3.zoom()
+                .scaleExtent([0.3, 3])
+                .on("zoom", (event) => {
+                    containerG.attr("transform", event.transform);
+                });
+
+            svg.call(fungsiZoom);
+
+            // 4. Inisialisasi Layout Pohon D3
+            // Jarak kotak ke samping (lebar) dan jarak ke bawah (tinggi antar generasi)
+            const nodeWidth = 280;
+            const nodeHeight = 160;
+            const treeLayout = d3.tree().nodeSize([nodeWidth + 80, nodeHeight + 160]);
+            
+            // Bangun root D3 dari struktur data pohon yang sudah disusun
+            const rootNode = d3.hierarchy(dataPohonStruktur);
+            // Simpan kondisi awal collapse (semua anak default terbuka di memori internal d3, nanti bisa diklik sembunyi)
+            rootNode.x0 = width / 2;
+            rootNode.y0 = 50;
+
+            // Jalankan fungsi update pertama kali
+            jalankanRenderPohon(rootNode);
+
+            function jalankanRenderPohon(source) {
+                const dataPohonTerhitung = treeLayout(rootNode);
+                const nodes = dataPohonTerhitung.descendants();
+                const links = dataPohonTerhitung.links();
+
+                // Atur kedalaman vertikal tiap generasi secara soft dan proposional
+                nodes.forEach(d => { d.y = d.depth * 240 + 100; });
+
+                // ---- BAGIAN A: PENGGAMBARAN GARIS RELASI (LINKS) ----
+                const linkIdFunct = d => d.target.id;
+                const linkCont = containerG.selectAll("path.link").data(links, linkIdFunct);
+
+                // Garis Baru Datang (Enter)
+                const linkEnter = linkCont.enter().append("path")
+                    .attr("class", "link")
+                    .attr("d", d => {
+                        const o = { x: source.x0, y: source.y0 };
+                        return generatorGarisSiku({ source: o, target: o });
+                    });
+
+                // Transisi Update Posisi Garis
+                linkCont.merge(linkEnter).transition().duration(400)
+                    .attr("d", generatorGarisSiku);
+
+                // Garis Dihapus (Exit)
+                linkCont.exit().transition().duration(400)
+                    .attr("d", d => {
+                        const o = { x: source.x, y: source.y };
+                        return generatorGarisSiku({ source: o, target: o });
+                    })
+                    .remove();
+
+                // ---- BAGIAN B: PENGGAMBARAN KOTAK ANGGOTA (NODES) ----
+                const nodeCont = containerG.selectAll("g.node").data(nodes, d => d.data.id);
+
+                // Node Baru Datang
+                const nodeEnter = nodeCont.enter().append("g")
+                    .attr("class", "node")
+                    .attr("transform", d => `translate(${source.x0},${source.y0})`)
+                    .on("click", (event, d) => {
+                        // Logika Toggle Collapse Cabang Keturunan
+                        if (d.children) {
+                            d._children = d.children;
+                            d.children = null;
+                        } else if (d._children) {
+                            d.children = d._children;
+                            d._children = null;
+                        }
+                        jalankanRenderPohon(d);
+                    });
+
+                // Gambar Kotak (Background Box) - Modern Design
+                nodeEnter.append("rect")
+                    .attr("class", d => {
+                        let cls = "node-card";
+                        if (d.data.wafat) cls += " wafat";
+                        else if (d.data.jenisKelamin === "Laki-Laki") cls += " male";
+                        else if (d.data.jenisKelamin === "Perempuan") cls += " female";
+                        return cls;
+                    })
+                    .attr("width", nodeWidth)
+                    .attr("height", nodeHeight)
+                    .attr("x", -nodeWidth / 2)
+                    .attr("y", -nodeHeight / 2);
+
+                // Konsistenkan padding dan posisi teks
+                const innerPad = 14;
+                const namaUtamaY = -nodeHeight / 2 + 35;
+                const hatiY = 0;
+                const pasanganTextY = nodeHeight / 2 - 25;
+
+                // Nama Utama (Atas)
+                nodeEnter.append("text")
+                    .attr("class", d => {
+                        let cls = "nama-utama";
+                        if (!d.data.wafat) {
+                            if (d.data.jenisKelamin === "Laki-Laki") cls += " male";
+                            else if (d.data.jenisKelamin === "Perempuan") cls += " female";
+                        }
+                        return cls;
+                    })
+                    .attr("text-anchor", "middle")
+                    .attr("y", namaUtamaY)
+                    .text(d => d.data.nama + (d.data.wafat ? " ⚰️" : ""));
+
+                // Label Generasi (kecil di pojok kanan atas)
+                nodeEnter.append("text")
+                    .attr("class", "label-gen")
+                    .attr("x", nodeWidth / 2 - 12)
+                    .attr("y", -nodeHeight / 2 + 18)
+                    .attr("text-anchor", "end")
+                    .text(d => `Gen ${d.data.generasi}`);
+
+                // Hati + Nama Pasangan (jika ada)
+                nodeEnter.each(function(d) {
+                    const groupKlmpk = d3.select(this);
+                    if (d.data.pasangan) {
+                        // Hati di tengah
+                        groupKlmpk.append("text")
+                            .attr("class", "hati")
+                            .attr("text-anchor", "middle")
+                            .attr("y", hatiY + 5)
+                            .text("❤️");
+
+                        // Nama Pasangan (Bawah)
+                        groupKlmpk.append("text")
+                            .attr("class", d => {
+                                let cls = "nama-pasangan";
+                                if (d.data.pasangan.jenisKelamin === "Laki-Laki") cls += " male";
+                                else if (d.data.pasangan.jenisKelamin === "Perempuan") cls += " female";
+                                return cls;
+                            })
+                            .attr("text-anchor", "middle")
+                            .attr("y", pasanganTextY)
+                            .text(d.data.pasangan.nama + (d.data.pasangan.wafat ? " ⚰️" : ""));
+                    }
+
+                    // Indikator collapse (lingkaran di bawah kotak)
+                    if (d.children || d._children) {
+                        groupKlmpk.append("circle")
+                            .attr("class", d => "collapse-indicator" + (d._children ? " collapsed" : ""))
+                            .attr("r", 6)
+                            .attr("cy", nodeHeight / 2 + 12);
+                    }
+                });
+
+                // Transisi Update Posisi perpindahan Kotak lama & baru
+                const nodeUpdate = nodeCont.merge(nodeEnter);
+                
+                nodeUpdate.transition().duration(400)
+                    .attr("transform", d => `translate(${d.x},${d.y})`);
+
+                // Mengubah warna tombol indikator saat status collapse berubah
+                nodeUpdate.select(".collapse-indicator")
+                    .attr("class", d => "collapse-indicator" + (d._children ? " collapsed" : ""));
+
+                // Node Dihapus (Sembunyikan/Exit)
+                const nodeExit = nodeCont.exit().transition().duration(400)
+                    .attr("transform", d => `translate(${source.x},${source.y})`)
+                    .remove();
+
+                // Simpan posisi saat ini untuk referensi animasi berikutnya
+                nodes.forEach(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            }
+
+            // Fungsi pembentuk jalur siku-siku rapi dari kotak orang tua ke anak-anaknya
+            function generatorGarisSiku({ source, target }) {
+                return `M ${source.x},${source.y + nodeHeight/2}
+                        C ${source.x},${(source.y + target.y) / 2}
+                          ${target.x},${(source.y + target.y) / 2}
+                          ${target.x},${target.y - nodeHeight/2}`;
+            }
+
+            // Fokuskan kamera otomatis tepat di tengah atas pada nama Eyang mula-mula
+            svg.call(fungsiZoom.transform, d3.zoomIdentity.translate(width / 2, 60).scale(0.85));
+        }
+    </script>
+</body>
+</html>

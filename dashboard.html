@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Utama - Aplikasi PKEK</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Lora:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Desain Tambahan Modal Pilihan yang Soft dan Elegan */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 52, 25, 0.4); /* Backdrop cokelat tua transparan */
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-box {
+            background: #FFFDF9;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            border-top: 4px solid var(--cokelat-sogan, #7C582B);
+            transform: scale(0.9);
+            transition: transform 0.25s ease;
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-box h4 {
+            font-family: 'Lora', serif;
+            color: var(--cokelat-tua, #4A3419);
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .modal-box p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .modal-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .btn-modal-opt {
+            padding: 14px;
+            border: 1px solid #EAE5DC;
+            border-radius: 8px;
+            background: #FFF;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #4A3419;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-modal-opt:hover {
+            background: #F5EFE6;
+            border-color: var(--cokelat-sogan, #7C582B);
+            transform: translateY(-1px);
+        }
+
+        .btn-modal-close {
+            margin-top: 15px;
+            background: transparent;
+            border: none;
+            color: #999;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .btn-modal-close:hover {
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="app-title-container">
+            <img src="logo PKEK.jpg" alt="Logo PKEK" class="logo-mini">
+            <h2>Aplikasi PKEK</h2>
+        </div>
+        <div class="header-right">
+            <span id="user-role-badge" class="badge-user-role">Role</span>
+            <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup);" onclick="logOut()">Keluar</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="welcome-box">
+            <h3>Sugeng Rawuh, <span id="welcome-role-text">Pengguna</span>!</h3>
+            <p id="welcome-desc-text">Memuat hak akses menu Anda...</p>
+        </div>
+
+        <div class="menu-grid" id="menu-container">
+        </div>
+    </main>
+
+    <!-- MODAL DIALOG POP-UP: Pilihan Sub-Menu Silsilah -->
+    <div class="modal-overlay" id="silsilah-modal" onclick="tutupModalSilsilah(event)">
+        <div class="modal-box">
+            <h4>Pilih Tampilan Silsilah</h4>
+            <p>Silakan pilih metode visualisasi data keluarga besar Eyang Kromoredjo yang ingin Anda buka.</p>
+            
+            <div class="modal-options">
+                <button class="btn-modal-opt" onclick="window.location.href='modules/anggota.html'">
+                    📋 <span>Tabel Pengelolaan Data & Anggota</span>
+                </button>
+                <button class="btn-modal-opt" onclick="window.location.href='modules/pohon.html'">
+                    🌳 <span>Bagan Pohon Interaktif (D3.js)</span>
+                </button>
+            </div>
+            
+            <button class="btn-modal-close" onclick="tutupModalSilsilah(event, true)">Tutup Pilihan</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Paguyuban Keluarga Eyang Kromoredjo &copy; 2026. Selalu Rukun dan Bersatu.</p>
+    </footer>
+
+    <script src="js/database.js"></script>
+    <script>
+        const currentRole = sessionStorage.getItem("pakek_user_role") || 'anggota';
+
+        window.onload = function() {
+            try {
+                initDashboardVisual();
+            } catch (e) {
+                console.error("Gagal memuat visual dashboard:", e);
+            }
+
+            try {
+                renderMenuBerdasarkanRole();
+            } catch (e) {
+                console.error("Gagal memuat daftar menu:", e);
+            }
+        };
+
+        function initDashboardVisual() {
+            const badge = document.getElementById("user-role-badge");
+            const welcomeRoleText = document.getElementById("welcome-role-text");
+            const welcomeDescText = document.getElementById("welcome-desc-text");
+
+            if (badge) {
+                badge.innerText = currentRole.toUpperCase();
+                
+                if (currentRole === 'admin') {
+                    badge.style.backgroundColor = "var(--admin-color, #dc3545)";
+                } else if (currentRole === 'pengurus') {
+                    badge.style.backgroundColor = "var(--pengurus-color, #007bff)";
+                } else {
+                    badge.style.backgroundColor = "var(--anggota-color, #28a745)";
+                }
+            }
+
+            if (welcomeRoleText && welcomeDescText) {
+                if (currentRole === 'admin') {
+                    welcomeRoleText.innerText = "Administrator (Mas Budi)";
+                    welcomeDescText.innerText = "Anda memegang kendali penuh sistem. Anda diizinkan mengelola (Tambah/Edit/Hapus) data Anggota, mengontrol kocokan Arisan, serta memanipulasi Laporan Keuangan.";
+                } else if (currentRole === 'pengurus') {
+                    welcomeRoleText.innerText = "Pengurus Paguyuban";
+                    welcomeDescText.innerText = "Anda memiliki akses operasional harian. Anda bisa menginput data Anggota baru serta mengelola Arisan keluarga, serta meninjau Laporan Keuangan.";
+                } else {
+                    welcomeRoleText.innerText = "Anggota Keluarga";
+                    welcomeDescText.innerText = "Selamat datang! Anda memiliki akses baca (Read-Only). Anda dapat memantau susunan Silsilah Anggota, mengecek status Arisan pribadi, dan melihat Laporan Keuangan.";
+                }
+            }
+        }
+
+        function renderMenuBerdasarkanRole() {
+            const menuContainer = document.getElementById("menu-container");
+            if (!menuContainer) return;
+            
+            menuContainer.innerHTML = ""; 
+
+            const modulData = [
+                {
+                    id: 'modul-silsilah',
+                    fase: 'Fase 2',
+                    icon: '🌿', 
+                    title: 'Silsilah Keluarga',
+                    desc: 'Pantau data keanggotaan dalam bentuk tabel database teratur atau bagan pohon silsilah interaktif.',
+                },
+                {
+                    id: 'modul-arisan',
+                    fase: 'Fase 3 (Terbuka)',
+                    icon: '🎟️',
+                    title: 'Sistem Arisan',
+                    desc: 'Pencatatan iuran bulanan, daftar peserta terpisah, status lunas, dan kocokan giliran arisan.',
+                },
+                {
+                    id: 'modul-keuangan',
+                    fase: 'Fase 4',
+                    icon: '💰',
+                    title: 'Laporan Keuangan',
+                    desc: 'Rekapitulasi total kas masuk, kas keluar, akumulasi per periode, serta ekspor laporan.',
+                }
+            ];
+
+            modulData.forEach(modul => {
+                const card = document.createElement("div");
+                card.className = "menu-card";
+                
+                let badgeClass = "badge-fase";
+                if(modul.id === 'modul-silsilah' || modul.id === 'modul-arisan') badgeClass += " active-fase";
+
+                card.innerHTML = `
+                    <span class="${badgeClass}">${modul.fase}</span>
+                    <div class="icon">${modul.icon}</div>
+                    <h4>${modul.title}</h4>
+                    <p>${modul.desc}</p>
+                `;
+                
+                card.onclick = () => {
+                    eksekusiKlikMenu(modul.id);
+                };
+
+                menuContainer.appendChild(card);
+            });
+        }
+
+        function eksekusiKlikMenu(modulId) {
+            if (modulId === 'modul-silsilah') {
+                // Modifikasi: Alih-alih langsung melompat, kita munculkan pop-up pilihan soft
+                document.getElementById("silsilah-modal").classList.add("active");
+            } else if (modulId === 'modul-arisan') {
+                window.location.href = "modules/arisan.html";
+            } else {
+                alert(`Modul Laporan Keuangan berada di fase berikutnya. Proteksi Role [${currentRole.toUpperCase()}] sudah siap mengamankan menu ini nanti!`);
+            }
+        }
+
+        function tutupModalSilsilah(event, paksaTutup = false) {
+            // Tutup hanya jika mengklik overlay latar belakang luar atau tombol tutup resmi
+            if (event.target.id === "silsilah-modal" || paksaTutup) {
+                document.getElementById("silsilah-modal").classList.remove("active");
+            }
+        }
+
+        function logOut() {
+            sessionStorage.removeItem("pakek_user_role");
+            window.location.href = "index.html";
+        }
+    </script>
+</body>
+</html>

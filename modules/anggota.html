@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silsilah & Data Keluarga - PKEK</title>
+    
+    <!-- Integrasi Font Google: Inter (Modern & Soft) & Lora (Klasik Elegan) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600&family=Lora:ital,wght=0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+        /* Menggunakan font utama Inter agar tampilan keseluruhan terasa lebih lembut dan bersih */
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #4A4A4A;
+            background-color: #FBF9F6;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        
+        @media (min-width: 992px) {
+            .grid-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        .form-box {
+            background-color: var(--krem-terang);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            border-top: 4px solid var(--cokelat-sogan);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--cokelat-tua);
+            letter-spacing: 0.3px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #DCD6CD;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: #333;
+            background-color: #FFF;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--emas-redup);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input {
+            width: 17px;
+            height: 17px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 0;
+        }
+
+        .btn-aksi {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-simpan {
+            background-color: var(--cokelat-sogan);
+            color: var(--krem-hangat);
+        }
+
+        .btn-simpan:hover {
+            background-color: var(--cokelat-tua);
+        }
+
+        .search-box {
+            background-color: var(--krem-terang);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .gen-section {
+            background-color: var(--krem-terang);
+            padding: 22px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            margin-bottom: 25px;
+            border-left: 4px solid var(--emas-redup);
+        }
+
+        .gen-section.induk-trah {
+            border-left: 4px solid var(--cokelat-sogan);
+            background-color: #F4EFE6;
+        }
+
+        .gen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding-bottom: 8px;
+            border-bottom: 1px dashed #DDD2C4;
+            margin-bottom: 15px;
+        }
+
+        .gen-header:hover .gen-title {
+            color: var(--cokelat-sogan);
+        }
+
+        .gen-title {
+            font-family: 'Lora', serif;
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--cokelat-tua);
+            margin: 0;
+            transition: color 0.2s ease;
+            line-height: 1.4;
+        }
+
+        /* Detail sub-penghitung di header agar terkesan soft dan informatif */
+        .gen-counter-detail {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            color: #6E6557;
+            font-weight: 400;
+            display: inline-block;
+            margin-left: 5px;
+            background-color: rgba(218, 192, 163, 0.25);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .gen-icon {
+            font-size: 0.9rem;
+            color: var(--cokelat-sogan);
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background-color: #F8F5F0;
+            color: var(--cokelat-tua);
+            padding: 12px 10px;
+            font-weight: 600;
+            border-bottom: 2px solid #EAE5DC;
+            letter-spacing: 0.3px;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #EFEBE4;
+            line-height: 1.5;
+        }
+
+        .badge-status {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-status.wafat { background-color: #EBEBEB; color: #666; }
+        .badge-status.hidup { background-color: #D8EED8; color: #2E7D32; }
+        .badge-status.arisan-ya { background-color: #4A90E2; color: #FFF; }
+        .badge-status.arisan-tidak { background-color: #F5C6CB; color: #8A1F26; }
+
+        .btn-tabel {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: opacity 0.15s ease;
+            min-width: 62px;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .sibling-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: flex-end;
+            margin-left: auto;
+        }
+        .sibling-buttons button {
+            min-width: 30px;
+            padding: 4px 8px;
+        }
+        .btn-tabel:hover { opacity: 0.85; }
+        .btn-edit { background-color: #F3C63F; color: #332200; }
+        .btn-hapus { background-color: #E05C5C; color: #FFF; }
+        
+        .wafat-row {
+            color: #9E9E9E;
+            background-color: #FAFAFA;
+        }
+
+        .nama-orangtua-sub {
+            display: block;
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 400;
+            margin-top: 3px;
+            margin-left: 4px;
+        }
+        
+        .nama-pasangan-sub {
+            display: block;
+            font-size: 0.8rem;
+            color: #A37F43;
+            font-weight: 400;
+            margin-top: 2px;
+            margin-left: 12px;
+            padding-left: 4px;
+        }
+        .spouse-row td:first-child {
+            padding-left: 28px;
+        }
+        td {
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <div class="app-title-container">
+            <img src="../logo PKEK.jpg" alt="Logo PKEK" class="logo-mini">
+            <h2 style="font-family: 'Lora', serif; font-weight: 500;">Silsilah & Data Keluarga Besar</h2>
+        </div>
+       <div class="header-right">
+    <span id="user-role-badge" class="badge-user-role">Role</span>
+    <!-- Tombol Baru untuk Akses ke Pohon Silsilah -->
+    <button class="btn-kembali-mini" style="background-color: var(--emas-redup); color: #332200; margin-right: 10px; border: none;" onclick="window.location.href='pohon.html'">🌳 Lihat Bagan Pohon</button>
+    <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup);" onclick="kembaliKeDashboard()">← Dashboard</button>
+</div>
+    </header>
+
+    <main class="main-content">
+        <div class="welcome-box" style="padding: 15px 20px; margin-bottom: 25px;">
+            <p style="font-size: 0.9rem; font-weight: 500;">
+                📢 Mode Akses: <span id="akses-text" style="text-transform: uppercase; color: var(--cokelat-sogan); font-weight: 600;">Memuat...</span>
+            </p>
+            <p style="font-size: 0.85rem; color: #777; margin-top: 3px;" id="akses-desc">
+                Memuat batasan fitur operasional...
+            </p>
+        </div>
+
+        <div class="grid-layout">
+            <div id="wrapper-form-input" class="form-box">
+                <h4 class="form-title" id="judul-form" style="font-family: 'Lora', serif; font-size: 1.25rem; font-weight: 500; margin-bottom: 20px; color: var(--cokelat-tua);">Tambah Data Keluarga</h4>
+                
+                <form id="form-anggota" onsubmit="simpanDataAnggota(event)">
+                    <input type="hidden" id="anggota-id">
+                    
+                    <div class="form-group">
+                        <label for="input-nama">Nama Lengkap</label>
+                        <input type="text" id="input-nama" class="form-control" placeholder="Contoh: Budi Purwanto" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="input-tanggal-lahir">Tanggal Lahir</label>
+                        <input type="date" id="input-tanggal-lahir" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Jenis Kelamin</label>
+                        <div class="radio-group" style="display:flex; gap:12px; margin-top:6px;">
+                            <label style="display:flex; align-items:center; gap:6px;"><input type="radio" name="input-jenis-kelamin" value="Laki-Laki" onchange="perbaruiDropdownDinamis()"> Laki-Laki</label>
+                            <label style="display:flex; align-items:center; gap:6px;"><input type="radio" name="input-jenis-kelamin" value="Perempuan" onchange="perbaruiDropdownDinamis()"> Perempuan</label>
+                        </div>
+                    </div>
+                    <div class="form-group" id="form-group-tanggal-kematian" style="display:none;">
+                        <label for="input-tanggal-kematian">Tanggal Kematian</label>
+                        <input type="date" id="input-tanggal-kematian" class="form-control">
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="input-ikut-arisan">
+                        <label for="input-ikut-arisan">Ikut Arisan</label>
+                    </div>
+<div class="form-group" id="form-group-urutan" style="display:none;">
+    <label for="urutan_anak" style="display:none;">Urutan Anak Ke-</label>
+    <input type="number" id="urutan_anak" name="urutan_anak" placeholder="Contoh: 1" min="1" class="form-control" style="display:none;">
+</div>
+                    <div class="form-group">
+                        <label for="input-generasi">Generasi Ke-</label>
+                        <select id="input-generasi" class="form-control" onchange="tanganiPerubahanGenerasi()" required>
+                            <option value="0">Generasi 0 (Induk Utama / Eyang)</option>
+                            <option value="1">Generasi 1 (Anak / Menantu Trah)</option>
+                            <option value="2">Generasi 2 (Cucu / Menantu Cucu)</option>
+                            <option value="3">Generasi 3 (Cicit / Menantu Cicit)</option>
+                            <option value="4">Generasi 4 (Canggah Trah)</option>
+                            <option value="5">Generasi 5 (Wareng / Balita / Bayi)</option>
+                            <option value="6">Generasi 6 (Kelanjar / Cicit Cucu)</option>
+                            <option value="7">Generasi 7 (Ket'urunan Lanjut)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="form-group-orangtua" style="display: none;">
+                        <label for="input-orangtua" id="label-orangtua">Orang Tua</label>
+                        <select id="input-orangtua" class="form-control"></select>
+                    </div>
+
+                    <div class="form-group" id="form-group-pasangan">
+                        <label for="input-pasangan">Hubungan Pasangan (Suami/Istri dari)</label>
+                        <select id="input-pasangan" class="form-control"></select>
+                    </div>
+
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="input-wafat" onchange="tanganiPerubahanWafat()">
+                        <label for="input-wafat">Keluarga Sudah Wafat (Rahimahullah)</label>
+                    </div>
+
+                    <button type="submit" class="btn-aksi btn-simpan" style="margin-top: 20px;" id="btn-submit-form">Simpan Keluarga</button>
+                    <button type="button" class="btn-aksi" style="background-color: #E2DDD5; color: #4A4A4A; margin-top: 10px; display: none;" id="btn-batal-edit" onclick="resetForm()">Batal Edit</button>
+                </form>
+            </div>
+
+            <div class="content-box">
+                <div class="search-box">
+                    <input type="text" id="cari-nama" class="form-control" placeholder="🔍 Cari nama keluarga besar di sini..." oninput="renderSilsilah()">
+                </div>
+
+                <div id="silsilah-container"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p style="font-size: 0.85rem; color: #888; letter-spacing: 0.3px;">Paguyuban Keluarga Eyang Kromoredjo &copy; 2026. Selalu Rukun dan Bersatu.</p>
+    </footer>
+
+    <script src="../js/database.js"></script>
+    <script>
+        const currentRole = sessionStorage.getItem("pakek_user_role") || 'anggota';
+        let statusCollapse = { 0: false, 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false };
+
+        window.onload = function() {
+            terapkanProteksiRole();
+            perbaruiDropdownDinamis();
+            renderSilsilah();
+        };
+
+        function terapkanProteksiRole() {
+            const badge = document.getElementById("user-role-badge");
+            if (badge) {
+                badge.innerText = currentRole.toUpperCase();
+                if (currentRole === 'admin') badge.style.backgroundColor = "#D44B4B";
+                else if (currentRole === 'pengurus') badge.style.backgroundColor = "#4B8BD4";
+                else badge.style.backgroundColor = "#52A447";
+            }
+
+            const aksesText = document.getElementById("akses-text");
+            const aksesDesc = document.getElementById("akses-desc");
+            const formBox = document.getElementById("wrapper-form-input");
+
+            if (aksesText) aksesText.innerText = currentRole;
+
+            if (currentRole === 'admin') {
+                if (aksesDesc) aksesDesc.innerText = "Akses Penuh: Anda diizinkan Menambah, Mengubah, dan Menghapus rekaman keluarga besar serta relasi trah.";
+            } else if (currentRole === 'pengurus') {
+                if (aksesDesc) aksesDesc.innerText = "Akses Operasional: Anda diizinkan Menambah dan Mengubah data dasar beserta relasi keluarga, namun hak menghapus dikunci.";
+            } else {
+                if (aksesDesc) aksesDesc.innerText = "Akses Terbatas (Read-Only): Anda hanya diizinkan memantau susunan silsilah keluarga s/d Gen 5 tanpa hak manipulasi data.";
+                if (formBox) formBox.style.display = "none";
+                const gridLayout = document.querySelector(".grid-layout");
+                if (gridLayout) gridLayout.style.gridTemplateColumns = "1fr";
+            }
+        }
+
+        function tanganiPerubahanGenerasi() {
+            const genInput = parseInt(document.getElementById("input-generasi").value);
+            statusCollapse[genInput] = true;
+            perbaruiDropdownDinamis();
+            renderSilsilah();
+        }
+
+        function tanganiPerubahanWafat() {
+            const wafat = document.getElementById("input-wafat").checked;
+            const groupTanggalKematian = document.getElementById("form-group-tanggal-kematian");
+            if (groupTanggalKematian) {
+                groupTanggalKematian.style.display = wafat ? "block" : "none";
+            }
+        }
+
+        function perbaruiDropdownDinamis(selectedParentId = "", selectedSpouseId = "") {
+            const genInput = parseInt(document.getElementById("input-generasi").value);
+            const currentEditingId = document.getElementById("anggota-id").value;
+            const currentGender = document.querySelector('input[name="input-jenis-kelamin"]:checked')?.value || "";
+            
+            const groupOrangTua = document.getElementById("form-group-orangtua");
+            const selectOrangTua = document.getElementById("input-orangtua");
+            const labelOrangTua = document.getElementById("label-orangtua");
+            const selectPasangan = document.getElementById("input-pasangan");
+
+            let listAnggota = [];
+            try {
+                listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            } catch (e) {
+                listAnggota = [];
+            }
+
+            if (genInput === 0) {
+                if (groupOrangTua) groupOrangTua.style.display = "none";
+                if (selectOrangTua) {
+                    selectOrangTua.innerHTML = '<option value="">-- Tidak Memiliki Orang Tua --</option>';
+                    selectOrangTua.value = "";
+                }
+            } else {
+                if (groupOrangTua) groupOrangTua.style.display = "block";
+                if (labelOrangTua) labelOrangTua.innerText = `Orang Tua (Dari Generasi ${genInput - 1})`;
+
+                const kandidatOrangTua = listAnggota.filter(m => m.generasi === (genInput - 1) && m.id !== parseInt(currentEditingId));
+                
+                let ortuHTML = '<option value="">-- Pilih Orang Tua --</option>';
+                if (kandidatOrangTua.length === 0) {
+                    ortuHTML = '<option value="">-- Data Generasi Sebelumnya Belum Ada --</option>';
+                } else {
+                    kandidatOrangTua.forEach(ortu => {
+                        ortuHTML += `<option value="${ortu.id}">${ortu.nama}</option>`;
+                    });
+                }
+                if (selectOrangTua) {
+                    selectOrangTua.innerHTML = ortuHTML;
+                    selectOrangTua.value = selectedParentId;
+                }
+            }
+
+            const kandidatPasangan = listAnggota
+                .filter(m => m.generasi === genInput && m.id !== parseInt(currentEditingId))
+                .filter(m => {
+                    if (!currentGender || !m.jenisKelamin) return true;
+                    return m.jenisKelamin !== currentGender;
+                });
+            
+            let pasanganHTML = '<option value="">-- Bukan Status Menantu (Keturunan Kandung) --</option>';
+            if (kandidatPasangan.length > 0) {
+                const relationshipLabel = currentGender === "Laki-Laki" ? "Suami dari" : currentGender === "Perempuan" ? "Istri dari" : "Suami/Istri dari";
+                kandidatPasangan.forEach(p => {
+                    pasanganHTML += `<option value="${p.id}">${relationshipLabel}: ${p.nama}</option>`;
+                });
+            }
+            if (selectPasangan) {
+                selectPasangan.innerHTML = pasanganHTML;
+                selectPasangan.value = selectedSpouseId;
+            }
+        }
+
+        function normalisasiUrutanAnak(listAnggota) {
+            let changed = false;
+            const parentIds = [...new Set(listAnggota.filter(m => m.parentId && !m.spouseId).map(m => m.parentId))];
+            parentIds.forEach(parentId => {
+                const saudara = listAnggota
+                    .filter(m => m.parentId === parentId && !m.spouseId)
+                    .sort((a, b) => {
+                        const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
+                        const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                        if (ua !== ub) return ua - ub;
+                        return a.id - b.id;
+                    });
+                saudara.forEach((anak, index) => {
+                    const expected = index + 1;
+                    const actual = anak.urutan_anak ? parseInt(anak.urutan_anak) : null;
+                    if (actual !== expected) {
+                        anak.urutan_anak = expected;
+                        changed = true;
+                    }
+                });
+            });
+            if (changed) {
+                localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
+            }
+            return listAnggota;
+        }
+
+        function toggleGenerasi(gen) {
+            statusCollapse[gen] = !statusCollapse[gen];
+            const contentDiv = document.getElementById(`gen-content-${gen}`);
+            const iconSpan = document.getElementById(`gen-icon-${gen}`);
+            
+            if (contentDiv && iconSpan) {
+                if (statusCollapse[gen]) {
+                    contentDiv.style.display = "block";
+                    iconSpan.innerText = "▼";
+                } else {
+                    contentDiv.style.display = "none";
+                    iconSpan.innerText = "▶";
+                }
+            }
+        }
+
+        function renderSilsilah() {
+            const container = document.getElementById("silsilah-container");
+            const keyword = document.getElementById("cari-nama").value.toLowerCase();
+            if (!container) return;
+            container.innerHTML = "";
+
+            let listAnggota = [];
+            try {
+                listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            } catch (e) {
+                listAnggota = [];
+            }
+
+            listAnggota = normalisasiUrutanAnak(listAnggota);
+
+            const namaGenerasiJawa = {
+                0: "Generasi 0 — Induk Utama",
+                1: "Generasi I — Anak & Menantu",
+                2: "Generasi II — Cucu & Menantu Cucu",
+                3: "Generasi III — Cicit & Menantu Cicit",
+                4: "Generasi IV — Canggah Trah",
+                5: "Generasi V — Wareng / Balita / Bayi",
+                6: "Generasi VI — Kelanjar / Cicit Cucu",
+                7: "Generasi VII — Ket'urunan Lanjut"
+            };
+
+            let adaDataTercetak = false;
+
+            for (let gen = 0; gen <= 7; gen++) {
+                const semuaAnggotaPerGen = listAnggota.filter(m => m.generasi === gen);
+
+                const anakKandung = semuaAnggotaPerGen.filter(m => !m.spouseId).sort((a, b) => {
+                    const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
+                    const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                    if (ua !== ub) return ua - ub;
+                    return a.id - b.id;
+                });
+                const paraPasangan = semuaAnggotaPerGen.filter(m => m.spouseId);
+
+                let anggotaPerGenTerurut = [];
+                anakKandung.forEach(anak => {
+                    anggotaPerGenTerurut.push(anak);
+                    const pasangannya = paraPasangan.find(p => parseInt(p.spouseId) === anak.id);
+                    if (pasangannya) {
+                        anggotaPerGenTerurut.push(pasangannya);
+                    }
+                });
+
+                paraPasangan.forEach(p => {
+                    if (!anggotaPerGenTerurut.some(a => a.id === p.id)) {
+                        anggotaPerGenTerurut.push(p);
+                    }
+                });
+
+                const anggotaPerGen = anggotaPerGenTerurut.filter(m => m.nama.toLowerCase().includes(keyword));
+
+                if (anggotaPerGen.length > 0) {
+                    adaDataTercetak = true;
+                    
+                    if (keyword.length > 0) {
+                        statusCollapse[gen] = true;
+                    }
+
+                    // PERUBAHAN: Menghitung pembagian jumlah Kandung dan Menantu khusus hasil pencarian/filter aktif
+                    const jmlKandung = anggotaPerGen.filter(m => !m.spouseId).length;
+                    const jmlMenantu = anggotaPerGen.filter(m => m.spouseId).length;
+
+                    const genSection = document.createElement("div");
+                    genSection.className = gen === 0 ? "gen-section induk-trah" : "gen-section";
+
+                    const displayStyle = statusCollapse[gen] ? "block" : "none";
+                    const iconTanda = statusCollapse[gen] ? "▼" : "▶";
+
+                    let tabelHTML = `
+                        <div class="gen-header" onclick="toggleGenerasi(${gen})">
+                            <div class="gen-title">
+                                ${namaGenerasiJawa[gen]}
+                                <span class="gen-counter-detail">${anggotaPerGen.length} Total: <strong>${jmlKandung}</strong> Kandung, <strong>${jmlMenantu}</strong> Menantu</span>
+                            </div>
+                            <span class="gen-icon" id="gen-icon-${gen}">${iconTanda}</span>
+                        </div>
+                        
+                        <div class="gen-content" id="gen-content-${gen}" style="display: ${displayStyle};">
+                            <div class="table-responsive">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Keluarga Besar</th>
+                                            <th style="width:110px;">Arisan</th>
+                                            <th style="width:140px;">Status</th>
+                                            ${currentRole !== 'anggota' ? '<th style="text-align:center; width:150px;">Aksi</th>' : ''}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                    `;
+
+                    // Kelompokkan berdasarkan parentId
+                    const groupByParent = {};
+                    anggotaPerGen.forEach(member => {
+                        const parentKey = member.parentId || '_no_parent';
+                        if (!groupByParent[parentKey]) {
+                            groupByParent[parentKey] = [];
+                        }
+                        groupByParent[parentKey].push(member);
+                    });
+
+                    const spousesGlobal = anggotaPerGen.filter(m => m.spouseId);
+
+                    // Urutkan parentId berdasarkan urutan_anak orang tua di generasi sebelumnya
+                    const sortedParentKeys = Object.keys(groupByParent).sort((parentIdA, parentIdB) => {
+                        let urutanA = 9999;
+                        let urutanB = 9999;
+                        
+                        if (parentIdA !== '_no_parent') {
+                            const ortuA = listAnggota.find(a => a.id === parseInt(parentIdA));
+                            urutanA = ortuA && ortuA.urutan_anak ? parseInt(ortuA.urutan_anak) : 9999;
+                        }
+                        if (parentIdB !== '_no_parent') {
+                            const ortuB = listAnggota.find(a => a.id === parseInt(parentIdB));
+                            urutanB = ortuB && ortuB.urutan_anak ? parseInt(ortuB.urutan_anak) : 9999;
+                        }
+                        
+                        if (urutanA !== urutanB) return urutanA - urutanB;
+                        return parentIdA.localeCompare(parentIdB);
+                    });
+
+                    // Render per grup orang tua
+                    sortedParentKeys.forEach(parentIdKey => {
+                        const groupMembers = groupByParent[parentIdKey];
+                        let parentName = "";
+                        
+                        if (parentIdKey !== '_no_parent') {
+                            const parentObj = listAnggota.find(a => a.id === parseInt(parentIdKey));
+                            if (parentObj) {
+                                parentName = parentObj.nama;
+                            }
+                        }
+
+                        // Pisahkan anak kandung untuk grup ini
+                        const childrenOnly = groupMembers.filter(m => !m.spouseId).sort((a, b) => {
+                            const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
+                            const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                            if (ua !== ub) return ua - ub;
+                            return a.id - b.id;
+                        });
+
+                        if (childrenOnly.length === 0) {
+                            return;
+                        }
+
+                        // Render header orang tua jika ada
+                        if (parentName) {
+                            tabelHTML += `
+                                <tr style="background-color:#F8F5F0; font-weight:600;">
+                                    <td colspan="${currentRole !== 'anggota' ? 4 : 3}" style="padding:8px 10px; border-bottom:2px solid #E8DED0;">
+                                        👨‍👩‍👧‍👦 ANAK <strong>${parentName}</strong>
+                                    </td>
+                                </tr>
+                            `;
+                        }
+
+                        const spouses = spousesGlobal;
+
+                        // Render anak-anak dengan nomor urut
+                        childrenOnly.forEach((member, index) => {
+                            let statusBadge = "";
+                            let rowClasses = [];
+                            let siblingButtons = '';
+
+                            if (member.wafat) {
+                                statusBadge = '<span class="badge-status wafat">WAFAT</span>';
+                                rowClasses.push('wafat-row');
+                            } else {
+                                statusBadge = '<span class="badge-status hidup">HIDUP</span>';
+                            }
+
+                            const rowClass = rowClasses.length ? `class="${rowClasses.join(' ')}"` : '';
+
+                            // Tombol naik/turun urutan
+                            if (parentName && childrenOnly.length > 1) {
+                                const upBtn = `<button type="button" class="btn-tabel" title="Naikkan urutan" style="padding:4px 8px;" onclick="naikkanUrutan(${member.id})">▲</button>`;
+                                const downBtn = `<button type="button" class="btn-tabel" title="Turunkan urutan" style="padding:4px 8px;" onclick="turunkanUrutan(${member.id})">▼</button>`;
+                                if (index === 0) {
+                                    siblingButtons = `<div class="sibling-buttons">${downBtn}</div>`;
+                                } else if (index === childrenOnly.length - 1) {
+                                    siblingButtons = `<div class="sibling-buttons">${upBtn}</div>`;
+                                } else {
+                                    siblingButtons = `<div class="sibling-buttons">${upBtn}${downBtn}</div>`;
+                                }
+                            }
+
+                            const urutanDisplay = parentName ? (index + 1) : "";
+                            tabelHTML += `
+                                <tr ${rowClass}>
+                                    <td>
+                                        <strong style="color:#2C2C2C; font-weight:600;">${urutanDisplay ? urutanDisplay + '. ' : ''}${member.nama}</strong>
+                                    </td>
+                                    <td>${member.ikutArisan ? '<span class="badge-status arisan-ya">Ya</span>' : '<span class="badge-status arisan-tidak">Tidak</span>'}</td>
+                                    <td>${statusBadge}</td>
+                                    ${currentRole !== 'anggota' ? `
+                                        <td style="text-align:left; vertical-align: middle;">
+                                            <div class="action-buttons">
+                                                <button type="button" class="btn-tabel btn-edit" onclick="siapEditAnggota(${member.id})">Edit</button>
+                                                ${currentRole === 'admin' ? `<button type="button" class="btn-tabel btn-hapus" onclick="hapusAnggota(${member.id})">Hapus</button>` : ''}
+                                                ${siblingButtons}
+                                            </div>
+                                        </td>
+                                    ` : ''}
+                                </tr>
+                            `;
+
+                            // Render pasangan jika ada
+                            const pasanganMember = spouses.find(p => parseInt(p.spouseId) === member.id);
+                            if (pasanganMember) {
+                                let statusPasangan = "";
+                                let rowClassesPasangan = ['spouse-row'];
+                                let teksPasangan = "";
+
+                                const pasanganLabel = pasanganMember.jenisKelamin === "Laki-Laki"
+                                    ? "Suami dari"
+                                    : pasanganMember.jenisKelamin === "Perempuan"
+                                        ? "Istri dari"
+                                        : "Pasangan dari";
+                                teksPasangan = `<span class="nama-pasangan-sub">💞 Status: <strong>${pasanganLabel} ${member.nama}</strong></span>`;
+
+                                if (pasanganMember.wafat) {
+                                    statusPasangan = '<span class="badge-status wafat">WAFAT</span>';
+                                    rowClassesPasangan.push('wafat-row');
+                                } else {
+                                    statusPasangan = '<span class="badge-status hidup">HIDUP</span>';
+                                }
+
+                                const rowClassPasangan = rowClassesPasangan.length ? `class="${rowClassesPasangan.join(' ')}"` : '';
+
+                                tabelHTML += `
+                                    <tr ${rowClassPasangan} style="padding-left:30px;">
+                                        <td style="padding-left:28px;">
+                                            <strong style="color:#2C2C2C; font-weight:600;">   ${pasanganMember.nama}</strong>
+                                            ${teksPasangan}
+                                        </td>
+                                        <td>${pasanganMember.ikutArisan ? '<span class="badge-status arisan-ya">Ya</span>' : '<span class="badge-status arisan-tidak">Tidak</span>'}</td>
+                                        <td>${statusPasangan}</td>
+                                        ${currentRole !== 'anggota' ? `
+                                            <td style="text-align:left; vertical-align: middle;">
+                                                <div class="action-buttons">
+                                                    <button type="button" class="btn-tabel btn-edit" onclick="siapEditAnggota(${pasanganMember.id})">Edit</button>
+                                                    ${currentRole === 'admin' ? `<button type="button" class="btn-tabel btn-hapus" onclick="hapusAnggota(${pasanganMember.id})">Hapus</button>` : ''}
+                                                </div>
+                                            </td>
+                                        ` : ''}
+                                    </tr>
+                                `;
+                            }
+                        });
+                    });
+
+                    tabelHTML += `
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+
+                    genSection.innerHTML = tabelHTML;
+                    container.appendChild(genSection);
+                }
+            }
+
+            if (!adaDataTercetak) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:#999; background:white; border-radius:8px; font-size:0.95rem;">
+                    ❌ Belum ada data silsilah atau nama keluarga tidak ditemukan.
+                </div>`;
+            }
+        }
+
+        function simpanDataAnggota(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("anggota-id").value;
+            const nama = document.getElementById("input-nama").value.trim();
+            const tanggalLahir = document.getElementById("input-tanggal-lahir").value || "";
+            const jenisKelamin = document.querySelector('input[name="input-jenis-kelamin"]:checked')?.value || "";
+            const tanggalKematian = document.getElementById("input-tanggal-kematian").value || "";
+            const ikutArisan = document.getElementById("input-ikut-arisan").checked;
+            const generasi = parseInt(document.getElementById("input-generasi").value);
+            const wafat = document.getElementById("input-wafat").checked;
+            
+            const selectOrangTua = document.getElementById("input-orangtua");
+            const selectPasangan = document.getElementById("input-pasangan");
+            
+            const parentId = selectOrangTua ? selectOrangTua.value : "";
+            const spouseId = selectPasangan ? selectPasangan.value : "";
+
+            if (!nama) {
+                showToast("Nama tidak boleh kosong!", "error", 1600);
+                return;
+            }
+
+            if (generasi !== 0 && !parentId && !spouseId) {
+                showToast("Untuk generasi di atas 0, Orang Tua wajib diisi kecuali jika anggota adalah menantu.", "error", 1800);
+                return;
+            }
+
+            let listAnggota = [];
+            try {
+                listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            } catch (e) {
+                listAnggota = [];
+            }
+
+            statusCollapse[generasi] = true;
+
+            if (id) {
+                listAnggota = listAnggota.map(member => {
+                    if (member.id === parseInt(id)) {
+                        return { 
+                            ...member, 
+                            nama, 
+                            tanggalLahir,
+                            jenisKelamin,
+                            tanggalKematian: wafat ? tanggalKematian : "",
+                            ikutArisan,
+                            generasi, 
+                            wafat, 
+                            parentId: generasi === 0 ? "" : parentId,
+                            spouseId: spouseId
+                        };
+                    }
+                    return member;
+                });
+                showToast("Data silsilah keluarga berhasil diperbarui!", "success", 1200);
+            } else {
+                const idBaru = Date.now();
+                let urutanAnak = null;
+                if (parentId) {
+                    const saudara = listAnggota.filter(m => m.parentId === parentId && !m.spouseId);
+                    const maxUrut = saudara.reduce((max, s) => {
+                        const u = s.urutan_anak ? parseInt(s.urutan_anak) : 0;
+                        return Math.max(max, u);
+                    }, 0);
+                    urutanAnak = maxUrut + 1;
+                }
+                listAnggota.push({ 
+                    id: idBaru, 
+                    nama, 
+                    tanggalLahir,
+                    jenisKelamin,
+                    tanggalKematian: wafat ? tanggalKematian : "",
+                    ikutArisan,
+                    generasi, 
+                    wafat, 
+                    parentId: generasi === 0 ? "" : parentId,
+                    spouseId: spouseId,
+                    urutan_anak: urutanAnak
+                });
+                showToast("Data keluarga baru berhasil disimpan!", "success", 1200);
+            }
+
+            localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
+            resetForm();
+            renderSilsilah();
+        }
+
+        function siapEditAnggota(id) {
+            let listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            const target = listAnggota.find(m => m.id === id);
+            if (!target) return;
+
+            const wafatValue = target.wafat === true || target.wafat === "true";
+            document.getElementById("anggota-id").value = target.id;
+            document.getElementById("input-nama").value = target.nama;
+            document.getElementById("input-tanggal-lahir").value = target.tanggalLahir || "";
+            document.querySelectorAll('input[name="input-jenis-kelamin"]').forEach(r => {
+                r.checked = r.value === (target.jenisKelamin || "");
+            });
+            document.getElementById("input-tanggal-kematian").value = target.tanggalKematian || "";
+            document.getElementById("input-ikut-arisan").checked = Boolean(target.ikutArisan);
+            document.getElementById("input-generasi").value = target.generasi;
+            document.getElementById("input-wafat").checked = wafatValue;
+
+            const groupTanggalKematian = document.getElementById("form-group-tanggal-kematian");
+            if (groupTanggalKematian) {
+                groupTanggalKematian.style.display = (wafatValue || Boolean(target.tanggalKematian)) ? "block" : "none";
+            }
+
+            statusCollapse[target.generasi] = true;
+            perbaruiDropdownDinamis(target.parentId, target.spouseId);
+
+            document.getElementById("judul-form").innerText = "Ubah Data Keluarga";
+            document.getElementById("btn-submit-form").innerText = "Perbarui Data";
+            document.getElementById("btn-batal-edit").style.display = "block";
+            
+            renderSilsilah();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function resetForm() {
+            document.getElementById("form-anggota").reset();
+            document.getElementById("anggota-id").value = "";
+            document.getElementById("judul-form").innerText = "Tambah Data Keluarga";
+            document.getElementById("btn-submit-form").innerText = "Simpan Keluarga";
+            document.getElementById("btn-batal-edit").style.display = "none";
+            document.querySelectorAll('input[name="input-jenis-kelamin"]').forEach(r => r.checked = false);
+            tanganiPerubahanWafat();
+            perbaruiDropdownDinamis();
+        }
+
+        function hapusAnggota(id) {
+            const listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            const target = listAnggota.find(m => String(m.id) === String(id));
+            if (!target) return;
+
+            if (!confirm(`Hapus anggota ${target.nama}? Tindakan ini akan menghapus hubungan pasangan dan orang tua/anak terkait.`)) {
+                return;
+            }
+
+            let updatedList = listAnggota.filter(m => String(m.id) !== String(id));
+
+            // Lepaskan referensi pasangan dari anggota lain jika perlu
+            updatedList = updatedList.map(member => {
+                if (member.spouseId && String(member.spouseId) === String(id)) {
+                    return { ...member, spouseId: "" };
+                }
+                if (member.parentId && String(member.parentId) === String(id)) {
+                    return { ...member, parentId: "" };
+                }
+                return member;
+            });
+
+            localStorage.setItem("kromoredjo_keluarga", JSON.stringify(updatedList));
+            showToast(`Anggota ${target.nama} berhasil dihapus.`, "success", 1200);
+            renderSilsilah();
+        }
+
+        function naikkanUrutan(id) {
+            let listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            const target = listAnggota.find(m => m.id === id);
+            if (!target || !target.parentId) return;
+            const saudara = listAnggota
+                .filter(m => m.parentId === target.parentId && !m.spouseId)
+                .sort((a, b) => {
+                    const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
+                    const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                    if (ua !== ub) return ua - ub;
+                    return a.id - b.id;
+                });
+            const i = saudara.findIndex(m => m.id === id);
+            if (i > 0) {
+                const prev = saudara[i - 1];
+                const currentUrut = target.urutan_anak ? parseInt(target.urutan_anak) : 0;
+                const prevUrut = prev.urutan_anak ? parseInt(prev.urutan_anak) : 0;
+                listAnggota = listAnggota.map(m => {
+                    if (m.id === target.id) m.urutan_anak = prevUrut;
+                    else if (m.id === prev.id) m.urutan_anak = currentUrut;
+                    return m;
+                });
+                localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
+                renderSilsilah();
+            }
+        }
+
+        function turunkanUrutan(id) {
+            let listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
+            const target = listAnggota.find(m => m.id === id);
+            if (!target || !target.parentId) return;
+            const saudara = listAnggota
+                .filter(m => m.parentId === target.parentId && !m.spouseId)
+                .sort((a, b) => {
+                    const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
+                    const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                    if (ua !== ub) return ua - ub;
+                    return a.id - b.id;
+                });
+            const i = saudara.findIndex(m => m.id === id);
+            if (i !== -1 && i < saudara.length - 1) {
+                const next = saudara[i + 1];
+                const currentUrut = target.urutan_anak ? parseInt(target.urutan_anak) : 0;
+                const nextUrut = next.urutan_anak ? parseInt(next.urutan_anak) : 0;
+                listAnggota = listAnggota.map(m => {
+                    if (m.id === target.id) m.urutan_anak = nextUrut;
+                    else if (m.id === next.id) m.urutan_anak = currentUrut;
+                    return m;
+                });
+                localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
+                renderSilsilah();
+            }
+        }
+
+        function kembaliKeDashboard() {
+            window.location.href = "../dashboard.html";
+        }
+    </script>
+</body>
+</html>
