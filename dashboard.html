@@ -114,6 +114,8 @@
     .badge.aktif{background:rgba(46,107,62,.2);border:1px solid rgba(46,107,62,.4);color:#7ec894}
     .badge.tidak-aktif{background:rgba(139,46,46,.2);border:1px solid rgba(139,46,46,.4);color:#e8a0a0}
     .badge.wafat-b{background:rgba(80,80,80,.25);border:1px solid rgba(150,150,150,.3);color:rgba(245,236,215,.5)}
+    .badge.trah{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:var(--em)}
+    .badge.spouse-badge{background:rgba(160,98,42,0.15);border:1px solid rgba(160,98,42,0.4);color:var(--cb)}
     .a-aksi{display:flex;gap:.5rem;margin-top:1rem;padding-top:.8rem;border-top:1px solid rgba(201,168,76,.1)}
     .btn-aksi{flex:1;padding:.4rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
     .btn-aksi:hover{border-color:var(--em);color:var(--em)}
@@ -235,6 +237,7 @@
     <div class="pesan-error" id="pesan-error">Nama pengguna atau kata sandi salah.</div>
 
     <button class="tombol-utama" onclick="window.handleLogin()">Masuk ke Paguyuban</button>
+    <button class="btn-batal" onclick="window.loginGuest()" style="width:100%; margin-top:0.8rem; border-color:rgba(201,168,76,0.4)">✦ Masuk Sebagai Tamu</button>
     <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.72rem; color: rgba(200,137,78,0.5); font-style: italic;">
       * Hubungi pengurus untuk mendapatkan akses
     </p>
@@ -473,7 +476,7 @@
         <div class="form-row">
           <div class="form-group">
             <label>Generasi *</label>
-            <select id="form-generasi" onchange="updateParentOptions()">
+            <select id="form-generasi" onchange="window.updateFormOptions()">
               <option value="0">Generasi 0 (Induk)</option>
               <option value="1">Generasi 1</option>
               <option value="2">Generasi 2</option>
@@ -483,10 +486,6 @@
               <option value="6">Generasi 6</option>
               <option value="7">Generasi 7</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label>Orang Tua (Ayah/Ibu)</label>
-            <select id="form-id-orang-tua"><option value="">- Tanpa Data -</option></select>
           </div>
           <div class="form-group">
             <label>Orang Tua (Garis Keturunan) *</label>
@@ -579,7 +578,8 @@
 
   const HAK = {
     admin:    { tambah:true,  edit:true,  hapus:true,  export:true,  kelolaAkun:true  },
-    pengurus: { tambah:true,  edit:true,  hapus:false, export:false, kelolaAkun:false }
+    pengurus: { tambah:true,  edit:true,  hapus:false, export:false, kelolaAkun:false },
+    guest:    { tambah:false, edit:false, hapus:false, export:false, kelolaAkun:false }
   };
   function boleh(f){ return !!(penggunaLogin && HAK[penggunaLogin.level]?.[f]); }
 
@@ -635,12 +635,38 @@
     }
   };
 
+  window.loginGuest = function() {
+    penggunaLogin = { username: 'guest', nama: 'Tamu Keluarga', level: 'guest' };
+    sessionStorage.setItem('kromoredjo_user', JSON.stringify(penggunaLogin));
+    document.getElementById('pesan-error').style.display = 'none';
+    document.getElementById('halaman-login').classList.remove('aktif');
+    document.getElementById('halaman-app').classList.add('aktif');
+    masukApp();
+    startRealtimeStats();
+    toast('Masuk sebagai Tamu (Lihat Saja)');
+  };
+
   function masukApp(){
     document.getElementById('nav-pengurus').style.display='block';
     if(document.getElementById('btn-login-sidebar')) document.getElementById('btn-login-sidebar').style.display='none';
     document.getElementById('btn-keluar-sidebar').style.display='block';
-    document.getElementById('sidebar-level').textContent = penggunaLogin.level === 'admin' ? '👑 Admin' : '🛡 Pengurus';
+    
+    const levels = { admin: '👑 Admin', pengurus: '🛡 Pengurus', guest: '👤 Tamu' };
+    document.getElementById('sidebar-level').textContent = levels[penggunaLogin.level] || '';
+    
     document.getElementById('topbar-user').textContent=penggunaLogin.nama;
+
+    // Kontrol Visibilitas Tombol Tambah/Setting
+    const canAdd = boleh('tambah');
+    const btnTambahAnggota = document.getElementById('btn-tambah-anggota');
+    if(btnTambahAnggota) btnTambahAnggota.style.display = canAdd ? 'flex' : 'none';
+    
+    const btnBuatPeriode = document.getElementById('btn-buat-periode');
+    if(btnBuatPeriode) btnBuatPeriode.style.display = canAdd ? 'block' : 'none';
+    
+    const btnSettingArisan = document.querySelector('.btn-setting');
+    if(btnSettingArisan) btnSettingArisan.style.display = boleh('edit') ? 'block' : 'none';
+
     updateStats();
   }
 
@@ -843,8 +869,7 @@
     document.getElementById('form-status').value='aktif';
     document.getElementById('form-kehidupan').value='hidup';
     toggleTglWafat();
-    updateParentOptions();
-    updatePasanganOptions();
+    window.updateFormOptions();
   }
 
   window.bukaFormTambah = function(){
@@ -875,8 +900,7 @@
     document.getElementById('form-lahir').value=a.lahir||'';
     document.getElementById('form-alamat').value=a.alamat||'';
     toggleTglWafat();
-    updateParentOptions(a.idOrangTua);
-    updatePasanganOptions(a.idPasangan);
+    window.updateFormOptions(a.idOrangTua, a.idPasangan);
     bukaModal('modal-anggota');
   }
 
@@ -928,6 +952,11 @@
     await hapusSatu(idHapusPending);
     idHapusPending=null;
     tutupModal('modal-hapus'); await renderAnggota(); await updateStats(); toast('Anggota berhasil dihapus.');
+  }
+
+  window.updateFormOptions = function(curParentId = "", curSpouseId = "") {
+    window.updateParentOptions(curParentId);
+    window.updatePasanganOptions(curSpouseId);
   }
 
   window.updateParentOptions = async function(currentParentId = "") {
@@ -1080,12 +1109,17 @@
     document.getElementById('detail-judul').textContent = 'Detail — '+BULAN[p.bulan]+' '+p.tahun;
     const selesai = p.status === 'selesai';
     const undianBox = document.getElementById('undian-box');
-    if(!selesai && !p.pemenang){
-      undianBox.style.display = 'block';
-      document.getElementById('undian-nama').textContent = '—';
-      document.getElementById('undian-sub').textContent = 'Klik tombol undian untuk mengocok nama';
-      document.getElementById('btn-undian').disabled = false;
-      document.getElementById('btn-undian').textContent = '🎲 Kocok Undian';
+    if(!selesai && !p.pemenang ){
+      if(boleh('edit')){
+        undianBox.style.display = 'block';
+        document.getElementById('undian-nama').textContent = '—';
+        document.getElementById('undian-sub').textContent = 'Klik tombol undian untuk mengocok nama';
+        document.getElementById('btn-undian').style.display = 'inline-block';
+        document.getElementById('btn-undian').disabled = false;
+        document.getElementById('btn-undian').textContent = '🎲 Kocok Undian';
+      } else {
+        undianBox.style.display = 'none';
+      }
     } else if(p.pemenang){
       undianBox.style.display = 'block';
       document.getElementById('undian-nama').textContent = p.pemenang;
@@ -1107,7 +1141,8 @@
     document.getElementById('detail-progress-fill').style.width = pct+'%';
     const tbody = document.getElementById('tabel-bayar-body');
     tbody.innerHTML = p.pembayaran.map(x => {
-      const klik = selesai ? '' : `onclick="toggleBayar('${p.id}','${x.id}')"`;
+      const canEdit = !selesai && boleh('edit');
+      const klik = canEdit ? `onclick="toggleBayar('${p.id}','${x.id}')"` : '';
       return `<tr>
         <td>${x.nama}</td>
         <td style="color:var(--cb)">Gen ${x.generasi}</td>

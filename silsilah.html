@@ -145,9 +145,16 @@
 
     container.innerHTML = `<ul>${roots.map(root => {
       const isLunas = lunasIds.includes(root.id);
+      const isWafat = root.kehidupan === 'wafat';
+      const spouse = spouseMap[root.id];
+      const label = root.gender === 'P' ? 'Istri dari' : 'Suami dari';
       return `
         <li>
-          <div class="tree-node ${isLunas ? 'active-arisan' : ''}">${root.nama}</div>
+          <div class="tree-node ${isLunas ? 'active-arisan' : ''} ${isWafat ? 'wafat' : ''}">
+            ${isWafat ? '🪦 ' : ''}${root.nama}
+            ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.nama}</small>` : ''}
+            <span class="node-panggilan">${root.panggilan ? root.panggilan : 'Gen ' + root.generasi}</span>
+          </div>
           ${buildBranch(root.id)}
         </li>`;
     }).join('')}</ul>`;
