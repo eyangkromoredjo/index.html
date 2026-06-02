@@ -22,7 +22,7 @@
     .nav-item.aktif{color:var(--em);border-left-color:var(--em);background:rgba(201,168,76,.08)}
     .nav-item .ni{font-size:1rem;width:1.2rem;text-align:center}
     .konten-utama{margin-left:240px;flex:1;min-height:100vh;padding:2rem}
-    .topbar{padding:1.2rem 2rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50;margin:-2rem -2rem 2rem -2rem}
+    .topbar{padding:1.2rem 2rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50;margin:-2rem -2rem 2rem -2rem; gap: 1rem;}
     .topbar-judul{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase}
 
     /* SILSILAH INTERAKTIF STYLES */
@@ -77,11 +77,28 @@
       border-radius: 4px;
     }
     .zoom-btn:hover { background: var(--cm); color: var(--el); }
+
+    /* Responsive Sidebar */
+    .hamburger{display:none;background:none;border:none;color:var(--em);font-size:1.3rem;cursor:pointer}
+    .overlay-sidebar{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+    .overlay-sidebar.aktif{display:block}
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); transition: transform .3s ease; }
+      .sidebar.buka { transform: translateX(0); }
+      .konten-utama { margin-left: 0; padding: 1.2rem; }
+      .hamburger { display: block; }
+      .topbar { padding: 1.2rem 1.5rem; }
+      .topbar-judul { font-size: 0.6rem; letter-spacing: 0.2em; }
+    }
   </style>
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
-  <nav class="sidebar">
+  <!-- Overlay mobile -->
+  <div class="overlay-sidebar" id="overlay-sidebar" onclick="tutupSidebar()"></div>
+
+  <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <p class="sidebar-logo">Paguyuban Keluarga</p>
       <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
@@ -91,7 +108,7 @@
       <div class="nav-item" onclick="location.href='dashboard.html'"><span class="ni">🏠</span> Beranda</div>
       <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
       <div class="nav-item" onclick="location.href='dashboard.html#arisan'"><span class="ni">💰</span> Arisan</div>
-      <div class="nav-item aktif"><span class="ni">🌳</span> Silsilah</div>
+      <div class="nav-item aktif" onclick="tutupSidebar()"><span class="ni">🌳</span> Silsilah</div>
     </div>
     <div style="padding: 1.2rem 1.5rem; border-top: 1px solid rgba(201,168,76,0.12);">
       <p style="font-size: 0.5rem; color: var(--cb); text-align: center; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Creator: Budi Purwanto bin Tukimin · Maret 2025</p>
@@ -100,6 +117,7 @@
 
   <main class="konten-utama">
     <div class="topbar">
+      <button class="hamburger" onclick="bukaSidebar()">☰</button>
       <p class="topbar-judul">Pohon Silsilah <em>Keluarga</em></p>
       <a href="dashboard.html" style="color:var(--em); text-decoration:none; font-size:0.7rem; font-family:'Cinzel'">← Kembali ke Dashboard</a>
     </div>
@@ -117,6 +135,10 @@
 <script type="module">
   import { db } from './js/firebase-config.js';
   import { ref, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  // Fungsi Sidebar Mobile
+  window.bukaSidebar = () => { document.getElementById('sidebar').classList.add('buka'); document.getElementById('overlay-sidebar').classList.add('aktif'); };
+  window.tutupSidebar = () => { document.getElementById('sidebar').classList.remove('buka'); document.getElementById('overlay-sidebar').classList.remove('aktif'); };
 
   // Proteksi Halaman
   window.addEventListener('load', () => {
