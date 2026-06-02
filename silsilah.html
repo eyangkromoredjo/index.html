@@ -41,7 +41,6 @@
     .tree-node:hover { background: var(--cm); border-color: var(--em); transform: translateY(-3px); }
     .tree-node .node-panggilan { display: block; font-family: 'Cinzel', serif; font-size: 0.6rem; color: var(--em); margin-top: 4px; border-top: 1px solid rgba(201,168,76,0.2); padding-top: 4px; }
     .tree-node.active-arisan::after { content: '💰'; position: absolute; top: -10px; right: -10px; font-size: 1rem; filter: drop-shadow(0 0 2px black); }
-    .tree-node.wafat { border-style: dashed; opacity: 0.7; }
   </style>
 </head>
 <body>
@@ -124,7 +123,7 @@
           <li>
             <div class="tree-node ${isLunas ? 'active-arisan' : ''} ${isWafat ? 'wafat' : ''}">
               ${isWafat ? '🪦 ' : ''}${child.nama} 
-              ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.nama}</small>` : ''}
+              ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.panggilan || spouse.nama}</small>` : ''}
               <span class="node-panggilan">${child.panggilan ? child.panggilan : 'Gen ' + child.generasi}</span>
             </div>
             ${buildBranch(child.id)}
@@ -152,7 +151,7 @@
         <li>
           <div class="tree-node ${isLunas ? 'active-arisan' : ''} ${isWafat ? 'wafat' : ''}">
             ${isWafat ? '🪦 ' : ''}${root.nama}
-            ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.nama}</small>` : ''}
+            ${spouse ? `<br><small style="color:var(--cb); font-size:0.6rem">${label} ${spouse.panggilan || spouse.nama}</small>` : ''}
             <span class="node-panggilan">${root.panggilan ? root.panggilan : 'Gen ' + root.generasi}</span>
           </div>
           ${buildBranch(root.id)}

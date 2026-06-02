@@ -780,7 +780,7 @@
                                     : pasanganMember.jenisKelamin === "Perempuan"
                                         ? "Istri dari"
                                         : "Pasangan dari";
-                                teksPasangan = `<span class="nama-pasangan-sub">💞 Status: <strong>${pasanganLabel} ${member.nama}</strong></span>`;
+                                teksPasangan = `<span class="nama-pasangan-sub">💞 Status: <strong>${pasanganLabel} ${member.panggilan || member.nama}</strong></span>`;
 
                                 if (pasanganMember.wafat) {
                                     statusPasangan = '<span class="badge-status wafat">WAFAT</span>';

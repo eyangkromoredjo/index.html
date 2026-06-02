@@ -264,7 +264,7 @@ function renderSilsilah() {
                 if (member.spouseId) {
                     const pasanganObj = listAnggota.find(a => a.id === parseInt(member.spouseId));
                     if (pasanganObj) {
-                        teksPasangan = `<br><span style="color:#C65911; font-size:0.8em; padding-left: 10px;">💞 Pasangan dari: <strong>${pasanganObj.nama}</strong></span>`;
+                        teksPasangan = `<br><span style="color:#C65911; font-size:0.8em; padding-left: 10px;">💞 Pasangan dari: <strong>${pasanganObj.panggilan || pasanganObj.nama}</strong></span>`;
                     }
                 }
 

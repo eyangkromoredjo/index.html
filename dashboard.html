@@ -97,14 +97,11 @@
     .gen-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent)}
     .anggota-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
     .a-card{border:1px solid rgba(201,168,76,.15);padding:1.3rem;position:relative;transition:all .3s}
-    .a-card.wafat{border-color:rgba(201,168,76,.07);opacity:.72}
     .a-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-3px)}
-    .a-card.wafat:hover{opacity:.9}
     .a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
     .a-card:hover::before{opacity:1}
     .a-top{display:flex;gap:1rem;align-items:center;margin-bottom:.8rem}
     .a-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--cs),var(--cm));display:flex;flex-shrink:0;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);border:1px solid rgba(201,168,76,.25)}
-    .a-card.wafat .a-avatar{background:linear-gradient(135deg,#2a2a2a,#444);filter:grayscale(.5)}
     .a-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.2;margin-bottom:.1rem}
     .a-panggilan{font-size:.72rem;color:var(--em);font-style:italic;margin-bottom:.2rem}
     .a-spouse{font-size:.72rem;color:var(--cb);font-style:italic}
@@ -117,6 +114,95 @@
     .badge.trah{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:var(--em)}
     .badge.spouse-badge{background:rgba(160,98,42,0.15);border:1px solid rgba(160,98,42,0.4);color:var(--cb)}
     .a-aksi{display:flex;gap:.5rem;margin-top:1rem;padding-top:.8rem;border-top:1px solid rgba(201,168,76,.1)}
+
+    /* ══ TAMPILAN TUMPUKAN KARTU (DECK STACK) ══ */
+    /* ══ TAMPILAN TUMPUKAN KARTU (DECK STACK) ══ */
+    .a-card-stack { 
+      position: relative; 
+      cursor: pointer; 
+      transition: all 0.3s ease; 
+      margin-bottom: 35px; 
+      height: 250px; /* Tinggi seragam saat tertutup (ditambah agar tombol tidak terpotong) */
+    }
+    .a-card-stack.terbuka { 
+      height: auto; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 1.2rem; 
+      cursor: default; 
+      margin-bottom: 20px; 
+    }
+
+    .a-card-stack .a-card { 
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1) !important; 
+      background: var(--ct) !important; 
+      position: absolute !important; 
+      top: 0; left: 0; width: 100%; height: 100% !important;
+      z-index: 10; 
+      overflow: hidden;
+    }
+
+    /* Offset tiap layer tumpukan agar terlihat bertumpuk (Deck Effect) */
+    .a-card-stack:not(.terbuka) .a-card:nth-child(2) { top: 12px !important; left: 12px !important; z-index: 5 !important; transform: scale(0.98) !important; pointer-events: none !important; }
+    .a-card-stack:not(.terbuka) .a-card:nth-child(3) { top: 24px !important; left: 24px !important; z-index: 4 !important; transform: scale(0.96) !important; pointer-events: none !important; }
+    
+    /* Efek angkat saat hover */
+    .a-card-stack:not(.terbuka):hover .a-card:nth-child(2) { top: 18px !important; left: 18px !important; }
+    .a-card-stack:not(.terbuka):hover .a-card:nth-child(3) { top: 30px !important; left: 30px !important; }
+
+    /* State saat Terbuka */
+    .a-card-stack.terbuka .a-card { 
+      position: relative !important; 
+      height: auto !important;
+      top: 0 !important; left: 0 !important; 
+      transform: none !important; 
+      pointer-events: auto !important; 
+      z-index: 10 !important; 
+      overflow: visible;
+    }
+
+    /* ══ FAMILY GROUP HEADER ══ */
+    .family-header {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.5rem 0 0.5rem 0;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.2s;
+    }
+    .family-header:hover { opacity: 0.7; }
+    .family-header span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      font-weight: 500; /* Menjaga agar tidak setebal header generasi */
+      letter-spacing: 0.3em;
+      color: var(--em);
+      text-transform: uppercase;
+      white-space: nowrap;
+      opacity: 0.85;
+      display: flex;
+      align-items: center;
+    }
+    .family-header span::before { content: '▾'; display: inline-block; margin-right: 8px; transition: transform 0.3s; font-size: 0.8rem; }
+    .family-header.collapsed span::before { transform: rotate(-90deg); }
+    .family-header.collapsed + .family-content { display: none; }
+
+    .family-content {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+      padding: 0.5rem 0 1.5rem 0;
+    }
+    .family-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(201,168,76, 0.3), transparent);
+    }
+
     .btn-aksi{flex:1;padding:.4rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
     .btn-aksi:hover{border-color:var(--em);color:var(--em)}
     .btn-aksi.hapus:hover{border-color:#e8a0a0;color:#e8a0a0}
@@ -153,8 +239,18 @@
     .arisan-setting-info strong{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);display:block;margin-bottom:.2rem}
     .btn-setting{padding:.5rem 1.1rem;background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cb);font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .25s}
     .btn-setting:hover{border-color:var(--em);color:var(--em)}
-    .periode-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-bottom:2rem}
-    .periode-card{border:1px solid rgba(201,168,76,.18);padding:1.3rem;position:relative;transition:all .3s}
+    .anggota-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; align-items: start; }
+    .a-card { 
+      border: 1px solid rgba(201,168,76,.15); 
+      padding: 1.3rem; 
+      position: relative; 
+      transition: all 0.3s; 
+      height: 250px; /* Ukuran seragam untuk kartu tunggal agar grid rapi */
+      background: var(--ct);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
     .periode-card.aktif-periode{border-color:rgba(201,168,76,.45)}
     .periode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
     .periode-card.aktif-periode::before{opacity:1}
@@ -281,7 +377,7 @@
     <div class="panel aktif" id="panel-dashboard">
       <div class="dash-salam">
         <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);color:var(--kr);margin-bottom:.3rem">Paguyuban Keluarga <em style="color:var(--em)">Eyang Kromoredjo</em></h2>
-        <p style="font-size:.82rem;color:var(--cb);font-style:italic">Berdiri 1981 · Solo – Jakarta · Generasi ke-5</p>
+        <p style="font-size:.82rem;color:var(--cb);font-style:italic">Berdiri 1981 · Jakarta</p>
       </div>
 
       <!-- Stats utama -->
@@ -773,7 +869,7 @@
     if (!unsubAnggota && penggunaLogin) startRealtimeStats();
   }
 
-  // FILTER & RENDER
+  // FILTER
   window.filterGen = function(gen,el){
     filterAktif=gen;
     document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('aktif'));
@@ -781,28 +877,116 @@
     renderAnggota();
   }
 
-  window.renderAnggota = async function(){
-    const data = await ambil();
-    const cari=(document.getElementById('search-anggota')?.value||'').toLowerCase();
-    const filtered=data.filter(a=>{
-      const cg=filterAktif==='semua'?true:filterAktif==='wafat'?a.kehidupan==='wafat':a.generasi===filterAktif;
-      const cc=!cari||a.nama.toLowerCase().includes(cari)||(a.panggilan||'').toLowerCase().includes(cari);
-      return cg&&cc;
-    }).sort((a, b) => (parseInt(a.urutan) || 0) - (parseInt(b.urutan) || 0));
+  window.renderAnggota = async function() {
+    try {
+      const data = await ambil();
+      const cari = (document.getElementById('search-anggota')?.value || '').toLowerCase();
+      const filtered = data.filter(a => {
+        const cg = filterAktif === 'semua' ? true : filterAktif === 'wafat' ? a.kehidupan === 'wafat' : a.generasi === filterAktif;
+        const checkMatch = (p) => !cari || p.nama.toLowerCase().includes(cari) || (p.panggilan || '').toLowerCase().includes(cari);
+        let cc = checkMatch(a);
+        
+        // Juga sertakan jika pasangannya yang cocok dengan pencarian (agar stack tetap utuh)
+        const sId = a.idPasangan || a.spouseId;
+        if (!cc && sId) {
+            const spouseObj = data.find(m => String(m.id) === String(sId));
+            if (spouseObj && checkMatch(spouseObj)) cc = true;
+        }
+        return cg && cc;
+      }).sort((a, b) => {
+        const getLineageKey = (m) => {
+          let path = [], cur = m;
+          // Jika Anggota Masuk (Menantu), ikuti jalur pasangannya agar urutan tetap dalam satu keluarga
+          const isTrah = !!(cur.idOrangTua || cur.parentId || String(cur.generasi) === '0');
+          if (!isTrah) {
+            const sId = cur.idPasangan || cur.spouseId;
+            const spouse = data.find(x => String(x.id) === String(sId));
+            if (spouse) cur = spouse;
+          }
+          // Telusuri ke atas hingga akar untuk membangun kunci urutan (contoh: 001-005-002)
+          while (cur) {
+            path.unshift((parseInt(cur.urutan || cur.urutan_anak) || 99).toString().padStart(3, '0'));
+            const pid = cur.idOrangTua || cur.parentId;
+            cur = pid ? data.find(x => String(x.id) === String(pid)) : null;
+          }
+          return path.join('-');
+        };
+        return getLineageKey(a).localeCompare(getLineageKey(b));
+      });
 
-    const c=document.getElementById('daftar-anggota');
-    if(!filtered.length){ c.innerHTML='<div class="kosong-info">Belum ada anggota yang terdaftar.</div>'; return; }
-    if(filterAktif==='wafat'){
-      c.innerHTML=`<div class="gen-section"><div class="gen-label"><span>🪦 Yang Telah Wafat</span></div><div class="anggota-grid">${filtered.map(a => kartu(a, data)).join('')}</div></div>`;
-      return;
-    }
-    const perGen={};
-    filtered.forEach(a=>{ if(!perGen[a.generasi])perGen[a.generasi]=[]; perGen[a.generasi].push(a); });
-    c.innerHTML=Object.keys(perGen).sort().map(g=>`
-      <div class="gen-section">
-        <div class="gen-label"><span>✦ Generasi ${g === '0' ? '0 (Induk)' : g}</span></div>
-        <div class="anggota-grid">${perGen[g].map(a => kartu(a, data)).join('')}</div>
-      </div>`).join('');
+      const container = document.getElementById('daftar-anggota');
+      if (!filtered.length) {
+        container.innerHTML = '<div class="kosong-info">Belum ada anggota yang terdaftar.</div>';
+        return;
+      }
+
+      const perGen = {};
+      if (filterAktif === 'wafat') perGen['wafat'] = filtered;
+      else filtered.forEach(a => { if (!perGen[a.generasi]) perGen[a.generasi] = []; perGen[a.generasi].push(a); });
+
+      let htmlOutput = '';
+      Object.keys(perGen).sort().forEach(g => {
+        let genCardsHtml = '';
+        const renderedIds = new Set();
+        const members = perGen[g];
+        let lastParentId = null;
+        let familyContentHtml = '';
+
+        members.forEach(a => {
+          if (renderedIds.has(a.id)) return;
+
+          const isTrah = (p) => !!(p.idOrangTua || p.parentId || String(p.generasi) === '0');
+          const isMale = (p) => p.gender === 'L' || p.jenisKelamin === 'Laki-Laki' || p.gender === 'Laki-Laki';
+
+          // MENCARI SEMUA PASANGAN (Poligami & Lintas Generasi)
+          // Kita cari di seluruh 'data' (bukan hanya list members generasi ini)
+          const partners = data.filter(m => {
+            if (m.id === a.id) return false;
+            const sIdA = a.idPasangan || a.spouseId;
+            const sIdM = m.idPasangan || m.spouseId;
+            return (sIdA && String(m.id) === String(sIdA)) || (sIdM && String(a.id) === String(sIdM));
+          });
+
+          // Tentukan stack & anggota utama untuk menentukan sub-header keluarga
+          let stack = partners.length > 0 ? [a, ...partners] : [a];
+          stack.sort((x, y) => {
+              const xT = isTrah(x), yT = isTrah(y);
+              if (xT !== yT) return xT ? -1 : 1;
+              return isMale(x) ? -1 : 1;
+          });
+          const mainMember = stack[0];
+
+          // Sub-header Keluarga (Hanya muncul jika ID Orang Tua berubah)
+          const pId = mainMember.idOrangTua || mainMember.parentId || "root";
+          if (pId !== lastParentId && g !== '0' && g !== 'wafat') {
+              if (familyContentHtml) {
+                  genCardsHtml += `<div class="family-content">${familyContentHtml}</div>`;
+                  familyContentHtml = '';
+              }
+              const ortu = data.find(m => String(m.id) === String(pId));
+              if (ortu) {
+                  genCardsHtml += `<div class="family-header" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
+              }
+              lastParentId = pId;
+          }
+
+          if (partners.length > 0) {
+            familyContentHtml += `<div class="a-card-stack" onclick="if(!event.target.closest('.a-aksi')) this.classList.toggle('terbuka')">${stack.map(member => kartu(member, data)).join('')}</div>`;
+            stack.forEach(m => renderedIds.add(m.id));
+          } else {
+            familyContentHtml += kartu(a, data);
+            renderedIds.add(a.id);
+          }
+        });
+        
+        if (familyContentHtml) genCardsHtml += `<div class="family-content">${familyContentHtml}</div>`;
+
+        const isInduk = String(g) === '0';
+        const lbl = g === 'wafat' ? '🪦 Yang Telah Wafat' : `✦ Generasi ${isInduk ? '0 (Induk)' : g}`;
+        htmlOutput += `<div class="gen-section ${isInduk ? 'gen-induk' : ''}"><div class="gen-label" onclick="this.parentElement.classList.toggle('collapsed')"><span>${lbl}</span></div><div class="anggota-grid">${genCardsHtml}</div></div>`;
+      });
+      container.innerHTML = htmlOutput;
+    } catch (e) { console.error("Render error:", e); }
   }
 
   function kartu(a, allData){
@@ -811,19 +995,25 @@
     const tWafat=a.tglWafat?new Date(a.tglWafat).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
     const sudahWafat=a.kehidupan==='wafat';
 
+    const valUrut = a.urutan || a.urutan_anak;
+    const urutanTeks = valUrut ? `<p style="font-size:0.7rem; color:var(--cb); margin-bottom:0.2rem;">✦ Anak ke-${valUrut}</p>` : '';
+
+    const sId = a.idPasangan || a.spouseId;
     let infoPasangan = '';
-    if (a.idPasangan && allData) {
-      const spouse = allData.find(m => m.id === a.idPasangan);
+    if (sId && allData) {
+      const spouse = allData.find(m => String(m.id) === String(sId));
       if (spouse) {
-        const label = a.gender === 'P' ? 'Istri dari' : 'Suami dari';
-        infoPasangan = `<p class="a-spouse">${label} ${spouse.nama}</p>`;
+        const isMale = a.gender === 'L' || a.jenisKelamin === 'Laki-Laki';
+        const label = isMale ? 'Suami dari' : 'Istri dari';
+        infoPasangan = `<p class="a-spouse">${label} ${spouse.panggilan || spouse.nama}</p>`;
       }
     }
+    const hasPartner = !!sId;
 
-    const isTrah = a.idOrangTua || a.generasi === '0';
+    const isTrah = !!(a.idOrangTua || a.parentId || a.generasi === '0');
     const badgeTrah = isTrah
       ? `<span class="badge trah">Garis Keturunan</span>` 
-      : (a.idPasangan ? `<span class="badge spouse-badge">Anggota Masuk</span>` : '');
+      : (sId ? `<span class="badge spouse-badge">Anggota Masuk</span>` : '');
 
     const badgeStatus=sudahWafat
       ?`<span class="badge wafat-b">🪦 Wafat${tWafat?' · '+tWafat:''}</span>`
@@ -832,12 +1022,14 @@
     const bEdit=boleh('edit')?`<button class="btn-aksi" onclick="bukaEdit('${a.id}')">✏ Edit</button>`:'';
     const bHapus=boleh('hapus')?`<button class="btn-aksi hapus" onclick="bukaHapus('${a.id}','${a.nama.replace(/'/g,"\\'")}')">🗑 Hapus</button>`:'';
     return `
-      <div class="a-card${sudahWafat?' wafat':''}">
+      <div class="a-card${sudahWafat?' wafat':''}" style="position:relative">
+        ${hasPartner ? `<span style="position:absolute; top:10px; right:10px; font-size:0.7rem; opacity:0.5;" title="Memiliki Pasangan">🔗</span>` : ''}
         <div class="a-top">
           <div class="a-avatar">${ini}</div>
           <div>
             <p class="a-nama">${sudahWafat?'🪦 ':''}${a.nama}</p>
             <p class="a-panggilan">${a.panggilan?'"'+a.panggilan+'"':''}</p>
+            ${urutanTeks}
             ${infoPasangan}
           </div>
         </div>
