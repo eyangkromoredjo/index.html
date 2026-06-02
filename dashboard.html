@@ -337,6 +337,9 @@
     <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.72rem; color: rgba(200,137,78,0.5); font-style: italic;">
       * Hubungi pengurus untuk mendapatkan akses
     </p>
+    <div style="margin-top: 2rem; border-top: 1px solid rgba(201,168,76,0.1); padding-top: 1rem;">
+      <p style="font-family: 'Cinzel'; font-size: 0.5rem; color: var(--em); letter-spacing: 2px; opacity: 0.6;">Handcrafted by Budi Purwanto bin Tukimin · Maret 2025</p>
+    </div>
   </div>
 </div>
 
@@ -363,6 +366,7 @@
       <p class="sidebar-level" id="sidebar-level"></p>
       <button id="btn-login-sidebar" class="tombol-keluar" onclick="window.tampilLogin()" style="margin-bottom:.5rem;display:block">✦ Login Pengurus</button>
       <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="keluar()" style="display:none">✦ Keluar</button>
+      <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
     </div>
   </nav>
 
@@ -992,6 +996,17 @@
   function kartu(a, allData){
     const ini=a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
     const tLahir=a.lahir?new Date(a.lahir).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
+    
+    let usiaTeks = '';
+    if (a.lahir && a.kehidupan !== 'wafat') {
+      const lahir = new Date(a.lahir);
+      const hariIni = new Date();
+      let usia = hariIni.getFullYear() - lahir.getFullYear();
+      const m = hariIni.getMonth() - lahir.getMonth();
+      if (m < 0 || (m === 0 && hariIni.getDate() < lahir.getDate())) usia--;
+      usiaTeks = ` (${usia} thn)`;
+    }
+
     const tWafat=a.tglWafat?new Date(a.tglWafat).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
     const sudahWafat=a.kehidupan==='wafat';
 
@@ -1035,7 +1050,7 @@
         </div>
         <div class="a-info">
           ${a.hp?'📱 '+a.hp+'<br>':''}
-          ${tLahir?'🎂 '+tLahir+'<br>':''}
+          ${tLahir?'🎂 '+tLahir + usiaTeks + '<br>':''}
           ${a.alamat?'📍 '+a.alamat:''}
         </div>
         <div class="a-badges">${badgeStatus}${badgeTrah}</div>
