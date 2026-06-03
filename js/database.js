@@ -36,6 +36,15 @@ function cekDanInisialisasiDatabase() {
         localStorage.setItem("kromoredjo_keuangan", JSON.stringify({ saldo: 0, transaksi: [] }));
     }
 
+    // INISIALISASI PENGATURAN NOMINAL (Default)
+    if (!localStorage.getItem("pakek_settings_arisan")) {
+        localStorage.setItem("pakek_settings_arisan", JSON.stringify({
+            nominal_arisan: 50000,
+            nominal_sosial: 10000,
+            nominal_tabungan: 5000
+        }));
+    }
+
     console.log("Sinkronisasi database lokal selesai.");
 }
 
@@ -237,13 +246,13 @@ function renderSilsilah() {
                 <div class="table-responsive" style="overflow-x: auto; background: #FFFDF9; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); margin-bottom: 25px;">
                     <table class="table-silsilah" style="width:100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background-color: #F9F6F0; border-bottom: 2px solid #EAE5DC; text-align: left; font-size: 0.85rem; color: #4A3419;">
+                            <tr style="background-color: #F9F6F0; border-bottom: 2px solid #EAE5DC; text-align: left; font-size: 1rem; color: #4A3419;">
                                 <th style="padding: 12px;">Nama Anggota Keluarga</th>
                                 <th style="padding: 12px;">Status Peran</th>
                                 <th style="text-align:center; width:150px; padding:12px;">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody style="font-size: 0.85rem;">
+                        <tbody style="font-size: 0.95rem;">
             `;
 
             anggotaPerGen.forEach(member => {
@@ -257,20 +266,20 @@ function renderSilsilah() {
                     const ortuObj = listAnggota.find(a => a.id === parentIdInt);
                     if (ortuObj) {
                         // Tampilkan hanya referensi orang tua tanpa menampilkan nomor urutan
-                        teksOrangTua = `<br><span style="color:#777; font-size:0.8em; padding-left: 10px;">↳ Anak dari: <strong>${ortuObj.nama}</strong></span>`;
+                        teksOrangTua = `<br><span style="color:#333; font-size:0.85rem; padding-left: 10px;">↳ Anak dari: <strong>${ortuObj.nama}</strong></span>`;
                     }
                 }
 
                 if (member.spouseId) {
                     const pasanganObj = listAnggota.find(a => a.id === parseInt(member.spouseId));
                     if (pasanganObj) {
-                        teksPasangan = `<br><span style="color:#C65911; font-size:0.8em; padding-left: 10px;">💞 Pasangan dari: <strong>${pasanganObj.panggilan || pasanganObj.nama}</strong></span>`;
+                        teksPasangan = `<br><span style="color:#A0450D; font-size:0.85rem; padding-left: 10px;">💞 Pasangan dari: <strong>${pasanganObj.panggilan || pasanganObj.nama}</strong></span>`;
                     }
                 }
 
                 if (member.wafat) {
     statusBadge = '<span class="badge-status" style="background:#6c757d; color:white; ...">Rahimahullah</span>';
-    rowClass = 'style="color:#aaa; background-color:#F9F9F9; font-style: italic;"';
+    rowClass = 'style="color:#666; background-color:#F5F5F5; font-style: italic;"';
 } else {
     // Label status silsilah (Masih Hidup)
     let labelStatus = "Masih Hidup"; 
@@ -278,7 +287,7 @@ function renderSilsilah() {
     
     // Anda bisa tetap menampilkan status peran (Pokok/Non-Pokok) jika mau, 
     // tapi label utama sekarang adalah "Masih Hidup"
-    statusBadge = `<span class="badge-status" style="background:${warna}; color:white; padding:3px 8px; border-radius:4px; font-size:0.75rem; font-weight:600;">✓ ${labelStatus}</span>`;
+    statusBadge = `<span class="badge-status" style="background:${warna}; color:white; padding:4px 10px; border-radius:4px; font-size:0.85rem; font-weight:600;">✓ ${labelStatus}</span>`;
 }
 
                 tabelHTML += `
@@ -290,9 +299,9 @@ function renderSilsilah() {
                         </td>
                         <td style="padding: 12px;">${statusBadge}</td>
                         <td style="text-align:center; padding: 12px;">
-                            ${member.parentId ? `<button class="btn-tabel" title="Naikkan urutan" style="margin-right:6px; padding:5px 8px;" onclick="naikkanUrutan(${member.id})">▲</button><button class="btn-tabel" title="Turunkan urutan" style="margin-right:6px; padding:5px 8px;" onclick="turunkanUrutan(${member.id})">▼</button>` : ''}
-                            <button class="btn-tabel btn-edit" style="background:#DAC0A3; color:#4A3419; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.75rem;" onclick="siapEditAnggota(${member.id})">Edit</button>
-                            ${roleSaatIni === 'admin' ? `<button class="btn-tabel btn-hapus" style="background:#D44B4B; color:white; border:none; padding:5px 12px; border-radius:4px; cursor:pointer; margin-left:5px; font-weight:600; font-size:0.75rem;" onclick="hapusAnggota(${member.id})">Hapus</button>` : ''}
+                            ${member.parentId ? `<button class="btn-tabel" title="Naikkan urutan" style="margin-right:4px; padding:6px 10px;" onclick="naikkanUrutan(${member.id})">▲</button><button class="btn-tabel" title="Turunkan urutan" style="margin-right:4px; padding:6px 10px;" onclick="turunkanUrutan(${member.id})">▼</button>` : ''}
+                            <button class="btn-tabel btn-edit" style="background:#DAC0A3; color:#4A3419; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; font-weight:600; font-size:0.85rem;" onclick="siapEditAnggota(${member.id})">Edit</button>
+                            ${roleSaatIni === 'admin' ? `<button class="btn-tabel btn-hapus" style="background:#D44B4B; color:white; border:none; padding:6px 14px; border-radius:4px; cursor:pointer; margin-left:5px; font-weight:600; font-size:0.85rem;" onclick="hapusAnggota(${member.id})">Hapus</button>` : ''}
                         </td>
                     </tr>
                 `;
@@ -576,12 +585,12 @@ function renderAppHeader(selector = '#app-header') {
         <header class="app-header">
             <div class="app-title-container">
                 <img src="../logo PKEK.jpg" alt="Logo PKEK" class="logo-mini">
-                <h2 style="font-family: 'Lora', serif; font-weight: 500;">Silsilah & Data Keluarga Besar</h2>
+                <h2 style="font-family: 'Lora', serif; font-weight: 800; color: #2C1E12;">Silsilah & Data Keluarga Besar</h2>
             </div>
             <div class="header-right">
                 <span id="user-role-badge" class="badge-user-role">Role</span>
                 <button class="btn-kembali-mini" style="background-color: var(--emas-redup); color: #332200; margin-right: 10px; border: none;" onclick="window.location.href='pohon.html'">🌳 Lihat Bagan Pohon</button>
-                <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup);" onclick="kembaliKeDashboard()">← Dashboard</button>
+                <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup); font-weight: 800;" onclick="kembaliKeDashboard()">← Menu Utama</button>
             </div>
         </header>
     `;

@@ -47,8 +47,9 @@
 
         .pohon-title p {
             font-size: 0.85rem;
-            color: #888;
+            color: #333;
             margin: 4px 0 0 0;
+            font-weight: 500;
         }
 
         .pohon-instructions {
@@ -59,7 +60,7 @@
             padding: 14px 18px;
             border-radius: 10px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            font-size: 0.82rem;
+            font-size: 0.9rem;
             line-height: 1.7;
             pointer-events: none; /* Supaya tidak mengganggu klik canvas */
             border-left: 4px solid var(--cokelat-sogan);
@@ -75,7 +76,7 @@
             padding: 14px 16px;
             border-radius: 10px;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            font-size: 0.82rem;
+            font-size: 0.9rem;
             line-height: 1.8;
             border-left: 4px solid var(--emas-redup);
             z-index: 5;
@@ -115,10 +116,9 @@
         /* Gaya Garis Penghubung (Links) - modern color */
         .link {
             fill: none;
-            stroke: #C5C5C5;
+            stroke: #999;
             stroke-width: 2.5px;
             transition: stroke 0.2s ease;
-            opacity: 0.6;
         }
 
         /* Gaya Kotak Anggota Keluarga (Nodes) - MODERN DESIGN */
@@ -184,7 +184,7 @@
 
         .node .label-gen {
             font-size: 11px;
-            fill: #888;
+            fill: #444;
             font-weight: 600;
         }
 
@@ -204,12 +204,12 @@
     <header class="app-header">
         <div class="app-title-container">
             <img src="../logo PKEK.jpg" alt="Logo PKEK" class="logo-mini">
-            <h2 style="font-family: 'Lora', serif; font-weight: 500;">Bagan Pohon Silsilah Keluarga Besar</h2>
+            <h2 style="font-family: 'Lora', serif; font-weight: 800; color: #3E2F22;">Bagan Pohon Silsilah Keluarga Besar</h2>
         </div>
        <div class="header-right">
     <span id="user-role-badge" class="badge-user-role">Role</span>
     <button class="btn-kembali-mini" style="background-color: var(--emas-redup); color: #332200; margin-right: 10px; border: none;" onclick="window.location.href='anggota.html'">← Kembali ke Tabel</button>
-    <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup);" onclick="window.location.href='../dashboard.html'">← Dashboard</button>
+    <button class="btn-kembali-mini" style="color: var(--krem-hangat); border-color: var(--emas-redup); font-weight: 700;" onclick="window.location.href='../dashboard.html'">← Menu Utama</button>
 </div>
     </header>
 
