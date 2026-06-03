@@ -36,6 +36,9 @@
         .topbar-judul { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--em); text-transform: uppercase; }
         .btn-kembali-dash { color: var(--cb); text-decoration: none; font-size: 0.6rem; font-family: 'Cinzel', serif; transition: 0.3s; }
         .btn-kembali-dash:hover { color: var(--em); }
+        .hamburger { display: none; background: none; border: none; color: var(--em); font-size: 1.3rem; cursor: pointer; }
+        .overlay-sb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
+        .overlay-sb.aktif { display: block; }
 
         /* PANELS (Match Dashboard Styles) */
         .arisan-main { padding: 1rem; flex: 1; }
@@ -116,12 +119,14 @@
             .sidebar { transform: translateX(-100%); transition: 0.3s; }
             .sidebar.aktif { transform: translateX(0); }
             .konten-utama { margin-left: 0; }
+            .hamburger { display: block; }
         }
     </style>
 </head>
 <script src="../js/database.js"></script>
 <body>
 <div class="arisan-layout">
+    <div class="overlay-sb" id="overlay-sb" onclick="window.tutupSidebar()"></div>
     <!-- SIDEBAR (Matches Dashboard) -->
     <nav class="sidebar">
         <div class="sidebar-header">
@@ -148,6 +153,7 @@
     <!-- MAIN CONTENT (Matches Dashboard) -->
     <main class="konten-utama">
         <div class="topbar">
+            <button class="hamburger" onclick="window.bukaSidebar()">☰</button>
             <p class="topbar-judul" id="topbar-judul">Manajemen Arisan</p>
             <a href="../dashboard.html" class="btn-kembali-dash">← Kembali Ke Menu Utama</a>
         </div>
@@ -358,6 +364,16 @@ async function initArisanPage() {
     });
 }
 
+window.bukaSidebar = function() {
+    document.querySelector('.sidebar').classList.add('aktif');
+    document.getElementById('overlay-sb').classList.add('aktif');
+};
+
+window.tutupSidebar = function() {
+    document.querySelector('.sidebar').classList.remove('aktif');
+    document.getElementById('overlay-sb').classList.remove('aktif');
+};
+
 function showPanel(panelId) {
     const target = document.getElementById(panelId);
     if (!target) return;
@@ -369,6 +385,7 @@ function showPanel(panelId) {
         btn.classList.toggle('active', onClick.includes(panelId));
     });
     target.style.display = '';
+    window.tutupSidebar(); // Tutup sidebar otomatis setelah pilih menu di HP
 }
 window.showPanel = showPanel;
 
