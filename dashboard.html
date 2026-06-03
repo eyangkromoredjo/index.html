@@ -8,6 +8,31 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--ct:#3B1F0E;--cs:#6B3A1F;--cm:#A0622A;--cb:#C8894E;--kr:#F5ECD7;--km:#FDF6E9;--em:#C9A84C;--el:#E8C97A}
+
+    /* ── LIGHT MODE OVERRIDES ── */
+    body.light-mode {
+      --ct: #F8F9FA;    /* Soft Grey Background */
+      --cs: #E9ECEF;    /* Soft Grey Medium (Sidebar) */
+      --cm: #ADB5BD;    /* Muted Grey */
+      --cb: #495057;    /* Slate Text (Sub) */
+      --kr: #212529;    /* Dark Text (Main) */
+      --km: #FFFFFF;    /* Pure White */
+      --em: #C9A84C;    /* Gold Utama */
+      --el: #D4AF37;    /* Metallic Gold */
+    }
+
+    body.light-mode .topbar {
+      background: rgba(248, 249, 250, 0.95);
+    }
+
+    body.light-mode .form-group input, 
+    body.light-mode .form-group select, 
+    body.light-mode .form-group textarea,
+    body.light-mode .search-box {
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--kr);
+    }
+
     html{scroll-behavior:smooth}
     body{font-family:'Lora',serif;background:var(--ct);color:var(--kr);min-height:100vh;overflow-x:hidden;position:relative}
     .halaman{display:none;min-height:100vh}
@@ -73,6 +98,32 @@
     .hamburger{display:none;background:none;border:none;color:var(--em);font-size:1.3rem;cursor:pointer}
     .panel{display:none;padding:2rem;animation:fadeInUp .4s ease}
     .panel.aktif{display:block}
+
+    /* Floating Toggle Button */
+    .theme-toggle {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      background: var(--cs);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--em);
+      color: var(--em);
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+      background: var(--em);
+      color: var(--ct);
+    }
 
     /* DASHBOARD */
     .dash-salam{margin-bottom:2rem}
@@ -320,6 +371,11 @@
   </style>
 </head>
 <body>
+
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="theme-btn" onclick="window.toggleTheme()" title="Ganti Tema">
+    <svg id="theme-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
+  </button>
 
 <!-- ══════════════════════════════════
      HALAMAN LOGIN (Pindahan dari admin.html)
@@ -680,6 +736,37 @@
 <script type="module">
   import { db } from './js/firebase-config.js';
   import { ref, get, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  // ══ LOGIC TEMA (Global Sync) ══
+  const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
+  const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+
+  window.toggleTheme = function() {
+    const body = document.body;
+    const btnIcon = document.getElementById('theme-icon');
+    
+    body.classList.toggle('light-mode');
+    const isLight = body.classList.contains('light-mode');
+    localStorage.setItem('pke_theme', isLight ? 'light' : 'dark');
+    
+    btnIcon.innerHTML = isLight ? moonIcon : sunIcon;
+  };
+
+  // Inisialisasi Tema Saat Load
+  (function initTheme() {
+    const savedTheme = localStorage.getItem('pke_theme');
+    const body = document.body;
+    // Kita jalankan setelah DOM siap untuk icon
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnIcon = document.getElementById('theme-icon');
+      if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+        btnIcon.innerHTML = moonIcon;
+      } else {
+        btnIcon.innerHTML = sunIcon;
+      }
+    });
+  })();
 
   // AKUN & HAK AKSES
   const AKUN = [

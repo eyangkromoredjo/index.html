@@ -27,6 +27,19 @@
       --putih: #FFFDF7;
     }
 
+    /* ── LIGHT MODE OVERRIDES ── */
+    body.light-mode {
+      --coklat-tua: #f8ffd1;    /* Soft Grey Background (Off-white) */
+      --coklat-sedang: #ffffff; /* Soft Grey Medium */
+      --coklat-muda: #bdadb6;   /* Muted Grey Primary */
+      --coklat-terang: #42331e; /* Light Grey Secondary */
+      --krem: #53371e;          /* Teks Gelap (Slate) */
+      --krem-muda: #7c6047;
+      --emas: #C9A84C;          /* Gold Utama (Khas Kromoredjo) */
+      --emas-muda: #D4AF37;     /* Metallic Gold */
+      --putih: #FFFFFF;
+    }
+
     html { scroll-behavior: smooth; }
 
     body {
@@ -46,6 +59,12 @@
         radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 50%);
       pointer-events: none;
       z-index: 0;
+    }
+
+    body.light-mode::before {
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(173,181,189,0.15) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.1) 0%, transparent 50%);
     }
 
     /* ── HERO ── */
@@ -301,6 +320,32 @@
       border-color: var(--emas-muda);
     }
 
+    /* Floating Toggle Button */
+    .theme-toggle {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 1000;
+      background: rgba(201,168,76,0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--emas);
+      color: var(--emas);
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(15deg);
+      background: var(--emas);
+      color: var(--coklat-tua);
+    }
+
     /* ── SECTION SEJARAH ── */
     .section-sejarah {
       background: linear-gradient(180deg, var(--coklat-tua) 0%, var(--coklat-sedang) 50%, var(--coklat-tua) 100%);
@@ -472,6 +517,12 @@
 </head>
 <body>
 
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Ganti Tema">
+    <!-- Default Sun Icon (untuk mengajak ke Light Mode saat posisi awal Dark Mode) -->
+    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+  </button>
+
   <!-- ══ HERO ══ -->
   <section class="hero">
     <div class="ornamen-atas"></div>
@@ -590,10 +641,40 @@
   <footer>
     <p class="footer-nama">Paguyuban Keluarga Eyang Kromoredjo</p>
     <p class="footer-tahun">Berdiri 1981 · Solo – Jakarta · Generasi ke-5</p>
-    <p style="font-size: 0.65rem; color: var(--coklat-terang); margin-top: 0.5rem; opacity: 0.8; letter-spacing: 1px;">Designed & Developed by Budi Purwanto bin Tukimin · Maret 2025</p>
+    <p style="font-size: 0.65rem; color: var(--coklat-terang); margin-top: 0.5rem; opacity: 0.8; letter-spacing: 1px;">Designed & Developed by Budi Purwanto bin Tukimin · Juni 2025</p>
   </footer>
 
   <script>
+    // Logic Tema
+    const sunIcon = `<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+    const moonIcon = `<svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+
+    function toggleTheme() {
+      const body = document.body;
+      const btn = document.getElementById('theme-btn');
+      
+      body.classList.toggle('light-mode');
+      
+      const isLight = body.classList.contains('light-mode');
+      localStorage.setItem('pke_theme', isLight ? 'light' : 'dark');
+      
+      // JIKA UI TERANG (Light), tampilkan ikon BULAN (untuk ke gelap)
+      // JIKA UI GELAP (Dark), tampilkan ikon MATAHARI (untuk ke terang)
+      btn.innerHTML = isLight ? moonIcon : sunIcon;
+    }
+
+    // Load saved theme
+    (function() {
+      const savedTheme = localStorage.getItem('pke_theme');
+      const btn = document.getElementById('theme-btn');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        btn.innerHTML = moonIcon;
+      } else {
+        btn.innerHTML = sunIcon;
+      }
+    })();
+
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
