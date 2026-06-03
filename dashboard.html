@@ -8,31 +8,6 @@
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--ct:#3B1F0E;--cs:#6B3A1F;--cm:#A0622A;--cb:#C8894E;--kr:#F5ECD7;--km:#FDF6E9;--em:#C9A84C;--el:#E8C97A}
-
-    /* ── LIGHT MODE OVERRIDES ── */
-    body.light-mode {
-      --ct: #F8F9FA;    /* Soft Grey Background */
-      --cs: #E9ECEF;    /* Soft Grey Medium (Sidebar) */
-      --cm: #ADB5BD;    /* Muted Grey */
-      --cb: #495057;    /* Slate Text (Sub) */
-      --kr: #212529;    /* Dark Text (Main) */
-      --km: #FFFFFF;    /* Pure White */
-      --em: #C9A84C;    /* Gold Utama */
-      --el: #D4AF37;    /* Metallic Gold */
-    }
-
-    body.light-mode .topbar {
-      background: rgba(248, 249, 250, 0.95);
-    }
-
-    body.light-mode .form-group input, 
-    body.light-mode .form-group select, 
-    body.light-mode .form-group textarea,
-    body.light-mode .search-box {
-      background: rgba(0, 0, 0, 0.05);
-      color: var(--kr);
-    }
-
     html{scroll-behavior:smooth}
     body{font-family:'Lora',serif;background:var(--ct);color:var(--kr);min-height:100vh;overflow-x:hidden;position:relative}
     .halaman{display:none;min-height:100vh}
@@ -53,11 +28,21 @@
     .ornamen-mini .d{width:5px;height:5px;background:var(--em);transform:rotate(45deg)}
     .form-group{margin-bottom:1.2rem;text-align:left}
     .form-group label{display:block;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;color:var(--em);text-transform:uppercase;margin-bottom:.5rem}
-    .form-group input,.form-group select,.form-group textarea{width:100%;padding:.75rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);color:var(--kr);font-family:'Lora',serif;font-size:.9rem;outline:none;transition:border-color .3s}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:.75rem 1rem;background:rgba(0,0,0,0.2);border:1px solid rgba(201,168,76,.2);color:var(--kr);font-family:'Lora',serif;font-size:.9rem;outline:none;transition:border-color .3s}
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--em)}
     .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(245,236,215,.3)}
     .form-group select option{background:var(--cs)}
     .form-group textarea{resize:vertical;min-height:70px}
+
+    /* Fix untuk mencegah background putih saat browser melakukan autofill */
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover,
+    input:-webkit-autofill:focus {
+      -webkit-text-fill-color: var(--kr);
+      -webkit-box-shadow: 0 0 0px 1000px var(--ct) inset;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
     .pesan-error{background:rgba(139,46,46,.2);border:1px solid rgba(139,46,46,.4);color:#e8a0a0;padding:.7rem 1rem;font-size:.8rem;margin-bottom:1rem;display:none}
     .tombol-utama{width:100%;padding:.9rem;background:var(--em);color:var(--ct);border:none;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:background .3s,transform .2s}
     .tombol-utama:hover{background:var(--el);transform:translateY(-1px)}
@@ -98,32 +83,6 @@
     .hamburger{display:none;background:none;border:none;color:var(--em);font-size:1.3rem;cursor:pointer}
     .panel{display:none;padding:2rem;animation:fadeInUp .4s ease}
     .panel.aktif{display:block}
-
-    /* Floating Toggle Button */
-    .theme-toggle {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 1000;
-      background: var(--cs);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--em);
-      color: var(--em);
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(15deg);
-      background: var(--em);
-      color: var(--ct);
-    }
 
     /* DASHBOARD */
     .dash-salam{margin-bottom:2rem}
@@ -372,11 +331,6 @@
 </head>
 <body>
 
-  <!-- Theme Toggle Button -->
-  <button class="theme-toggle" id="theme-btn" onclick="window.toggleTheme()" title="Ganti Tema">
-    <svg id="theme-icon" viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
-  </button>
-
 <!-- ══════════════════════════════════
      HALAMAN LOGIN (Pindahan dari admin.html)
 ══════════════════════════════════ -->
@@ -401,13 +355,10 @@
     <div class="pesan-error" id="pesan-error">Nama pengguna atau kata sandi salah.</div>
 
     <button class="tombol-utama" onclick="window.handleLogin()">Masuk ke Paguyuban</button>
-    <button class="btn-batal" onclick="window.loginGuest()" style="width:100%; margin-top:0.8rem; border-color:rgba(201,168,76,0.4)">✦ Masuk Sebagai Tamu</button>
-    <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.72rem; color: rgba(200,137,78,0.5); font-style: italic;">
-      * Hubungi pengurus untuk mendapatkan akses
+    <button class="btn-batal" onclick="window.bukaModal('modal-daftar')" style="width:100%; margin-top:0.8rem; border-color:rgba(201,168,76,0.4)">✦ Daftar Akun Keluarga</button>
+    <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.85rem; color: rgba(240, 156, 77, 0.705); font-style: italic;">
+      * Validasi pendaftaran berdasarkan data silsilah
     </p>
-    <div style="margin-top: 2rem; border-top: 1px solid rgba(201,168,76,0.1); padding-top: 1rem;">
-      <p style="font-family: 'Cinzel'; font-size: 0.5rem; color: var(--em); letter-spacing: 2px; opacity: 0.6;">Handcrafted by Budi Purwanto bin Tukimin · Maret 2025</p>
-    </div>
   </div>
 </div>
 
@@ -711,6 +662,39 @@
   </div>
 </div>
 
+<!-- ══ MODAL DAFTAR ══ -->
+<div class="modal-overlay" id="modal-daftar">
+  <div class="modal-box" style="max-width:450px">
+    <div class="modal-header">
+      <p class="modal-judul">Pendaftaran Anggota</p>
+      <button class="modal-tutup" onclick="tutupModal('modal-daftar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.8rem; color:var(--cb); margin-bottom:1.5rem; font-style:italic;">
+        Sistem akan memvalidasi Nama Lengkap dan Tanggal Lahir Anda sesuai dengan data silsilah.
+      </p>
+      <form class="modal-form" onsubmit="return false">
+        <div class="form-group">
+          <label>Nama Lengkap Anda *</label>
+          <input type="text" id="reg-nama" placeholder="Sesuai Silsilah" required/>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Lahir *</label>
+          <input type="date" id="reg-lahir" required/>
+        </div>
+        <div class="form-group">
+          <label>Buat Password Baru *</label>
+          <input type="password" id="reg-pass" placeholder="Minimal 6 karakter" required/>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="tutupModal('modal-daftar')">Batal</button>
+      <button class="btn-simpan" onclick="window.prosesDaftar()">Daftar Sekarang</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL HAPUS -->
 <div class="modal-overlay" id="modal-hapus">
   <div class="modal-box" style="max-width:380px">
@@ -737,36 +721,47 @@
   import { db } from './js/firebase-config.js';
   import { ref, get, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // ══ LOGIC TEMA (Global Sync) ══
-  const sunIcon = `<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>`;
-  const moonIcon = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+  // ══ LOGIKA DAFTAR (PLAN B) ══
+  window.prosesDaftar = async function() {
+    const namaInput = document.getElementById('reg-nama').value.trim();
+    const lahirInput = document.getElementById('reg-lahir').value;
+    const passInput = document.getElementById('reg-pass').value;
 
-  window.toggleTheme = function() {
-    const body = document.body;
-    const btnIcon = document.getElementById('theme-icon');
+    if (!namaInput || !lahirInput || passInput.length < 6) {
+      return alert('Harap isi Nama, Tgl Lahir, dan Password (min 6 karakter).');
+    }
+
+    const data = await ambil();
+    // Cari data yang Nama & Tgl Lahir cocok (Case-Insensitive)
+    const match = data.find(m => 
+      m.nama && m.nama.toLowerCase() === namaInput.toLowerCase() && 
+      (m.tanggalLahir === lahirInput || m.lahir === lahirInput)
+    );
+
+    if (!match) {
+      return alert('Data Anda tidak ditemukan. Pastikan Nama dan Tgl Lahir sesuai dengan data silsilah.');
+    }
+
+    if (!match.bolehDaftar) {
+      return alert('Akses pendaftaran Anda belum dibuka oleh Admin. Silakan hubungi pengurus keluarga.');
+    }
+
+    if (match.password) {
+      return alert('Anda sudah memiliki akun. Silakan langsung login di halaman utama.');
+    }
+
+    // Simpan password dan aktifkan level anggota
+    match.password = passInput;
+    match.level = match.level || 'anggota';
     
-    body.classList.toggle('light-mode');
-    const isLight = body.classList.contains('light-mode');
-    localStorage.setItem('pke_theme', isLight ? 'light' : 'dark');
-    
-    btnIcon.innerHTML = isLight ? moonIcon : sunIcon;
+    try {
+      await set(ref(db, "anggota/" + match.id), match);
+      alert('Pendaftaran Berhasil! Sekarang Anda bisa login menggunakan Nama Lengkap sebagai Username.');
+      tutupModal('modal-daftar');
+    } catch (e) {
+      alert('Gagal menyimpan data. Cek koneksi internet.');
+    }
   };
-
-  // Inisialisasi Tema Saat Load
-  (function initTheme() {
-    const savedTheme = localStorage.getItem('pke_theme');
-    const body = document.body;
-    // Kita jalankan setelah DOM siap untuk icon
-    document.addEventListener('DOMContentLoaded', () => {
-      const btnIcon = document.getElementById('theme-icon');
-      if (savedTheme === 'light') {
-        body.classList.add('light-mode');
-        btnIcon.innerHTML = moonIcon;
-      } else {
-        btnIcon.innerHTML = sunIcon;
-      }
-    });
-  })();
 
   // AKUN & HAK AKSES
   const AKUN = [
@@ -777,11 +772,23 @@
   const HAK = {
     admin:    { tambah:true,  edit:true,  hapus:true,  export:true,  kelolaAkun:true  },
     pengurus: { tambah:true,  edit:true,  hapus:false, export:false, kelolaAkun:false },
+    anggota:  { tambah:true,  edit:false, hapus:false, export:false, kelolaAkun:false },
     guest:    { tambah:false, edit:false, hapus:false, export:false, kelolaAkun:false }
   };
   function boleh(f){ return !!(penggunaLogin && HAK[penggunaLogin.level]?.[f]); }
 
   let filterAktif='semua', idHapusPending=null, penggunaLogin=null, nominalArisan = 0;
+
+  function proceedLogin(akun) {
+    penggunaLogin = akun;
+    sessionStorage.setItem('kromoredjo_user', JSON.stringify(akun));
+    document.getElementById('pesan-error').style.display = 'none';
+    document.getElementById('halaman-login').classList.remove('aktif');
+    document.getElementById('halaman-app').classList.add('aktif');
+    masukApp();
+    startRealtimeStats();
+    toast('Selamat datang, ' + akun.nama);
+  }
 
   // Variabel untuk menyimpan fungsi unsubscribe agar tidak terjadi kebocoran memori
   let unsubAnggota = null;
@@ -811,21 +818,28 @@
   }
 
   // ══ LOGIN & AUTHENTIKASI ══
-  window.handleLogin = function() {
-    const u = document.getElementById('input-username').value.trim();
-    const password = document.getElementById('input-pass').value;
+  window.handleLogin = async function() {
+    const uInput = document.getElementById('input-username').value.trim().toLowerCase();
+    const pInput = document.getElementById('input-pass').value;
     
-    const akun = AKUN.find(a => a.username === u && a.password === password);
-
+    // 1. Cek Akun Master (Admin/Pengurus Hardcoded)
+    const akun = AKUN.find(a => a.username.toLowerCase() === uInput && a.password === pInput);
     if (akun) {
-      penggunaLogin = akun;
-      sessionStorage.setItem('kromoredjo_user', JSON.stringify(akun));
-      document.getElementById('pesan-error').style.display = 'none';
-      document.getElementById('halaman-login').classList.remove('aktif');
-      document.getElementById('halaman-app').classList.add('aktif');
-      masukApp();
-      startRealtimeStats();
-      toast('Selamat datang, ' + akun.nama);
+      return proceedLogin(akun);
+    }
+
+    // 2. Cek Data Anggota di Firebase (Username = Nama Lengkap)
+    const data = await ambil();
+    const userFire = data.find(m => 
+      m.nama && m.nama.toLowerCase() === uInput && m.password === pInput
+    );
+
+    if (userFire) {
+      proceedLogin({
+        username: userFire.nama,
+        nama: userFire.nama,
+        level: userFire.level || 'anggota'
+      });
     } else {
       document.getElementById('pesan-error').style.display = 'block';
       document.getElementById('input-pass').value = '';
@@ -834,14 +848,7 @@
   };
 
   window.loginGuest = function() {
-    penggunaLogin = { username: 'guest', nama: 'Tamu Keluarga', level: 'guest' };
-    sessionStorage.setItem('kromoredjo_user', JSON.stringify(penggunaLogin));
-    document.getElementById('pesan-error').style.display = 'none';
-    document.getElementById('halaman-login').classList.remove('aktif');
-    document.getElementById('halaman-app').classList.add('aktif');
-    masukApp();
-    startRealtimeStats();
-    toast('Masuk sebagai Tamu (Lihat Saja)');
+    proceedLogin({ username: 'guest', nama: 'Tamu Keluarga', level: 'guest' });
   };
 
   function masukApp(){
@@ -849,10 +856,12 @@
     if(document.getElementById('btn-login-sidebar')) document.getElementById('btn-login-sidebar').style.display='none';
     document.getElementById('btn-keluar-sidebar').style.display='block';
     
-    const levels = { admin: '👑 Admin', pengurus: '🛡 Pengurus', guest: '👤 Tamu' };
+    const levels = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
     document.getElementById('sidebar-level').textContent = levels[penggunaLogin.level] || '';
     
-    document.getElementById('topbar-user').textContent=penggunaLogin.nama;
+    const icons = { admin: '👑', pengurus: '🛡️', anggota: '🔑', guest: '👤' };
+    const userIcon = icons[penggunaLogin.level] || '';
+    document.getElementById('topbar-user').textContent = `${userIcon} ${penggunaLogin.nama}`;
 
     // Kontrol Visibilitas Tombol Tambah/Setting
     const canAdd = boleh('tambah');
@@ -873,14 +882,7 @@
     if(unsubAnggota) unsubAnggota();
     if(unsubArisan) unsubArisan();
     penggunaLogin = null;
-    document.getElementById('halaman-app').classList.remove('aktif');
-    document.getElementById('halaman-login').classList.add('aktif');
-    document.getElementById('nav-pengurus').style.display = 'none';
-    if(document.getElementById('btn-login-sidebar')) document.getElementById('btn-login-sidebar').style.display = 'block';
-    document.getElementById('btn-keluar-sidebar').style.display = 'none';
-    document.getElementById('sidebar-level').textContent = '';
-    document.getElementById('topbar-user').textContent = '';
-    toast('Anda telah keluar.');
+    window.location.href = 'index.html';
   }
 
   window.tampilLogin = function() {
@@ -999,7 +1001,7 @@
         const getLineageKey = (m) => {
           let path = [], cur = m;
           // Jika Anggota Masuk (Menantu), ikuti jalur pasangannya agar urutan tetap dalam satu keluarga
-          const isTrah = !!(cur.idOrangTua || cur.parentId || String(cur.generasi) === '0');
+          const isTrah = !!(cur.parentId || String(cur.generasi) === '0');
           if (!isTrah) {
             const sId = cur.idPasangan || cur.spouseId;
             const spouse = data.find(x => String(x.id) === String(sId));
@@ -1093,7 +1095,7 @@
 
   function kartu(a, allData){
     const ini=a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-    const tLahir=a.lahir?new Date(a.lahir).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
+    const tLahir=(a.tanggalLahir || a.lahir)?new Date(a.tanggalLahir || a.lahir).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
     
     let usiaTeks = '';
     if (a.lahir && a.kehidupan !== 'wafat') {
@@ -1131,9 +1133,37 @@
     const badgeStatus=sudahWafat
       ?`<span class="badge wafat-b">🪦 Wafat${tWafat?' · '+tWafat:''}</span>`
       :`<span class="badge ${a.status}">${a.status==='aktif'?'Aktif':'Tidak Aktif'}</span>`;
+    
+    // Tampilkan label level yang lebih jelas di kartu
+    const labelLevel = a.level === 'pengurus' ? '🛡️ PENGURUS' : '🔑 ANGGOTA';
+    const badgeAkun = a.password 
+      ? `<span class="badge aktif" style="background:rgba(201,168,76,0.2); border-color:var(--em); color:var(--em); font-weight:bold;">${labelLevel}</span>` 
+      : '';
 
-    const bEdit=boleh('edit')?`<button class="btn-aksi" onclick="bukaEdit('${a.id}')">✏ Edit</button>`:'';
-    const bHapus=boleh('hapus')?`<button class="btn-aksi hapus" onclick="bukaHapus('${a.id}','${a.nama.replace(/'/g,"\\'")}')">🗑 Hapus</button>`:'';
+    // Logika Akses Anggota: Bisa edit/hapus jika punya hak akses global ATAU jika dia yang membuat data tersebut
+    const isOwner = a.createdBy === penggunaLogin.username;
+    const canEditSelf = (penggunaLogin.level === 'anggota' && isOwner);
+
+    const bEdit=(boleh('edit') || canEditSelf)?`<button class="btn-aksi" onclick="bukaEdit('${a.id}')">✏ Edit</button>`:'';
+    const bHapus=(boleh('hapus') || canEditSelf)?`<button class="btn-aksi hapus" onclick="bukaHapus('${a.id}','${a.nama.replace(/'/g,"\\'")}')">🗑 Hapus</button>`:'';
+    
+    // Fitur Admin: Pengaturan Akses Anggota
+    let aksesAdmin = '';
+    if(boleh('kelolaAkun')) {
+      aksesAdmin = `
+        <div onclick="event.stopPropagation()" style="margin-top:0.5rem; padding-top:0.5rem; border-top:1px dashed rgba(201,168,76,0.2)">
+          <label style="display:flex; align-items:center; gap:5px; font-size:0.65rem; color:var(--cb); cursor:pointer; margin-bottom:5px;">
+            <input type="checkbox" ${a.bolehDaftar ? 'checked' : ''} onchange="window.toggleIzinDaftar('${a.id}', this.checked)" style="width:12px; height:12px;"> 
+            Izin Akses Daftar
+          </label>
+          ${a.password ? `
+            <select onchange="window.ubahLevel('${a.id}', this.value)" style="width:100%; font-size:0.6rem; padding:2px; background:var(--cs); color:var(--em); border:1px solid var(--em)">
+              <option value="anggota" ${a.level==='anggota'?'selected':''}>Level: Anggota</option>
+              <option value="pengurus" ${a.level==='pengurus'?'selected':''}>Level: Pengurus</option>
+            </select>` : ''}
+        </div>`;
+    }
+
     return `
       <div class="a-card${sudahWafat?' wafat':''}" style="position:relative">
         ${hasPartner ? `<span style="position:absolute; top:10px; right:10px; font-size:0.7rem; opacity:0.5;" title="Memiliki Pasangan">🔗</span>` : ''}
@@ -1151,8 +1181,9 @@
           ${tLahir?'🎂 '+tLahir + usiaTeks + '<br>':''}
           ${a.alamat?'📍 '+a.alamat:''}
         </div>
-        <div class="a-badges">${badgeStatus}${badgeTrah}</div>
-        ${(bEdit||bHapus)?`<div class="a-aksi">${bEdit}${bHapus}</div>`:''}
+        <div class="a-badges">${badgeStatus}${badgeTrah}${badgeAkun}</div>
+        ${aksesAdmin}
+        ${(bEdit||bHapus)?`<div class="a-aksi" onclick="event.stopPropagation()">${bEdit}${bHapus}</div>`:''}
       </div>`;
   }
 
@@ -1190,8 +1221,8 @@
     const a = d.find(x=>x.id===id); if(!a)return;
     document.getElementById('modal-judul-form').textContent='Edit Data Anggota';
     document.getElementById('form-id').value=a.id;
-    document.getElementById('form-id-orang-tua').value=a.idOrangTua||'';
-    document.getElementById('form-id-pasangan').value=a.idPasangan||'';
+    document.getElementById('form-id-orang-tua').value=a.parentId||a.idOrangTua||'';
+    document.getElementById('form-id-pasangan').value=a.spouseId||a.idPasangan||'';
     document.getElementById('form-urutan').value=a.urutan||'';
     document.getElementById('form-nama').value=a.nama;
     document.getElementById('form-panggilan').value=a.panggilan||'';
@@ -1202,12 +1233,33 @@
     document.getElementById('form-kehidupan').value=a.kehidupan||'hidup';
     document.getElementById('form-tgl-wafat').value=a.tglWafat||'';
     document.getElementById('form-hp').value=a.hp||'';
-    document.getElementById('form-lahir').value=a.lahir||'';
+    document.getElementById('form-lahir').value=a.tanggalLahir||''; // FIX: Gunakan a.tanggalLahir
     document.getElementById('form-alamat').value=a.alamat||'';
     toggleTglWafat();
-    window.updateFormOptions(a.idOrangTua, a.idPasangan);
+    window.updateFormOptions(a.parentId||a.idOrangTua, a.spouseId||a.idPasangan);
     bukaModal('modal-anggota');
   }
+
+  // Fungsi Admin untuk mengizinkan pendaftaran
+  window.toggleIzinDaftar = async function(id, val) {
+    const d = await ambil();
+    const a = d.find(x => String(x.id) === String(id));
+    if(!a) return;
+    a.bolehDaftar = val;
+    await simpanSatu(a);
+    toast('Izin pendaftaran ' + a.nama + (val ? ' dibuka.' : ' ditutup.'));
+  };
+
+  // Fungsi Admin untuk merubah role
+  window.ubahLevel = async function(id, levelBaru) {
+    const d = await ambil();
+    const a = d.find(x => String(x.id) === String(id));
+    if(!a) return;
+    a.level = levelBaru;
+    await simpanSatu(a);
+    toast('Level ' + a.nama + ' diubah menjadi ' + levelBaru);
+    window.renderAnggota(); // Refresh tampilan agar badge di kartu langsung berubah
+  };
 
   window.simpanAnggota = async function(){
     try {
@@ -1217,20 +1269,25 @@
       const kh=document.getElementById('form-kehidupan').value;
       const gender=document.querySelector('input[name="form-gender"]:checked').value;
       const urutan=document.getElementById('form-urutan').value;
+      
+      // Ambil data lama jika sedang edit untuk mempertahankan 'createdBy'
+      const dataLama = id ? (await ambil()).find(x => x.id === id) : null;
+
       const obj={
         id:id||'a_'+Date.now(), nama,
         gender,
         urutan,
         panggilan:document.getElementById('form-panggilan').value.trim(),
         generasi:document.getElementById('form-generasi').value,
-        idOrangTua:document.getElementById('form-id-orang-tua').value,
-        idPasangan:document.getElementById('form-id-pasangan').value,
+        parentId:document.getElementById('form-id-orang-tua').value,
+        spouseId:document.getElementById('form-id-pasangan').value,
         status:kh==='wafat'?'tidak-aktif':document.getElementById('form-status').value,
         kehidupan:kh,
         tglWafat:kh==='wafat'?document.getElementById('form-tgl-wafat').value:'',
         hp:document.getElementById('form-hp').value.trim(),
-        lahir:document.getElementById('form-lahir').value,
+        tanggalLahir:document.getElementById('form-lahir').value, // FIX: Simpan sebagai tanggalLahir
         alamat:document.getElementById('form-alamat').value.trim(),
+        createdBy: id ? (dataLama?.createdBy || 'admin') : penggunaLogin.username
       };
       await simpanSatu(obj);
       toast(id ? 'Data berhasil diperbarui.' : 'Anggota baru ditambahkan.');

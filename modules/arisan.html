@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -329,6 +329,19 @@ window.semuaAnggota = [];
 window.storageArisan = { jadwal: [], pengeluaran: [], iuran_bulanan: [] };
 
 async function initArisanPage() {
+    // Proteksi UI Anggota: Sembunyikan menu yang tidak boleh diakses
+    const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
+    if (user && user.level === 'anggota') {
+        const targets = ['panel-cek-pembayaran', 'panel-pengeluaran', 'panel-atur-anggota', 'panel-jadwal'];
+        targets.forEach(t => {
+            const btn = document.querySelector(`.side-btn[data-target="${t}"]`);
+            if (btn) btn.style.display = 'none';
+        });
+        // Sembunyikan tombol reset data uji untuk anggota
+        const btnReset = document.querySelector('.side-btn[onclick*="resetSemuaDataArisan"]');
+        if (btnReset) btnReset.style.display = 'none';
+    }
+
     // 1. Inisialisasi dropdown periode
     populatePeriodeSelectors();
 
@@ -375,6 +388,12 @@ window.tutupSidebar = function() {
 };
 
 function showPanel(panelId) {
+    const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
+    const restricted = ['panel-cek-pembayaran', 'panel-pengeluaran', 'panel-atur-anggota', 'panel-jadwal'];
+    if (user && user.level === 'anggota' && restricted.includes(panelId)) {
+        return; // Hentikan akses jika user level anggota mencoba membuka panel terlarang
+    }
+
     const target = document.getElementById(panelId);
     if (!target) return;
     document.querySelectorAll('.arisan-main .panel').forEach(p => {
@@ -736,8 +755,8 @@ function renderIuranHistory() {
     tbody.innerHTML = rows;
 }
 
-window.saveExpense = async function() {
-    const periode = getPeriodeFromSelectors('expense');
+async function saveExpense() {
+    const periode = getPeriodeFromSelectors('exp');
     const tipe = document.getElementById('exp-type').value;
     const desc = document.getElementById('exp-desc').value.trim();
     const amount = parseInt(document.getElementById('exp-amount').value, 10) || 0;

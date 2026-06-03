@@ -503,75 +503,53 @@ function tambahAnggotaBaru() {
 }
 
 // Naikkan posisi urutan anak (swap dengan saudara sebelumnya)
-function naikkanUrutan(id) {
+/**
+ * Menggeser urutan anak (naik atau turun) dengan logika yang lebih bersih (DRY)
+ * @param {number} id - ID Anggota
+ * @param {number} arah - (-1 untuk naik, 1 untuk turun)
+ */
+function geserUrutan(id, arah) {
     let listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
     const idx = listAnggota.findIndex(a => a.id === id);
     if (idx === -1) return;
-    const member = listAnggota[idx];
-    const parentId = (member.parentId === null || member.parentId === undefined || member.parentId === "") ? null : parseInt(member.parentId);
+
+    const anggota = listAnggota[idx];
+    const pId = (anggota.parentId === null || anggota.parentId === undefined || anggota.parentId === "") ? null : parseInt(anggota.parentId);
 
     const saudara = listAnggota
         .filter(m => {
-            const pid = (m.parentId === null || m.parentId === undefined || m.parentId === "") ? null : parseInt(m.parentId);
-            return pid === parentId && !m.spouseId;
+            const mPid = (m.parentId === null || m.parentId === undefined || m.parentId === "") ? null : parseInt(m.parentId);
+            return mPid === pId && !m.spouseId;
         })
-        .sort((a,b) => {
-            const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-            const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
-            if (ua !== ub) return ua - ub;
-            return a.id - b.id;
-        });
+        .sort((a, b) => (parseInt(a.urutan_anak || 9999)) - (parseInt(b.urutan_anak || 9999)) || a.id - b.id);
 
     const pos = saudara.findIndex(s => s.id === id);
-    if (pos > 0) {
-        const prev = saudara[pos - 1];
-        const curUrut = member.urutan_anak ? parseInt(member.urutan_anak) : 0;
-        const prevUrut = prev.urutan_anak ? parseInt(prev.urutan_anak) : 0;
-        // swap
+    const targetPos = pos + arah;
+
+    if (targetPos >= 0 && targetPos < saudara.length) {
+        const target = saudara[targetPos];
+        const urutanSkrg = parseInt(anggota.urutan_anak || 0);
+        const urutanTarget = parseInt(target.urutan_anak || 0);
+
         listAnggota = listAnggota.map(a => {
-            if (a.id === member.id) { a.urutan_anak = prevUrut; }
-            else if (a.id === prev.id) { a.urutan_anak = curUrut; }
+            if (a.id === anggota.id) a.urutan_anak = urutanTarget;
+            else if (a.id === target.id) a.urutan_anak = urutanSkrg;
             return a;
         });
+
         localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
         renderSilsilah();
     }
 }
 
-// Turunkan posisi urutan anak (swap dengan saudara berikutnya)
-function turunkanUrutan(id) {
-    let listAnggota = JSON.parse(localStorage.getItem("kromoredjo_keluarga")) || [];
-    const idx = listAnggota.findIndex(a => a.id === id);
-    if (idx === -1) return;
-    const member = listAnggota[idx];
-    const parentId = (member.parentId === null || member.parentId === undefined || member.parentId === "") ? null : parseInt(member.parentId);
+function naikkanUrutan(id) { geserUrutan(id, -1); }
+function turunkanUrutan(id) { geserUrutan(id, 1); }
 
-    const saudara = listAnggota
-        .filter(m => {
-            const pid = (m.parentId === null || m.parentId === undefined || m.parentId === "") ? null : parseInt(m.parentId);
-            return pid === parentId && !m.spouseId;
-        })
-        .sort((a,b) => {
-            const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-            const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
-            if (ua !== ub) return ua - ub;
-            return a.id - b.id;
-        });
-
-    const pos = saudara.findIndex(s => s.id === id);
-    if (pos !== -1 && pos < saudara.length - 1) {
-        const next = saudara[pos + 1];
-        const curUrut = member.urutan_anak ? parseInt(member.urutan_anak) : 0;
-        const nextUrut = next.urutan_anak ? parseInt(next.urutan_anak) : 0;
-        // swap
-        listAnggota = listAnggota.map(a => {
-            if (a.id === member.id) { a.urutan_anak = nextUrut; }
-            else if (a.id === next.id) { a.urutan_anak = curUrut; }
-            return a;
-        });
-        localStorage.setItem("kromoredjo_keluarga", JSON.stringify(listAnggota));
-        renderSilsilah();
-    }
+/**
+ * Fungsi Utilitas untuk mencetak laporan ke PDF A4
+ */
+function cetakLaporanKePDF() {
+    window.print();
 }
 
 // =========================================================================
