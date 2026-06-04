@@ -301,6 +301,82 @@
       border-color: var(--emas-muda);
     }
 
+    .hero-logo-wrapper {
+      position: relative;
+      width: clamp(120px, 18vw, 160px);
+      aspect-ratio: 1 / 1;
+      margin: 0 auto 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      padding: 4px;
+      overflow: hidden;
+      background: rgba(0, 0, 0, 0.3);
+      filter: drop-shadow(0 0 15px rgba(201, 168, 76, 0.4));
+      z-index: 10;
+    }
+
+    /* Efek Cahaya Berputar di Pinggiran (Orbit) */
+    .hero-logo-wrapper::before {
+      content: '';
+      position: absolute;
+      width: 150%;
+      height: 150%;
+      background: conic-gradient(
+        transparent 0deg, 
+        var(--emas) 20deg, 
+        var(--emas-muda) 40deg, 
+        transparent 60deg,
+        transparent 180deg,
+        var(--emas) 200deg,
+        var(--emas-muda) 220deg,
+        transparent 240deg
+      );
+      animation: rotate-border 3s linear infinite;
+    }
+
+    .hero-logo {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Efek Berkilau (Shimmer/Glint) di Atas Logo */
+    .hero-logo-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      z-index: 3;
+      background: linear-gradient(
+        135deg, 
+        transparent 0%, 
+        transparent 45%, 
+        rgba(255, 255, 255, 0.7) 50%, 
+        transparent 55%, 
+        transparent 100%
+      );
+      background-size: 250% 250%;
+      animation: logo-shimmer 6s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes rotate-border {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes logo-shimmer {
+      0%   { background-position: -200% -200%; }
+      25%  { background-position: 200% 200%; }
+      100% { background-position: 200% 200%; }
+    }
+
     /* ── SECTION SEJARAH ── */
     .section-sejarah {
       background: linear-gradient(180deg, var(--coklat-tua) 0%, var(--coklat-sedang) 50%, var(--coklat-tua) 100%);
@@ -477,6 +553,9 @@
     <div class="ornamen-atas"></div>
 
     <div class="hero-inner">
+      <div class="hero-logo-wrapper">
+        <img src="logo PKEK.jpg" alt="Logo PKEK" class="hero-logo">
+      </div>
       <p class="label-atas">Berdiri sejak 1981 · Jakarta</p>
 
       <div class="logo-ornamen">

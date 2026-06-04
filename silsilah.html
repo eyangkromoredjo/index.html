@@ -13,6 +13,7 @@
     /* Sidebar & Layout Styles (Seragam dengan Dashboard) */
     .sidebar{width:240px;min-height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
     .sidebar-header{padding:1.8rem 1.5rem 1.2rem;border-bottom:1px solid rgba(201,168,76,.12)}
+    .sidebar-logo-img{width:45px;height:45px;border-radius:50%;object-fit:cover;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 8px rgba(201,168,76,0.2))}
     .sidebar-logo{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem}
     .sidebar-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.3}
     .sidebar-nav{flex:1;padding:1rem 0}
@@ -33,7 +34,7 @@
       position: relative;
       background: radial-gradient(circle at center, rgba(107,58,31,0.3) 0%, transparent 85%);
     }
-    #tree-svg { width: 100%; height: 100%; cursor: grab; }
+    #tree-svg { width: 100%; height: 100%; cursor: grab; transition: transform 0.4s ease, width 0.4s ease, height 0.4s ease; transform-origin: center; }
     #tree-svg:active { cursor: grabbing; }
 
     .link { fill: none; stroke: var(--em); stroke-width: 1.5px; opacity: 0.3; transition: all 0.3s; }
@@ -100,6 +101,7 @@
 
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
+      <img src="logo PKEK.jpg" alt="Logo" class="sidebar-logo-img">
       <p class="sidebar-logo">Paguyuban Keluarga</p>
       <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
     </div>
@@ -127,6 +129,7 @@
       <div class="zoom-controls">
         <button class="zoom-btn" id="zoom-in" title="Zoom In">+</button>
         <button class="zoom-btn" id="zoom-out" title="Zoom Out">−</button>
+        <button class="zoom-btn" id="zoom-rotate" title="Rotasi 90°">↻</button>
         <button class="zoom-btn" id="zoom-reset" title="Reset Tampilan">⟲</button>
       </div>
     </div>
@@ -151,7 +154,7 @@
     }
   });
 
-  let root, treeLayout, svg, gContainer, zoom;
+  let root, treeLayout, svg, gContainer, zoom, currentRotation = 0;
   const nodeW = 180, nodeH = 70;
 
   function startRealtimeSilsilah() {
@@ -169,20 +172,27 @@
   function initD3(data, arisanData) {
     const lunasIds = arisanData ? arisanData.filter(p => p.lunas).map(p => p.id) : [];
     const spouseMap = {};
-    data.forEach(a => { if(a.idPasangan) spouseMap[a.idPasangan] = a; });
+    data.forEach(a => { 
+      const sid = a.spouseId || a.idPasangan;
+      if(sid) spouseMap[String(sid)] = a; 
+    });
 
-    const nest = (parentId) => {
-      return data.filter(a => a.idOrangTua === parentId)
-                 .sort((a, b) => (parseInt(a.urutan) || 0) - (parseInt(b.urutan) || 0))
+    const nest = (pId) => {
+      return data.filter(a => String(a.parentId || a.idOrangTua) === String(pId))
+                 .sort((a, b) => (parseInt(a.urutan || a.urutan_anak) || 0) - (parseInt(b.urutan || b.urutan_anak) || 0))
                  .map(child => ({
                    ...child,
                    isLunas: lunasIds.includes(child.id),
-                   spouse: spouseMap[child.id],
+                   spouse: spouseMap[String(child.id)],
                    children: nest(child.id)
                  }));
     };
 
-    const roots = data.filter(a => (!a.idOrangTua || a.idOrangTua === "") && !a.idPasangan);
+    const roots = data.filter(a => {
+        const pId = a.parentId || a.idOrangTua;
+        const sId = a.spouseId || a.idPasangan;
+        return (!pId || pId === "") && !sId;
+    });
     if (!roots.length) return;
 
     const hierarchyData = roots.length > 1 
@@ -199,6 +209,36 @@
     d3.select("#zoom-in").on("click", () => svg.transition().call(zoom.scaleBy, 1.3));
     d3.select("#zoom-out").on("click", () => svg.transition().call(zoom.scaleBy, 0.7));
     d3.select("#zoom-reset").on("click", () => svg.transition().call(zoom.transform, d3.zoomIdentity.translate(svg.node().clientWidth/2, 50).scale(0.8)));
+
+    d3.select("#zoom-rotate").on("click", () => {
+      currentRotation = (currentRotation === 0) ? 90 : 0;
+      const container = document.querySelector('.silsilah-container');
+      const kontW = container.clientWidth;
+      const kontH = container.clientHeight;
+
+      if (currentRotation === 90) {
+        // Tukar dimensi agar lebar SVG menggunakan tinggi layar
+        svg.style("width", kontH + "px")
+           .style("height", kontW + "px")
+           .style("position", "absolute")
+           .style("top", "50%")
+           .style("left", "50%")
+           .style("transform", `translate(-50%, -50%) rotate(${currentRotation}deg)`);
+      } else {
+        // Kembali ke dimensi normal
+        svg.style("width", "100%")
+           .style("height", "100%")
+           .style("position", "relative")
+           .style("top", "0")
+           .style("left", "0")
+           .style("transform", `rotate(${currentRotation}deg)`);
+      }
+      
+      // Reset tampilan agar bagan berada di tengah ruang yang baru
+      setTimeout(() => {
+        svg.transition().duration(300).call(zoom.transform, d3.zoomIdentity.translate(svg.node().clientWidth/2, 50).scale(0.8));
+      }, 450);
+    });
 
     treeLayout = d3.tree().nodeSize([nodeW + 40, nodeH + 100]);
     root = d3.hierarchy(hierarchyData);

@@ -1,4 +1,4 @@
-﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -19,6 +19,7 @@
         /* SIDEBAR (Match Dashboard) */
         .sidebar { width: 240px; background: var(--cs); border-right: 1px solid rgba(201,168,76,0.15); display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; }
         .sidebar-header { padding: 1.8rem 1.5rem 1.2rem; border-bottom: 1px solid rgba(201,168,76,0.12); }
+        .sidebar-logo-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-bottom: 1rem; display: block; filter: drop-shadow(0 0 8px rgba(201,168,76,0.2)); }
         .sidebar-logo { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--em); text-transform: uppercase; margin-bottom: 0.3rem; font-weight: 700; }
         .sidebar-nama { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--kr); line-height: 1.3; }
         .nav-label {
@@ -84,8 +85,8 @@
         input[type="checkbox"] { 
             appearance: none; 
             -webkit-appearance: none; 
-            width: 12px; height: 12px; 
-            border: 1px solid rgba(201,168,76,0.4); 
+            width: 16px; height: 16px; 
+            border: 1.5px solid rgba(255,255,255,0.6); 
             border-radius: 2px; 
             background: rgba(255,255,255,0.05); 
             display: inline-grid; 
@@ -94,8 +95,8 @@
             transition: 0.2s; 
             margin: 0;
         }
-        input[type="checkbox"]::before { content: ""; width: 7px; height: 7px; transform: scale(0); transition: 100ms transform ease-in-out; box-shadow: inset 10px 10px var(--em); clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
-        input[type="checkbox"]:checked { border-color: var(--em); background: rgba(201,168,76,0.1); }
+        input[type="checkbox"]::before { content: ""; width: 10px; height: 10px; transform: scale(0); transition: 100ms transform ease-in-out; box-shadow: inset 12px 12px var(--kr); clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); }
+        input[type="checkbox"]:checked { border-color: #81c784; background: #2e7d32; }
         input[type="checkbox"]:checked::before { transform: scale(1); }
 
         .checkbox-card label { color: var(--kr); font-size: 0.8rem; cursor: pointer; flex: 1; opacity: 0.8; }
@@ -156,8 +157,9 @@
 <div class="arisan-layout">
     <div class="overlay-sb" id="overlay-sb" onclick="window.tutupSidebar()"></div>
     <!-- SIDEBAR (Matches Dashboard) -->
-    <nav class="sidebar">
+    <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
+            <img src="../logo PKEK.jpg" alt="Logo" class="sidebar-logo-img">
             <p class="sidebar-logo">Paguyuban Keluarga</p>
             <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
         </div>
@@ -171,6 +173,9 @@
             </div>
 
             <p class="nav-label" style="margin-top:1rem;">Manajemen Arisan</p>
+            <div class="nav-item" data-target="panel-aturan" onclick="showPanel('panel-aturan', this)">
+                <span class="ni">📜</span> Aturan & Tata Tertib
+            </div>
             <div class="nav-item aktif" data-target="panel-daftar-peserta" onclick="showPanel('panel-daftar-peserta', this)">
                 <span class="ni">👥</span> Daftar Peserta
             </div>
@@ -211,6 +216,28 @@
         </div>
 
         <div class="arisan-main">
+            <!-- PANEL ATURAN -->
+            <div class="panel" id="panel-aturan" style="display:none;">
+                <h3>Aturan & <em>Tata Tertib</em></h3>
+                <div id="view-aturan" style="background: rgba(107,58,31,0.15); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(201,168,76,0.2);">
+                    <div id="text-aturan-display" style="color: var(--kr); line-height: 1.8; white-space: pre-wrap; font-size: 0.95rem;">
+                        <p style="font-style: italic; color: var(--cb);">Konten aturan dan tata tertib paguyuban akan segera ditambahkan oleh pengurus.</p>
+                    </div>
+                    <button id="btn-edit-aturan" class="btn-primary" style="margin-top: 1.5rem; display: none;" onclick="window.mulaiEditAturan()">✏️ Edit Aturan</button>
+                </div>
+
+                <div id="edit-aturan-form" style="display: none; background: rgba(107,58,31,0.15); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--em);">
+                    <div class="form-group">
+                        <label>Tulis Aturan Paguyuban</label>
+                        <textarea id="input-aturan-teks" class="form-control" style="min-height: 350px; font-size: 0.9rem; line-height: 1.6; background: rgba(0,0,0,0.2);"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-primary" onclick="window.simpanAturan()">💾 Simpan Aturan</button>
+                        <button class="btn-batal" style="padding: 0.6rem 1.2rem;" onclick="window.batalEditAturan()">Batal</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- PANEL DAFTAR PESERTA -->
             <div class="panel" id="panel-daftar-peserta">
                 <h3>Daftar <em>Peserta Aktif</em></h3>
@@ -291,10 +318,22 @@
                         <tbody id="pay-tbody"></tbody>
                     </table>
                 </div>
-                <div id="pay-summary" style="margin-top: 1.2rem; padding: 1.2rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(201,168,76,0.15); border-radius: 8px; display: flex; flex-wrap: wrap; gap: 2.5rem;">
+                <div id="pay-summary" style="margin-top: 1.2rem; padding: 1.2rem; background: rgba(0,0,0,0.25); border: 1px solid rgba(201,168,76,0.15); border-radius: 8px; display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem;">
                    <div>
-                       <span style="font-size: 0.6rem; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; opacity: 0.7;">Total Iuran Terbayar</span>
-                       <div id="total-wajib" style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--kr);">Rp 0</div>
+                       <span style="font-size: 0.6rem; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; opacity: 0.7;">Arisan Pokok</span>
+                       <div id="total-pokok" style="font-family: 'Cinzel', serif; font-size: 1rem; color: var(--em);">Rp 0</div>
+                   </div>
+                   <div>
+                       <span style="font-size: 0.6rem; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; opacity: 0.7;">Dana Sosial</span>
+                       <div id="total-sosial" style="font-family: 'Cinzel', serif; font-size: 1rem; color: var(--em);">Rp 0</div>
+                   </div>
+                   <div>
+                       <span style="font-size: 0.6rem; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; opacity: 0.7;">Tabungan</span>
+                       <div id="total-tabungan" style="font-family: 'Cinzel', serif; font-size: 1rem; color: var(--em);">Rp 0</div>
+                   </div>
+                   <div style="border-left: 1px solid rgba(201,168,76,0.3); padding-left: 1rem;">
+                       <span style="font-size: 0.6rem; color: #ffffff; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 5px; opacity: 0.7;">Total Terbayar</span>
+                       <div id="total-wajib" style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--kr); font-weight: bold;">Rp 0</div>
                    </div>
                 </div>
                 <button class="btn-primary" style="margin-top:1.5rem;" onclick="savePresensi()">Simpan Presensi & Iuran</button>
@@ -437,15 +476,27 @@ window.initArisanPage = async function() {
             renderPenerimaDropdown();
         }
     });
+
+    // 4. Sinkronisasi Teks Aturan
+    onValue(ref(db, "settings/aturan"), (snapshot) => {
+        const val = snapshot.val();
+        const display = document.getElementById('text-aturan-display');
+        const input = document.getElementById('input-aturan-teks');
+        if (display) {
+            display.textContent = val || "Konten aturan dan tata tertib paguyuban akan segera ditambahkan oleh pengurus.";
+            display.style.fontStyle = val ? "normal" : "italic";
+        }
+        if (input) input.value = val || "";
+    });
 }
 
 window.bukaSidebar = function() {
-    document.querySelector('.sidebar').classList.add('aktif');
+    document.getElementById('sidebar').classList.add('aktif');
     document.getElementById('overlay-sb').classList.add('aktif');
 };
 
 window.tutupSidebar = function() {
-    document.querySelector('.sidebar').classList.remove('aktif');
+    document.getElementById('sidebar').classList.remove('aktif');
     document.getElementById('overlay-sb').classList.remove('aktif');
 };
 
@@ -466,6 +517,11 @@ window.showPanel = function(panelId, el) {
 
     target.style.display = '';
     window.tutupSidebar(); // Tutup sidebar otomatis setelah pilih menu di HP
+    // Tampilkan tombol edit hanya jika Admin/Pengurus membuka panel aturan
+    const btnEdit = document.getElementById('btn-edit-aturan');
+    if (panelId === 'panel-aturan' && btnEdit && user && (user.level === 'admin' || user.level === 'pengurus')) {
+        btnEdit.style.display = 'block';
+    }
 };
 
 function hidePanel(panelId) {
@@ -483,7 +539,11 @@ function renderPesertaDropdown() {
     semuaAnggota.filter(m => !m.wafat && m.status === 'aktif').sort((a, b) => a.nama.localeCompare(b.nama)).forEach(m => {
         const opt = document.createElement("option");
         opt.value = m.id;
-        opt.textContent = m.nama;
+        opt.textContent = m.nama + (m.ikutArisan ? " ✦" : "");
+        if (m.ikutArisan) {
+            opt.style.color = "#81c784";
+            opt.style.fontWeight = "bold";
+        }
         sel.appendChild(opt);
     });
 }
@@ -514,8 +574,13 @@ window.renderPenerimaDropdown = renderPenerimaDropdown;
 
 function loadAnggotaSettings() {
     const id = document.getElementById("select-anggota")?.value;
+    const sel = document.getElementById("select-anggota");
     const anggota = window.semuaAnggota.find(m => String(m.id) === String(id));
     const inputCatatan = document.getElementById("input-catatan");
+
+    if (sel) {
+        sel.style.color = (anggota && anggota.ikutArisan) ? "#81c784" : "var(--kr)";
+    }
 
     if (!anggota) {
         document.getElementById("chk-arisan").checked = false;
@@ -900,6 +965,9 @@ function renderPayChecklist() {
     const savedDataMap = new Map((entri.pembayaran || []).map(p => [String(p.memberId), p]));
 
     let grandTotalTerbayar = 0;
+    let totalArisan = 0;
+    let totalSosial = 0;
+    let totalTabungan = 0;
 
     const rows = peserta.map(p => {
         const saved = savedDataMap.get(String(p.id)) || {};
@@ -914,18 +982,23 @@ function renderPayChecklist() {
         if (komponen.sosial) totalNominal += nominal.sosial || 40000;
         if (komponen.tabungan) totalNominal += nominal.tabungan || 5000;
 
-        if (paid) grandTotalTerbayar += totalNominal;
+        if (paid) {
+            if (komponen.arisan) totalArisan += nominal.arisan || 55000;
+            if (komponen.sosial) totalSosial += nominal.sosial || 40000;
+            if (komponen.tabungan) totalTabungan += nominal.tabungan || 5000;
+            grandTotalTerbayar += totalNominal;
+        }
 
         const nominalText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
         const isNonPokok = p.tipeArisan === 'non-pokok';
         return `
-            <tr class="${isNonPokok ? 'non-pokok-row' : ''}">
-                <td style="font-weight:600; vertical-align:middle;">${p.nama}</td>
-                <td style="text-align:right; vertical-align:middle;">${nominalText}</td>
-                <td style="text-align:center; vertical-align:middle;"><input type="checkbox" class="hadir-chk" ${hadir ? 'checked' : ''}></td>
-                <td style="text-align:center; vertical-align:middle;"><input type="checkbox" class="pay-chk" data-member="${p.id}" ${paid ? 'checked' : ''} onchange="handlePaymentToggle(event)"></td>
-                <td style="vertical-align:middle;">
-                    <select class="form-control metode-bayar" style="font-size:0.7rem; padding:2px 5px; margin:0;">
+            <tr>
+                <td class="${isNonPokok ? 'non-pokok-row' : ''}" style="font-weight:600; vertical-align:middle;">${p.nama}</td>
+                <td class="${isNonPokok ? 'non-pokok-row' : ''}" style="text-align:right; vertical-align:middle;">${nominalText}</td>
+                <td style="text-align:center; vertical-align:middle; color:#fff; opacity:1 !important;"><input type="checkbox" class="hadir-chk" ${hadir ? 'checked' : ''} style="border: 1.5px solid rgba(255,255,255,0.9) !important;"></td>
+                <td style="text-align:center; vertical-align:middle; color:#fff; opacity:1 !important;"><input type="checkbox" class="pay-chk" data-member="${p.id}" ${paid ? 'checked' : ''} onchange="handlePaymentToggle(event)" style="border: 1.5px solid rgba(255,255,255,0.9) !important;"></td>
+                <td style="vertical-align:middle; color:#fff; opacity:1 !important;">
+                    <select class="form-control metode-bayar" style="font-size:0.7rem; padding:2px 5px; margin:0; color:#fff; border-color:rgba(255,255,255,0.3); background:rgba(255,255,255,0.05);">
                         <option value="cash" ${metode === 'cash' ? 'selected' : ''}>Cash</option>
                         <option value="transfer" ${metode === 'transfer' ? 'selected' : ''}>Transfer</option>
                         <option value="titip" ${metode === 'titip' ? 'selected' : ''}>Titip</option>
@@ -935,8 +1008,16 @@ function renderPayChecklist() {
     }).join('');
     tbody.innerHTML = rows;
 
+    const fmt = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+    const pokokEl = document.getElementById('total-pokok');
+    const sosialEl = document.getElementById('total-sosial');
+    const tabunganEl = document.getElementById('total-tabungan');
     const wajibEl = document.getElementById('total-wajib');
-    if(wajibEl) wajibEl.textContent = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(grandTotalTerbayar);
+
+    if(pokokEl) pokokEl.textContent = fmt(totalArisan);
+    if(sosialEl) sosialEl.textContent = fmt(totalSosial);
+    if(tabunganEl) tabunganEl.textContent = fmt(totalTabungan);
+    if(wajibEl) wajibEl.textContent = fmt(grandTotalTerbayar);
 
     window.renderPesertaTable();
 }
@@ -999,19 +1080,42 @@ function populatePeriodeSelectors() {
 window.populatePeriodeSelectors = populatePeriodeSelectors;
 
 function handlePaymentToggle(e) {
-    let currentTotal = 0;
+    let currentTotal = 0, totalArisan = 0, totalSosial = 0, totalTabungan = 0;
     const rows = Array.from(document.querySelectorAll('#pay-tbody tr'));
     rows.forEach(row => {
         const payChk = row.querySelector('.pay-chk');
         if (payChk && payChk.checked) {
-            // Ambil nominal dari kolom kedua (index 1) dan bersihkan format mata uangnya
-            const nominalText = row.cells[1].textContent;
-            const nominal = parseInt(nominalText.replace(/[^0-9]/g, '')) || 0;
-            currentTotal += nominal;
+            const memberId = payChk.getAttribute('data-member');
+            const p = window.semuaAnggota.find(m => String(m.id) === String(memberId));
+            if (p) {
+                const komponen = p.iuranKomponen || { arisan:false, sosial:false, tabungan:false };
+                const nominal = p.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+                
+                let pTotal = 0;
+                if (komponen.arisan) {
+                    const val = nominal.arisan || 55000;
+                    totalArisan += val;
+                    pTotal += val;
+                }
+                if (komponen.sosial) {
+                    const val = nominal.sosial || 40000;
+                    totalSosial += val;
+                    pTotal += val;
+                }
+                if (komponen.tabungan) {
+                    const val = nominal.tabungan || 5000;
+                    totalTabungan += val;
+                    pTotal += val;
+                }
+                currentTotal += pTotal;
+            }
         }
     });
-    const wajibEl = document.getElementById('total-wajib');
-    if(wajibEl) wajibEl.textContent = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(currentTotal);
+    const fmt = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+    if(document.getElementById('total-pokok')) document.getElementById('total-pokok').textContent = fmt(totalArisan);
+    if(document.getElementById('total-sosial')) document.getElementById('total-sosial').textContent = fmt(totalSosial);
+    if(document.getElementById('total-tabungan')) document.getElementById('total-tabungan').textContent = fmt(totalTabungan);
+    if(document.getElementById('total-wajib')) document.getElementById('total-wajib').textContent = fmt(currentTotal);
 }
 window.handlePaymentToggle = handlePaymentToggle;
 
@@ -1133,6 +1237,23 @@ window.batalSimpanAnggota = function() {
     resetAturAnggotaForm();
     hidePanel('panel-atur-anggota');
 }
+
+window.mulaiEditAturan = function() {
+    document.getElementById('view-aturan').style.display = 'none';
+    document.getElementById('edit-aturan-form').style.display = 'block';
+};
+
+window.batalEditAturan = function() {
+    document.getElementById('view-aturan').style.display = 'block';
+    document.getElementById('edit-aturan-form').style.display = 'none';
+};
+
+window.simpanAturan = async function() {
+    const teks = document.getElementById('input-aturan-teks').value;
+    await set(ref(db, "settings/aturan"), teks);
+    showToast("Aturan paguyuban berhasil diperbarui.", "success", 1200);
+    window.batalEditAturan();
+};
 </script>
 </body>
 </html>

@@ -52,6 +52,7 @@
     #halaman-app{flex-direction:row}
     .sidebar{width:240px;min-height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform .3s ease}
     .sidebar-header{padding:1.8rem 1.5rem 1.2rem;border-bottom:1px solid rgba(201,168,76,.12)}
+    .sidebar-logo-img{width:45px;height:45px;border-radius:50%;object-fit:cover;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 8px rgba(201,168,76,0.2))}
     .sidebar-logo{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem;font-weight:700}
     .sidebar-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.3}
     .sidebar-nav{flex:1;padding:1rem 0}
@@ -123,7 +124,8 @@
     .a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
     .a-card:hover::before{opacity:1}
     .a-top{display:flex;gap:1rem;align-items:center;margin-bottom:.8rem}
-    .a-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--cs),var(--cm));display:flex;flex-shrink:0;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);border:1px solid rgba(201,168,76,.25)}
+    .a-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--cs),var(--cm));display:flex;flex-shrink:0;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);border:1px solid rgba(201,168,76,.25);overflow:hidden;}
+    .a-avatar img{width:100%;height:100%;object-fit:cover;}
     .a-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.2;margin-bottom:.1rem}
     .a-panggilan{font-size:0.95rem;color:var(--em);font-style:italic;margin-bottom:.2rem;font-weight:500}
     .a-urutan{font-size:0.85rem;color:var(--cb);margin-bottom:0.2rem;font-style:italic}
@@ -377,7 +379,7 @@
     <div class="pesan-error" id="pesan-error">Nama pengguna atau kata sandi salah.</div>
 
     <button class="tombol-utama" onclick="window.handleLogin()">Masuk ke Paguyuban</button>
-    <button class="btn-batal" onclick="window.bukaModal('modal-daftar')" style="width:100%; margin-top:0.8rem; border:1px solid var(--em); color:var(--em); font-weight:800; font-size:0.9rem;">✦ Daftar Akun Keluarga</button>
+    <button class="btn-batal" onclick="window.bukaModal('modal-daftar')" style="width:100%; margin-top:0.8rem; border:1px solid var(--em); color:var(--em); font-weight:800; font-size:0.75rem;">✦ Daftar Akun Keluarga</button>
     <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.85rem; color: rgba(240, 156, 77, 0.705); font-style: italic;">
       * Untuk mendaftar, silahkan menghubungi Admin terlebih dahulu
     </p>
@@ -389,6 +391,7 @@
   <div class="overlay-sb" id="overlay-sb" onclick="tutupSidebar()"></div>
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
+      <img src="logo PKEK.jpg" alt="Logo" class="sidebar-logo-img">
       <p class="sidebar-logo">Paguyuban Keluarga</p>
       <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
     </div>
@@ -446,11 +449,18 @@
 
       <!-- Info arisan (hanya jika sudah login) -->
       <div id="dash-arisan-info" style="display:none;margin-top:1rem">
-        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Ringkasan Laporan Arisan</p>
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Ringkasan Saldo Secara Keseluruhan</p>
         <div class="stats-grid">
-          <div class="stat-card"><p class="stat-lbl">Dana Terkumpul</p><p class="stat-num" id="dash-terkumpul" style="font-size:1.5rem">Rp 0</p><p class="stat-sub" id="dash-lunas-sub">0 orang lunas</p></div>
-          <div class="stat-card"><p class="stat-lbl">Dana Belum Masuk</p><p class="stat-num" id="dash-piutang" style="font-size:1.5rem; color:var(--cb)">Rp 0</p><p class="stat-sub" id="dash-belum-sub">0 orang belum bayar</p></div>
-          <div class="stat-card"><p class="stat-lbl">Tingkat Partisipasi</p><p class="stat-num" id="dash-persen" style="font-size:1.5rem">0%</p><p class="stat-sub">kolektif iuran</p></div>
+          <div class="stat-card" style="background: rgba(46, 125, 50, 0.15); border-color: rgba(76, 175, 80, 0.6);">
+            <p class="stat-lbl" style="color: #A5D6A7;">🏮 Saldo Dana Sosial</p>
+            <p class="stat-num" id="dash-sosial" style="font-size:1.7rem; color: #C8E6C9;">Rp 0</p>
+            <p class="stat-sub">Setelah dipotong bantuan sosial</p>
+          </div>
+          <div class="stat-card" style="background: rgba(43, 85, 133, 0.15); border-color: rgba(67, 133, 204, 0.6);">
+            <p class="stat-lbl" style="color: #A3C9F8;">🎓 Saldo Dana Tabungan</p>
+            <p class="stat-num" id="dash-tabungan" style="font-size:1.7rem; color: #D1E4FD;">Rp 0</p>
+            <p class="stat-sub">Akumulasi tabungan mandiri</p>
+          </div>
         </div>
       </div>
     </div>
@@ -675,6 +685,15 @@
           <div class="form-group"><label>Tanggal Lahir</label><input type="date" id="form-lahir"/></div>
         </div>
         <div class="form-group"><label>Alamat</label><textarea id="form-alamat" placeholder="Alamat lengkap"></textarea></div>
+      <div class="form-group">
+        <label>Foto Profil</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="form-foto" placeholder="Link URL atau data gambar..." style="flex:1"/>
+          <button type="button" class="btn-sm solid" onclick="document.getElementById('input-file-foto').click()" style="padding:0 1rem; height:48px; white-space:nowrap; background:var(--em); color:var(--ct); border:none; font-family:'Cinzel'; font-weight:800; font-size:0.7rem; cursor:pointer;">📸 Ambil Foto</button>
+        </div>
+        <input type="file" id="input-file-foto" accept="image/*" capture="environment" style="display:none" onchange="window.prosesUploadFoto(this)">
+        <p style="font-size:0.65rem; color:var(--cb); margin-top:5px; font-style:italic;">* Bisa ambil dari kamera HP atau galeri. Foto akan dikompres otomatis.</p>
+      </div>
       </form>
     </div>
     <div class="modal-footer">
@@ -937,6 +956,7 @@
     unsubAnggota = onValue(ref(db, "anggota"), (snapshot) => {
       const val = snapshot.val();
       const data = val ? Object.values(val) : [];
+      window.cachedAnggota = data;
       
       // Update stats utama
       document.getElementById('stat-total').textContent = data.length;
@@ -974,46 +994,46 @@
 
     // 2. Listener untuk data Arisan Bulan Ini
     if(unsubArisan) unsubArisan();
-    unsubArisan = onValue(ref(db, "arisan"), (snapshot) => {
+    unsubArisan = onValue(ref(db, "arisan_global"), (snapshot) => {
       const arisanInfo = document.getElementById('dash-arisan-info');
       if (snapshot.exists() && penggunaLogin) {
-        const allArisan = snapshot.val();
-        // Urutkan kunci (tahun_bulan) secara numerik menurun agar periode terbaru selalu di index 0
-        const keys = Object.keys(allArisan).filter(k => k.includes('_')).sort((a, b) => {
-          const [yA, mA] = a.split('_').map(Number);
-          const [yB, mB] = b.split('_').map(Number);
-          if (yA !== yB) return yB - yA;
-          return mB - mA;
-        });
-        
-        const p = allArisan[keys[0]]; // Ambil periode terbaru yang ada di database
-        if (!p || !p.pembayaran) { arisanInfo.style.display = 'none'; return; }
+        const arisanData = snapshot.val();
+        const listIuran = Array.isArray(arisanData.iuran_bulanan) ? arisanData.iuran_bulanan : Object.values(arisanData.iuran_bulanan || {});
+        const listPengeluaran = Array.isArray(arisanData.pengeluaran) ? arisanData.pengeluaran : Object.values(arisanData.pengeluaran || {});
+
+        if (listIuran.length === 0) { arisanInfo.style.display = 'none'; return; }
         
         arisanInfo.style.display = 'block';
 
-        // Pastikan list pembayaran diperlakukan sebagai array (aman dari format objek Firebase)
-        const listPembayaran = Array.isArray(p.pembayaran) ? p.pembayaran : Object.values(p.pembayaran);
-        const lunas = listPembayaran.filter(x => x.lunas === true || x.lunas === "true").length;
-        const total = listPembayaran.length;
-        const belum = total - lunas;
-        const persen = total > 0 ? Math.round((lunas / total) * 100) : 0;
+        let totalSosialMasuk = 0;
+        let totalTabunganMasuk = 0;
+        const dataAnggota = window.cachedAnggota || [];
 
-        // Ambil nominal terbaru untuk update tampilan uang
-        get(ref(db, "settings/arisan")).then(sSnap => {
-          const nominal = sSnap.exists() ? (sSnap.val().nominal || 0) : 0;
-          
-          const titleEl = arisanInfo.querySelector('p:first-child');
-          if(titleEl) {
-            const bulanNama = BULAN[parseInt(p.bulan)] || '';
-            titleEl.textContent = `✦ Ringkasan Laporan ${bulanNama} ${p.tahun}`;
-          }
-
-          document.getElementById('dash-lunas-sub').textContent = `${lunas} orang lunas`;
-          document.getElementById('dash-belum-sub').textContent = `${belum} orang belum bayar`;
-          document.getElementById('dash-terkumpul').textContent = formatRp(lunas * nominal);
-          document.getElementById('dash-piutang').textContent = formatRp(belum * nominal);
-          document.getElementById('dash-persen').textContent = `${persen}%`;
+        listIuran.forEach(periodeEntry => {
+          const listPay = periodeEntry.pembayaran || [];
+          listPay.forEach(pay => {
+            if (pay.paid === true) {
+              const m = dataAnggota.find(x => String(x.id) === String(pay.memberId));
+              if (m) {
+                const komponen = m.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
+                const nominal = m.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+                
+                if (komponen.sosial) {
+                  totalSosialMasuk += (parseInt(nominal.sosial) || 0);
+                }
+                if (komponen.tabungan) {
+                  totalTabunganMasuk += (parseInt(nominal.tabungan) || 0);
+                }
+              }
+            }
+          });
         });
+
+        const totalKeluar = listPengeluaran.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
+        const saldoSosial = totalSosialMasuk - totalKeluar;
+
+        document.getElementById('dash-sosial').textContent = formatRp(saldoSosial);
+        document.getElementById('dash-tabungan').textContent = formatRp(totalTabunganMasuk);
       } else {
         arisanInfo.style.display = 'none';
       }
@@ -1156,6 +1176,7 @@
 
   function kartu(a, allData){
     const ini=a.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+    const avatarBody = a.foto ? `<img src="${a.foto}" alt="${a.nama}" onerror="this.parentElement.innerHTML='${ini}'">` : ini;
     const tLahir=(a.tanggalLahir || a.lahir)?new Date(a.tanggalLahir || a.lahir).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'}):'';
     
     let usiaTeks = '';
@@ -1229,7 +1250,7 @@
       <div class="a-card${sudahWafat?' wafat':''}" style="position:relative">
         ${hasPartner ? `<span style="position:absolute; top:10px; right:10px; font-size:0.7rem; opacity:0.5;" title="Memiliki Pasangan">🔗</span>` : ''}
         <div class="a-top">
-          <div class="a-avatar">${ini}</div>
+          <div class="a-avatar">${avatarBody}</div>
           <div>
             <p class="a-nama">${sudahWafat?'🪦 ':''}${a.nama}</p>
             <p class="a-panggilan">${a.panggilan?'"'+a.panggilan+'"':''}</p>
@@ -1260,7 +1281,7 @@
 
   // FORM
   function resetForm(){
-    ['form-id','form-nama','form-panggilan','form-hp','form-lahir','form-alamat','form-tgl-wafat','form-id-pasangan','form-id-orang-tua', 'form-urutan'].forEach(id=>document.getElementById(id).value='');
+    ['form-id','form-nama','form-panggilan','form-hp','form-lahir','form-alamat','form-tgl-wafat','form-id-pasangan','form-id-orang-tua', 'form-urutan', 'form-foto'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('form-generasi').value='0';
     document.querySelectorAll('input[name="form-gender"]')[0].checked = true;
     document.getElementById('form-status').value='aktif';
@@ -1296,6 +1317,7 @@
     document.getElementById('form-hp').value=a.hp||'';
     document.getElementById('form-lahir').value=a.tanggalLahir||''; // FIX: Gunakan a.tanggalLahir
     document.getElementById('form-alamat').value=a.alamat||'';
+    document.getElementById('form-foto').value=a.foto||'';
     toggleTglWafat();
     window.updateFormOptions(a.parentId||a.idOrangTua, a.spouseId||a.idPasangan);
     bukaModal('modal-anggota');
@@ -1348,6 +1370,7 @@
         hp:document.getElementById('form-hp').value.trim(),
         tanggalLahir:document.getElementById('form-lahir').value, // FIX: Simpan sebagai tanggalLahir
         alamat:document.getElementById('form-alamat').value.trim(),
+        foto:document.getElementById('form-foto').value.trim(),
         createdBy: id ? (dataLama?.createdBy || 'admin') : penggunaLogin.username
       };
       await simpanSatu(obj);
@@ -1663,6 +1686,42 @@
       window.tampilLogin();
     }
   });
+
+window.prosesUploadFoto = function(input) {
+    const file = input.files[0];
+    if(!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            // Logika Kompresi Gambar menggunakan Canvas
+            const canvas = document.createElement('canvas');
+            const MAX_SIDE = 300; // Ukuran maksimal sisi (lebar/tinggi)
+            let w = img.width;
+            let h = img.height;
+
+            if (w > h) {
+                if (w > MAX_SIDE) { h *= MAX_SIDE / w; w = MAX_SIDE; }
+            } else {
+                if (h > MAX_SIDE) { w *= MAX_SIDE / h; h = MAX_SIDE; }
+            }
+            
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            
+            // Mengonversi ke Base64 dengan kualitas 0.6 (60%)
+            const dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+            document.getElementById('form-foto').value = dataUrl;
+            if(typeof toast === 'function') toast("Foto berhasil diproses!");
+            else alert("Foto siap disimpan!");
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+};
 </script>
 </body>
 </html>
