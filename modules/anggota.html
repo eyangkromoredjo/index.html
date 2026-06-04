@@ -478,7 +478,13 @@
                 if (groupOrangTua) groupOrangTua.style.display = "block";
                 if (labelOrangTua) labelOrangTua.innerText = `Orang Tua (Dari Generasi ${genInput - 1})`;
 
-                const kandidatOrangTua = listAnggota.filter(m => m.generasi === (genInput - 1) && m.id !== parseInt(currentEditingId));
+                // Filter: Hanya anggota Garis Keturunan (Trah) yang boleh jadi referensi orang tua
+                const kandidatOrangTua = listAnggota.filter(m => {
+                    const isPrevGen = m.generasi === (genInput - 1);
+                    const isNotSelf = m.id !== parseInt(currentEditingId);
+                    const isTrah = !!(m.parentId || String(m.generasi) === '0');
+                    return isPrevGen && isNotSelf && isTrah;
+                });
                 
                 let ortuHTML = '<option value="">-- Pilih Orang Tua --</option>';
                 if (kandidatOrangTua.length === 0) {
@@ -689,8 +695,15 @@
                         let parentName = "";
                         
                         if (parentIdKey !== '_no_parent') {
-                            const parentObj = listAnggota.find(a => a.id === parseInt(parentIdKey));
+                            let parentObj = listAnggota.find(a => a.id === parseInt(parentIdKey));
                             if (parentObj) {
+                                // Jika ID merujuk ke Menantu, otomatis alihkan nama ke pasangan Trah-nya
+                                const isTrahMember = !!(parentObj.parentId || String(parentObj.generasi) === '0');
+                                if (!isTrahMember) {
+                                    const sId = parentObj.spouseId;
+                                    const trahPartner = listAnggota.find(m => m.id === parseInt(sId));
+                                    if (trahPartner) parentObj = trahPartner;
+                                }
                                 parentName = parentObj.nama;
                             }
                         }

@@ -506,12 +506,12 @@
 
       <div class="stats-row">
         <div class="stat-item">
-          <span class="stat-angka">45</span>
+          <span class="stat-angka" id="tahun-berjalan">45</span>
           <span class="stat-label">Tahun Berjalan</span>
         </div>
         <div class="stat-divider"></div>
         <div class="stat-item">
-          <span class="stat-angka">5</span>
+          <span class="stat-angka" id="jumlah-generasi">5</span>
           <span class="stat-label">Generasi</span>
         </div>
         <div class="stat-divider"></div>
@@ -525,7 +525,7 @@
         <button class="tombol-masuk" onclick="document.getElementById('sejarah').scrollIntoView({behavior:'smooth'})">
           ✦ Sejarah &amp; Nilai
         </button>
-        <button class="tombol-solid" onclick="location.href='dashboard.html'" aria-label="Masuk ke sistem paguyuban">
+        <button class="tombol-masuk" onclick="location.href='dashboard.html'" aria-label="Masuk ke sistem paguyuban">
           Masuk Paguyuban →
         </button>
       </div>
@@ -589,11 +589,14 @@
   <!-- ══ FOOTER ══ -->
   <footer>
     <p class="footer-nama">Paguyuban Keluarga Eyang Kromoredjo</p>
-    <p class="footer-tahun">Berdiri 1981 · Solo – Jakarta · Generasi ke-5</p>
-    <p style="font-size: 0.7rem; color: var(--coklat-terang); margin-top: 0.5rem; opacity: 0.8; letter-spacing: 1px;">Designed & Developed by Budi Purwanto bin Tukimin · Maret 2025</p>
+    <p class="footer-tahun">Berdiri 1981 · Jakarta · Generasi ke-<span id="footer-generasi">5</span></p>
+    <p style="font-size: 0.7rem; color: var(--coklat-terang); margin-top: 0.5rem; opacity: 0.8; letter-spacing: 1px;">Designed & Developed by Budi Purwanto bin Tukimin · Juni 2026</p>
   </footer>
 
-  <script>
+  <script type="module">
+    import { db } from './js/firebase-config.js';
+    import { ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
@@ -604,6 +607,25 @@
       });
     }, { threshold: 0.15 });
     reveals.forEach(el => observer.observe(el));
+
+    // --- Logika Statistik Dinamis ---
+    // 1. Hitung Tahun Berjalan (Tahun Sekarang - 1981)
+    const tahunBerdiri = 1981;
+    const tahunSekarang = new Date().getFullYear();
+    document.getElementById('tahun-berjalan').textContent = tahunSekarang - tahunBerdiri;
+
+    // 2. Ambil Generasi Tertinggi dari Database secara Real-time
+    onValue(ref(db, "anggota"), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = Object.values(snapshot.val());
+        const maxGen = data.reduce((max, curr) => {
+          const gen = parseInt(curr.generasi) || 0;
+          return gen > max ? gen : max;
+        }, 0);
+        document.getElementById('jumlah-generasi').textContent = maxGen;
+        document.getElementById('footer-generasi').textContent = maxGen;
+      }
+    });
   </script>
 </body>
 </html>

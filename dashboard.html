@@ -9,15 +9,15 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{--ct:#3B1F0E;--cs:#6B3A1F;--cm:#A0622A;--cb:#C8894E;--kr:#F5ECD7;--km:#FDF6E9;--em:#C9A84C;--el:#E8C97A}
     html{scroll-behavior:smooth}
-    body{font-family:'Lora',serif;background:var(--ct);color:var(--kr);min-height:100vh;overflow-x:hidden;position:relative}
+    body{font-family:'Lora',serif;background:var(--ct);color:var(--kr);min-height:100vh;overflow-x:hidden;position:relative; width:100%;}
     .halaman{display:none;min-height:100vh}
     .halaman.aktif{display:flex;flex-direction:column;animation:fadeIn .5s ease}
     @keyframes fadeIn{from{opacity:0}to{opacity:1}}
     @keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 
     /* LOGIN */
-    #halaman-login{align-items:center;justify-content:center;background:radial-gradient(ellipse at 20% 50%,rgba(169,98,42,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(201,168,76,.08) 0%,transparent 50%),var(--ct);padding:2rem}
-    .login-box{width:100%;max-width:420px;border:1px solid rgba(201,168,76,.25);padding:3rem 2.5rem;text-align:center;animation:fadeInUp .8s ease both;position:relative}
+    #halaman-login{align-items:center;justify-content:center;background:radial-gradient(ellipse at 20% 50%,rgba(169,98,42,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(201,168,76,.08) 0%,transparent 50%),var(--ct);padding:2rem; overflow-y: auto;}
+    .login-box{width:100%;max-width:420px;border:1px solid rgba(201,168,76,.6);padding:3rem 2.5rem;text-align:center;animation:fadeInUp .8s ease both;position:relative;border-radius:15px;overflow:hidden}
     .login-box::before{content:'';position:absolute;top:-1px;left:15%;right:15%;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent)}
     .login-logo{font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.4em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem}
     .login-judul{font-family:'Playfair Display',serif;font-size:2rem;color:var(--kr);margin-bottom:.3rem}
@@ -27,8 +27,8 @@
     .ornamen-mini .r{width:40px;height:1px;background:linear-gradient(90deg,var(--em),transparent)}
     .ornamen-mini .d{width:5px;height:5px;background:var(--em);transform:rotate(45deg)}
     .form-group{margin-bottom:1.2rem;text-align:left}
-    .form-group label{display:block;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.25em;color:var(--em);text-transform:uppercase;margin-bottom:.5rem}
-    .form-group input,.form-group select,.form-group textarea{width:100%;padding:.75rem 1rem;background:rgba(0,0,0,0.2);border:1px solid rgba(201,168,76,.2);color:var(--kr);font-family:'Lora',serif;font-size:.9rem;outline:none;transition:border-color .3s}
+    .form-group label{display:block;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.15em;color:var(--el);text-transform:uppercase;margin-bottom:.5rem;font-weight:600}
+    .form-group input,.form-group select,.form-group textarea{width:100%;padding:1rem;background:rgba(0,0,0,0.2);border:1px solid rgba(201,168,76,.2);color:var(--kr);font-family:'Lora',serif;font-size:1rem;outline:none;transition:border-color .3s}
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--em)}
     .form-group input::placeholder,.form-group textarea::placeholder{color:rgba(245,236,215,.3)}
     .form-group select option{background:var(--cs)}
@@ -44,7 +44,7 @@
     }
 
     .pesan-error{background:rgba(139,46,46,.2);border:1px solid rgba(139,46,46,.4);color:#e8a0a0;padding:.7rem 1rem;font-size:.8rem;margin-bottom:1rem;display:none}
-    .tombol-utama{width:100%;padding:.9rem;background:var(--em);color:var(--ct);border:none;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:background .3s,transform .2s}
+    .tombol-utama{width:100%;padding:.9rem;background:var(--em);color:var(--ct);border:none;font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.25em;text-transform:uppercase;cursor:pointer;font-weight:800;transition:background .3s,transform .2s}
     .tombol-utama:hover{background:var(--el);transform:translateY(-1px)}
     .login-hint{margin-top:1.5rem;font-size:.72rem;color:rgba(200,137,78,.5);font-style:italic}
 
@@ -74,12 +74,12 @@
     .nav-item .ni{font-size:1rem;width:1.2rem;text-align:center}
     .sidebar-footer{padding:1.2rem 1.5rem;border-top:1px solid rgba(201,168,76,.12)}
     .sidebar-level{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;color:var(--em);text-align:center;margin-bottom:.8rem;font-weight:700}
-    .tombol-keluar{width:100%;padding:.6rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+    .tombol-keluar{width:100%;padding:.6rem;background:transparent;border:1px solid rgba(201,168,76,.5);color:var(--cb);font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;font-weight:700}
     .tombol-keluar:hover{border-color:var(--em);color:var(--em)}
     .konten-utama{margin-left:240px;flex:1;min-height:100vh;background:radial-gradient(ellipse at 80% 10%,rgba(169,98,42,.06) 0%,transparent 50%),var(--ct)}
     .topbar{padding:1.2rem 2rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50}
-    .topbar-judul{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase}
-    .topbar-user{font-size:.72rem;color:var(--cb);font-style:italic}
+    .topbar-judul{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.15em;color:var(--em);text-transform:uppercase;font-weight:600}
+    .topbar-user{font-size:.9rem;color:var(--cb);font-style:italic;text-align:right;line-height:1.2}
     .hamburger{display:none;background:none;border:none;color:var(--em);font-size:1.3rem;cursor:pointer}
     .panel{display:none;padding:2rem;animation:fadeInUp .4s ease}
     .panel.aktif{display:block}
@@ -89,43 +89,44 @@
     .dash-salam h2{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,3vw,2.2rem);color:var(--kr);margin-bottom:.3rem}
     .dash-salam p{color:var(--cb);font-size:.9rem;font-style:italic}
     .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
-    .stat-card{border:1px solid rgba(201,168,76,.2);padding:1.5rem;position:relative;overflow:hidden;transition:border-color .3s,transform .3s}
+    .stat-card{background:rgba(60,35,20,.85);border:1px solid rgba(201,168,76,.8);padding:1.5rem;position:relative;overflow:hidden;transition:border-color .3s,transform .3s;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:165px;border-radius:12px}
     .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
     .stat-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-3px)}
     .stat-card:hover::before{opacity:1}
-    .stat-lbl{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--cb);text-transform:uppercase;margin-bottom:.8rem}
+    .stat-lbl{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600}
     .stat-num{font-family:'Playfair Display',serif;font-size:2.5rem;color:var(--em);line-height:1}
     .stat-sub{font-size:.72rem;color:rgba(245,236,215,.5);margin-top:.4rem;font-style:italic}
-    .dash-info{border:1px solid rgba(201,168,76,.15);padding:1.5rem;background:rgba(107,58,31,.15)}
-    .dash-info h3{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:1rem}
-    .dash-info p{font-size:.85rem;color:var(--cb);line-height:1.8;font-style:italic}
+    .dash-info{border:1px solid rgba(201,168,76,.6);padding:1.5rem;background:rgba(107,58,31,.15);border-radius:12px}
+    .dash-info h3{font-family:'Cinzel',serif;font-size:.95rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:1rem;font-weight:600}
+    .dash-info p{font-size:1.05rem;color:var(--cb);line-height:1.7;font-style:italic}
 
     /* ANGGOTA */
     .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
     .panel-judul{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--kr)}
     .panel-judul em{color:var(--em);font-style:italic}
-    .btn-tambah{display:flex;align-items:center;gap:.5rem;padding:.7rem 1.5rem;background:var(--em);color:var(--ct);border:none;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:background .3s,transform .2s}
+    .btn-tambah{display:flex;align-items:center;gap:.5rem;padding:.7rem 1.5rem;background:var(--em);color:var(--ct);border:none;font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:800;transition:background .3s,transform .2s}
     .btn-tambah:hover{background:var(--el);transform:translateY(-1px)}
     .filter-bar{display:flex;gap:.7rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center}
-    .fbtn{padding:.4rem 1rem;border:1px solid rgba(201,168,76,.25);background:transparent;color:rgba(245,236,215,.6);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .fbtn{padding:.4rem 1rem;border:1px solid rgba(201,168,76,.4);background:transparent;color:rgba(245,236,215,0.95);font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s;font-weight:700}
     .fbtn:hover{border-color:var(--em);color:var(--em)}
-    .fbtn.aktif{border-color:var(--em);color:var(--ct);background:var(--em)}
+    .fbtn.aktif{border-color:var(--em);color:#000000;background:var(--em);font-weight:800;box-shadow:0 0 10px rgba(201,168,76,0.3)}
     .search-box{padding:.5rem 1rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);color:var(--kr);font-family:'Lora',serif;font-size:.85rem;outline:none;min-width:200px;transition:border-color .3s}
     .search-box:focus{border-color:var(--em)}
     .search-box::placeholder{color:rgba(245,236,215,.3)}
     .gen-section{margin-bottom:2.5rem}
     .gen-label{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
-    .gen-label span{font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;white-space:nowrap}
+    .gen-label span{font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--el);text-transform:uppercase;font-weight:600}
     .gen-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent)}
     .anggota-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
-    .a-card{border:1px solid rgba(201,168,76,.45);padding:1.3rem;position:relative;transition:all .3s}
+    .a-card{border:1px solid rgba(201,168,76,.9);padding:1.3rem;position:relative;transition:all .3s;border-radius:12px;overflow:hidden}
     .a-card:hover{border-color:var(--em);transform:translateY(-3px)}
     .a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
     .a-card:hover::before{opacity:1}
     .a-top{display:flex;gap:1rem;align-items:center;margin-bottom:.8rem}
     .a-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--cs),var(--cm));display:flex;flex-shrink:0;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);border:1px solid rgba(201,168,76,.25)}
     .a-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.2;margin-bottom:.1rem}
-    .a-panggilan{font-size:.72rem;color:var(--em);font-style:italic;margin-bottom:.2rem}
+    .a-panggilan{font-size:0.95rem;color:var(--em);font-style:italic;margin-bottom:.2rem;font-weight:500}
+    .a-urutan{font-size:0.85rem;color:var(--cb);margin-bottom:0.2rem;font-style:italic}
     .a-spouse{font-size:.72rem;color:var(--cb);font-style:italic}
     .a-info{font-size:.75rem;color:rgba(245,236,215,.55);line-height:1.7}
     .a-badges{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem}
@@ -135,7 +136,7 @@
     .badge.wafat-b{background:rgba(80,80,80,.25);border:1px solid rgba(150,150,150,.3);color:rgba(245,236,215,.5)}
     .badge.trah{background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:var(--em)}
     .badge.spouse-badge{background:rgba(160,98,42,0.15);border:1px solid rgba(160,98,42,0.4);color:var(--cb)}
-    .a-aksi{display:flex;gap:.5rem;margin-top:1rem;padding-top:.8rem;border-top:1px solid rgba(201,168,76,.1)}
+    .a-aksi{display:flex;gap:.5rem;margin-top:auto;padding-top:.8rem;border-top:1px solid rgba(201,168,76,.1)}
 
     /* ══ TAMPILAN TUMPUKAN KARTU (DECK STACK) ══ */
     /* ══ TAMPILAN TUMPUKAN KARTU (DECK STACK) ══ */
@@ -162,6 +163,7 @@
       top: 0; left: 0; width: 100%; height: 100% !important;
       z-index: 10; 
       overflow: hidden;
+      border-radius: 12px;
     }
 
     /* Offset tiap layer tumpukan agar terlihat bertumpuk (Deck Effect) */
@@ -197,13 +199,13 @@
     .family-header:hover { opacity: 0.7; }
     .family-header span {
       font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      font-weight: 500; /* Menjaga agar tidak setebal header generasi */
-      letter-spacing: 0.3em;
-      color: var(--em);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      color: var(--el);
       text-transform: uppercase;
-      white-space: nowrap;
-      opacity: 0.85;
+      white-space: normal;
+      opacity: 1;
       display: flex;
       align-items: center;
     }
@@ -225,7 +227,7 @@
       background: linear-gradient(90deg, rgba(201,168,76, 0.3), transparent);
     }
 
-    .btn-aksi{flex:1;padding:.4rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .btn-aksi{flex:1;padding:.4rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s;font-weight:700}
     .btn-aksi:hover{border-color:var(--em);color:var(--em)}
     .btn-aksi.hapus:hover{border-color:#e8a0a0;color:#e8a0a0}
     .kosong-info{text-align:center;padding:3rem;color:rgba(245,236,215,.3);font-style:italic;font-size:.9rem;border:1px dashed rgba(201,168,76,.15)}
@@ -233,33 +235,32 @@
     /* MODAL */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(20,10,5,.85);z-index:200;align-items:center;justify-content:center;padding:1rem}
     .modal-overlay.aktif{display:flex}
-    .modal-box{background:var(--cs);border:1px solid rgba(201,168,76,.25);width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:fadeInUp .3s ease;position:relative}
+    .modal-box{background:var(--cs);border:1px solid rgba(201,168,76,.6);width:100%;max-width:650px;max-height:92vh;overflow-y:auto;animation:fadeInUp .3s ease;position:relative;border-radius:15px}
     .modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent)}
     .modal-header{padding:1.5rem 1.5rem 1rem;border-bottom:1px solid rgba(201,168,76,.12);display:flex;justify-content:space-between;align-items:center}
-    .modal-judul{font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.25em;color:var(--em);text-transform:uppercase}
+    .modal-judul{font-family:'Cinzel',serif;font-size:1rem;letter-spacing:.15em;color:var(--el);text-transform:uppercase;font-weight:600}
     .modal-tutup{background:none;border:none;color:var(--cb);font-size:1.3rem;cursor:pointer;transition:color .25s}
     .modal-tutup:hover{color:var(--kr)}
     .modal-body{padding:1.5rem}
     .modal-form .form-group{margin-bottom:1rem}
-    .modal-form .form-group label{font-size:.55rem;letter-spacing:.2em}
-    .modal-form .form-group input,.modal-form .form-group select,.modal-form .form-group textarea{padding:.7rem .9rem;font-size:.85rem}
+    .modal-form .form-group input,.modal-form .form-group select,.modal-form .form-group textarea{padding:1rem;font-size:1rem}
     .form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
     .modal-footer{padding:1rem 1.5rem 1.5rem;display:flex;gap:.8rem;justify-content:flex-end}
-    .btn-batal{padding:.7rem 1.5rem;background:transparent;border:1px solid rgba(201,168,76,.25);color:var(--cb);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .btn-batal{padding:.7rem 1.5rem;background:transparent;border:1px solid rgba(201,168,76,.5);color:var(--kr);font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .25s;font-weight:700}
     .btn-batal:hover{border-color:var(--em);color:var(--em)}
-    .btn-simpan{padding:.7rem 1.5rem;background:var(--em);border:none;color:var(--ct);font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:600;transition:background .25s}
+    .btn-simpan{padding:.7rem 1.5rem;background:var(--em);border:none;color:var(--ct);font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-weight:800;transition:background .25s}
     .btn-simpan:hover{background:var(--el)}
-    .btn-hapus-ok{padding:.7rem 1.5rem;background:rgba(139,46,46,.8);border:1px solid rgba(139,46,46,.6);color:#f0c0c0;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .25s}
+    .btn-hapus-ok{padding:.7rem 1.5rem;background:rgba(139,46,46,.8);border:1px solid rgba(139,46,46,.6);color:#f0c0c0;font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:background .25s;font-weight:700}
     .btn-hapus-ok:hover{background:rgba(139,46,46,1)}
     .konfirm-teks{font-size:.9rem;color:var(--km);line-height:1.7;margin-bottom:.5rem}
     .konfirm-nama{font-family:'Playfair Display',serif;color:var(--em)}
     #group-tgl-wafat{transition:opacity .3s}
 
     /* ARISAN */
-    .arisan-setting{background:rgba(107,58,31,.2);border:1px solid rgba(201,168,76,.15);padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+    .arisan-setting{background:rgba(107,58,31,.2);border:1px solid rgba(201,168,76,.15);padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;border-radius:12px}
     .arisan-setting-info{font-size:.8rem;color:var(--cb)}
     .arisan-setting-info strong{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--em);display:block;margin-bottom:.2rem}
-    .btn-setting{padding:.5rem 1.1rem;background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cb);font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .btn-setting{padding:.5rem 1.1rem;background:transparent;border:1px solid rgba(201,168,76,.3);color:var(--cb);font-family:'Cinzel',serif;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .25s;font-weight:700}
     .btn-setting:hover{border-color:var(--em);color:var(--em)}
     .anggota-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; align-items: start; }
     .a-card { 
@@ -272,6 +273,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      border-radius: 12px;
     }
     .periode-card.aktif-periode{border-color:rgba(201,168,76,.45)}
     .periode-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
@@ -287,7 +289,7 @@
     .ps-lbl{font-size:.6rem;color:rgba(245,236,215,.4);letter-spacing:.1em;text-transform:uppercase}
     .pemenang-info{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.15);padding:.7rem 1rem;font-size:.8rem;color:var(--em);margin-bottom:.8rem;font-style:italic}
     .periode-aksi{display:flex;gap:.5rem;flex-wrap:wrap}
-    .btn-sm{padding:.4rem .9rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s}
+    .btn-sm{padding:.4rem .9rem;background:transparent;border:1px solid rgba(201,168,76,.2);color:var(--cb);font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;transition:all .25s;font-weight:700}
     .btn-sm:hover{border-color:var(--em);color:var(--em)}
     .btn-sm.solid{background:var(--em);color:var(--ct);border-color:var(--em);font-weight:600}
     .btn-sm.solid:hover{background:var(--el)}
@@ -323,9 +325,29 @@
       .sidebar.buka{transform:translateX(0)}
       .konten-utama{margin-left:0}
       .hamburger{display:block}
-      .form-row{grid-template-columns:1fr}
+      .topbar-judul{margin-left:1rem;flex:1}
+      .topbar{padding:1.2rem 1rem}
+      .form-row{grid-template-columns:1fr; gap:0.5rem;}
+      .modal-overlay{padding:0; align-items: flex-start; overflow-y: auto; justify-content: flex-start;}
+      .modal-box{width:100%; max-width:100%; height:100vh; border-radius:0; margin: 0; border: none; overflow-x: hidden;}
+      .modal-header, .modal-body, .modal-footer { padding: 1rem !important; }
+      .modal-footer { flex-direction: column; gap: 0.5rem; }
+      .modal-footer button { width: 100%; }
+      .form-group div[style*="display:flex"] { flex-wrap: wrap; gap: 0.8rem !important; }
+      .login-box{padding:2rem 1.5rem; width: 100%;}
       .panel{padding:1.2rem}
       .stats-grid{grid-template-columns:repeat(2,1fr)}
+      /* Skala Konten Kartu Anggota Mobile */
+      .a-avatar{width:60px;height:60px;font-size:1.3rem}
+      .a-nama{font-size:1.15rem}
+      .a-panggilan{font-size:1.05rem}
+      .a-urutan{font-size:0.95rem}
+      .a-info{font-size:0.85rem}
+      .badge{font-size:0.65rem;padding:0.3rem 0.8rem}
+      .btn-aksi{padding:0.6rem;font-size:0.75rem}
+      .a-card{height:auto;min-height:280px}
+      .a-card-stack:not(.terbuka) .a-card { width: calc(100% - 25px) !important; }
+      .a-card-stack{height:280px}
     }
   </style>
 </head>
@@ -355,9 +377,9 @@
     <div class="pesan-error" id="pesan-error">Nama pengguna atau kata sandi salah.</div>
 
     <button class="tombol-utama" onclick="window.handleLogin()">Masuk ke Paguyuban</button>
-    <button class="btn-batal" onclick="window.bukaModal('modal-daftar')" style="width:100%; margin-top:0.8rem; border-color:rgba(201,168,76,0.4)">✦ Daftar Akun Keluarga</button>
+    <button class="btn-batal" onclick="window.bukaModal('modal-daftar')" style="width:100%; margin-top:0.8rem; border:1px solid var(--em); color:var(--em); font-weight:800; font-size:0.9rem;">✦ Daftar Akun Keluarga</button>
     <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.85rem; color: rgba(240, 156, 77, 0.705); font-style: italic;">
-      * Validasi pendaftaran berdasarkan data silsilah
+      * Untuk mendaftar, silahkan menghubungi Admin terlebih dahulu
     </p>
   </div>
 </div>
@@ -407,12 +429,12 @@
         <div class="stat-card"><p class="stat-lbl">Total Anggota</p><p class="stat-num" id="stat-total">0</p><p class="stat-sub">terdaftar</p></div>
         <div class="stat-card"><p class="stat-lbl">Masih Hidup</p><p class="stat-num" id="stat-aktif">0</p><p class="stat-sub">orang</p></div>
         <div class="stat-card"><p class="stat-lbl">Telah Wafat</p><p class="stat-num" id="stat-wafat">0</p><p class="stat-sub">orang</p></div>
-        <div class="stat-card"><p class="stat-lbl">Tahun Berdiri</p><p class="stat-num">1981</p><p class="stat-sub">Solo – Jakarta</p></div>
+        <div class="stat-card"><p class="stat-lbl">Tahun Berjalan</p><p class="stat-num" id="stat-tahun-berjalan">0</p><p class="stat-sub">sejak 1981</p></div>
       </div>
 
       <!-- Stats per generasi -->
       <div style="margin-bottom:.6rem">
-        <p style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem">✦ Anggota per Generasi</p>
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Anggota per Generasi</p>
         <div class="stats-grid" id="stats-per-gen"></div>
       </div>
 
@@ -424,11 +446,11 @@
 
       <!-- Info arisan (hanya jika sudah login) -->
       <div id="dash-arisan-info" style="display:none;margin-top:1rem">
-        <p style="font-family:'Cinzel',serif;font-size:.58rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem">✦ Arisan Bulan Ini</p>
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Ringkasan Laporan Arisan</p>
         <div class="stats-grid">
-          <div class="stat-card"><p class="stat-lbl">Sudah Bayar</p><p class="stat-num" id="dash-lunas">0</p><p class="stat-sub">orang</p></div>
-          <div class="stat-card"><p class="stat-lbl">Belum Bayar</p><p class="stat-num" id="dash-belum">0</p><p class="stat-sub">orang</p></div>
-          <div class="stat-card"><p class="stat-lbl">Terkumpul</p><p class="stat-num" id="dash-terkumpul" style="font-size:1.2rem">Rp 0</p><p class="stat-sub">bulan ini</p></div>
+          <div class="stat-card"><p class="stat-lbl">Dana Terkumpul</p><p class="stat-num" id="dash-terkumpul" style="font-size:1.5rem">Rp 0</p><p class="stat-sub" id="dash-lunas-sub">0 orang lunas</p></div>
+          <div class="stat-card"><p class="stat-lbl">Dana Belum Masuk</p><p class="stat-num" id="dash-piutang" style="font-size:1.5rem; color:var(--cb)">Rp 0</p><p class="stat-sub" id="dash-belum-sub">0 orang belum bayar</p></div>
+          <div class="stat-card"><p class="stat-lbl">Tingkat Partisipasi</p><p class="stat-num" id="dash-persen" style="font-size:1.5rem">0%</p><p class="stat-sub">kolektif iuran</p></div>
         </div>
       </div>
     </div>
@@ -856,12 +878,11 @@
     if(document.getElementById('btn-login-sidebar')) document.getElementById('btn-login-sidebar').style.display='none';
     document.getElementById('btn-keluar-sidebar').style.display='block';
     
-    const levels = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
-    document.getElementById('sidebar-level').textContent = levels[penggunaLogin.level] || '';
+    const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
+    const roleText = levelMap[penggunaLogin.level] || '';
     
-    const icons = { admin: '👑', pengurus: '🛡️', anggota: '🔑', guest: '👤' };
-    const userIcon = icons[penggunaLogin.level] || '';
-    document.getElementById('topbar-user').textContent = `${userIcon} ${penggunaLogin.nama}`;
+    if(document.getElementById('sidebar-level')) document.getElementById('sidebar-level').textContent = roleText;
+    document.getElementById('topbar-user').innerHTML = `${roleText}<br>${penggunaLogin.nama}`;
 
     // Kontrol Visibilitas Tombol Tambah/Setting
     const canAdd = boleh('tambah');
@@ -922,11 +943,22 @@
       document.getElementById('stat-aktif').textContent = data.filter(a => a.kehidupan !== 'wafat').length;
       document.getElementById('stat-wafat').textContent = data.filter(a => a.kehidupan === 'wafat').length;
 
+      // Update Tahun Berjalan
+      const thnBerjalan = new Date().getFullYear() - 1981;
+      const thnEl = document.getElementById('stat-tahun-berjalan');
+      if(thnEl) thnEl.textContent = thnBerjalan;
+
       // Update per generasi
       const genEl = document.getElementById('stats-per-gen');
       if (genEl) {
         let html = '';
-        for (let g = 0; g <= 7; g++) { // Loop dari Generasi 0 hingga 7
+        // Hitung generasi tertinggi untuk menentukan batas loop
+        const maxGen = data.reduce((max, curr) => {
+          const gen = parseInt(curr.generasi) || 0;
+          return gen > max ? gen : max;
+        }, 0);
+
+        for (let g = 0; g <= maxGen; g++) { 
           const anggGen = data.filter(a => a.generasi == g);
           const hidup = anggGen.filter(a => a.kehidupan !== 'wafat').length;
           html += `
@@ -941,25 +973,47 @@
     });
 
     // 2. Listener untuk data Arisan Bulan Ini
-    const now = new Date();
-    const currentKey = `${now.getFullYear()}_${now.getMonth() + 1}`;
-    
     if(unsubArisan) unsubArisan();
-    unsubArisan = onValue(ref(db, "arisan/" + currentKey), async (snapshot) => {
+    unsubArisan = onValue(ref(db, "arisan"), (snapshot) => {
       const arisanInfo = document.getElementById('dash-arisan-info');
-      const val = snapshot.val();
+      if (snapshot.exists() && penggunaLogin) {
+        const allArisan = snapshot.val();
+        // Urutkan kunci (tahun_bulan) secara numerik menurun agar periode terbaru selalu di index 0
+        const keys = Object.keys(allArisan).filter(k => k.includes('_')).sort((a, b) => {
+          const [yA, mA] = a.split('_').map(Number);
+          const [yB, mB] = b.split('_').map(Number);
+          if (yA !== yB) return yB - yA;
+          return mB - mA;
+        });
+        
+        const p = allArisan[keys[0]]; // Ambil periode terbaru yang ada di database
+        if (!p || !p.pembayaran) { arisanInfo.style.display = 'none'; return; }
+        
+        arisanInfo.style.display = 'block';
 
-      if (val) {
-        if(penggunaLogin) arisanInfo.style.display = 'block';
-        const lunas = val.pembayaran.filter(x => x.lunas).length;
-        const total = val.pembayaran.length;
+        // Pastikan list pembayaran diperlakukan sebagai array (aman dari format objek Firebase)
+        const listPembayaran = Array.isArray(p.pembayaran) ? p.pembayaran : Object.values(p.pembayaran);
+        const lunas = listPembayaran.filter(x => x.lunas === true || x.lunas === "true").length;
+        const total = listPembayaran.length;
+        const belum = total - lunas;
+        const persen = total > 0 ? Math.round((lunas / total) * 100) : 0;
 
-        const settingsSnap = await get(ref(db, "settings/arisan"));
-        const nominal = settingsSnap.exists() ? settingsSnap.val().nominal : 0;
+        // Ambil nominal terbaru untuk update tampilan uang
+        get(ref(db, "settings/arisan")).then(sSnap => {
+          const nominal = sSnap.exists() ? (sSnap.val().nominal || 0) : 0;
+          
+          const titleEl = arisanInfo.querySelector('p:first-child');
+          if(titleEl) {
+            const bulanNama = BULAN[parseInt(p.bulan)] || '';
+            titleEl.textContent = `✦ Ringkasan Laporan ${bulanNama} ${p.tahun}`;
+          }
 
-        document.getElementById('dash-lunas').textContent = lunas;
-        document.getElementById('dash-belum').textContent = total - lunas;
-        document.getElementById('dash-terkumpul').textContent = formatRp(lunas * nominal);
+          document.getElementById('dash-lunas-sub').textContent = `${lunas} orang lunas`;
+          document.getElementById('dash-belum-sub').textContent = `${belum} orang belum bayar`;
+          document.getElementById('dash-terkumpul').textContent = formatRp(lunas * nominal);
+          document.getElementById('dash-piutang').textContent = formatRp(belum * nominal);
+          document.getElementById('dash-persen').textContent = `${persen}%`;
+        });
       } else {
         arisanInfo.style.display = 'none';
       }
@@ -1067,8 +1121,15 @@
                   genCardsHtml += `<div class="family-content">${familyContentHtml}</div>`;
                   familyContentHtml = '';
               }
-              const ortu = data.find(m => String(m.id) === String(pId));
+              let ortu = data.find(m => String(m.id) === String(pId));
               if (ortu) {
+                  // VALIDASI: Jika ID yang dirujuk adalah Menantu (bukan Trah), 
+                  // cari pasangan Trah-nya untuk ditampilkan namanya di header keluarga.
+                  if (!isTrah(ortu)) {
+                      const sId = ortu.spouseId || ortu.idPasangan;
+                      const trahPartner = data.find(m => String(m.id) === String(sId));
+                      if (trahPartner) ortu = trahPartner;
+                  }
                   genCardsHtml += `<div class="family-header" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
               }
               lastParentId = pId;
@@ -1111,7 +1172,7 @@
     const sudahWafat=a.kehidupan==='wafat';
 
     const valUrut = a.urutan || a.urutan_anak;
-    const urutanTeks = valUrut ? `<p style="font-size:0.7rem; color:var(--cb); margin-bottom:0.2rem;">✦ Anak ke-${valUrut}</p>` : '';
+    const urutanTeks = valUrut ? `<p class="a-urutan">✦ Anak ke-${valUrut}</p>` : '';
 
     const sId = a.idPasangan || a.spouseId;
     let infoPasangan = '';
@@ -1152,12 +1213,12 @@
     if(boleh('kelolaAkun')) {
       aksesAdmin = `
         <div onclick="event.stopPropagation()" style="margin-top:0.5rem; padding-top:0.5rem; border-top:1px dashed rgba(201,168,76,0.2)">
-          <label style="display:flex; align-items:center; gap:5px; font-size:0.65rem; color:var(--cb); cursor:pointer; margin-bottom:5px;">
-            <input type="checkbox" ${a.bolehDaftar ? 'checked' : ''} onchange="window.toggleIzinDaftar('${a.id}', this.checked)" style="width:12px; height:12px;"> 
+          <label style="display:flex; align-items:center; gap:10px; font-size:0.85rem; color:var(--cb); cursor:pointer; margin-bottom:8px;">
+            <input type="checkbox" ${a.bolehDaftar ? 'checked' : ''} onchange="window.toggleIzinDaftar('${a.id}', this.checked)" style="width:18px; height:18px; cursor:pointer;"> 
             Izin Akses Daftar
           </label>
           ${a.password ? `
-            <select onchange="window.ubahLevel('${a.id}', this.value)" style="width:100%; font-size:0.6rem; padding:2px; background:var(--cs); color:var(--em); border:1px solid var(--em)">
+            <select onchange="window.ubahLevel('${a.id}', this.value)" style="width:100%; font-size:0.75rem; padding:5px; background:var(--cs); color:var(--em); border:1px solid var(--em); border-radius:4px;">
               <option value="anggota" ${a.level==='anggota'?'selected':''}>Level: Anggota</option>
               <option value="pengurus" ${a.level==='pengurus'?'selected':''}>Level: Pengurus</option>
             </select>` : ''}
@@ -1328,8 +1389,12 @@
     const currentMemberId = document.getElementById('form-id').value;
     
     let html = '<option value="">- Tanpa Data (Akar) -</option>';
-    // Orang tua hanya bisa dipilih dari generasi yang lebih tua (angka gen lebih kecil)
-    data.filter(a => parseInt(a.generasi) < currentGen && a.id !== currentMemberId).forEach(p => {
+    // Orang tua hanya bisa dipilih dari generasi sebelumnya dan harus dari Garis Keturunan (Trah)
+    data.filter(a => {
+      const isPrevGen = parseInt(a.generasi) < currentGen;
+      const isTrahMember = !!(a.parentId || a.idOrangTua || String(a.generasi) === '0');
+      return isPrevGen && a.id !== currentMemberId && isTrahMember;
+    }).forEach(p => {
       html += `<option value="${p.id}" ${p.id === currentParentId ? 'selected' : ''}>${p.nama} (Gen ${p.generasi})</option>`;
     });
     select.innerHTML = html;
@@ -1428,7 +1493,12 @@
   window.renderPeriode = async function(){
     await updateLabelNominal();
     const arisan = await ambilArisan();
-    const keys = Object.keys(arisan).sort().reverse();
+    const keys = Object.keys(arisan).sort((a, b) => {
+      const [yA, mA] = a.split('_').map(Number);
+      const [yB, mB] = b.split('_').map(Number);
+      if (yA !== yB) return yB - yA;
+      return mB - mA;
+    });
     const c = document.getElementById('daftar-periode');
     if(!keys.length){ c.innerHTML='<div class="kosong-info">Belum ada periode arisan. Buat periode baru untuk memulai.</div>'; return; }
     
@@ -1437,8 +1507,9 @@
   }
 
   function kartuPeriode(p, nominal){
-    const lunas = p.pembayaran.filter(x=>x.lunas).length;
-    const total = p.pembayaran.length;
+    const listBayar = p.pembayaran ? (Array.isArray(p.pembayaran) ? p.pembayaran : Object.values(p.pembayaran)) : [];
+    const lunas = listBayar.filter(x=>x.lunas).length;
+    const total = listBayar.length;
     const terkumpul = lunas * nominal;
     const selesai = p.status === 'selesai';
     const pct = total ? Math.round(lunas/total*100) : 0;
@@ -1495,14 +1566,15 @@
   }
 
   function renderTabelBayar(p){
-    const lunas = p.pembayaran.filter(x=>x.lunas).length;
-    const total = p.pembayaran.length;
+    const listBayar = p.pembayaran ? (Array.isArray(p.pembayaran) ? p.pembayaran : Object.values(p.pembayaran)) : [];
+    const lunas = listBayar.filter(x=>x.lunas).length;
+    const total = listBayar.length;
     const pct = total ? Math.round(lunas/total*100) : 0;
     const selesai = p.status === 'selesai';
     document.getElementById('detail-progress-label').textContent = lunas+' / '+total+' lunas ('+pct+'%)';
     document.getElementById('detail-progress-fill').style.width = pct+'%';
     const tbody = document.getElementById('tabel-bayar-body');
-    tbody.innerHTML = p.pembayaran.map(x => {
+    tbody.innerHTML = listBayar.map(x => {
       const canEdit = !selesai && boleh('edit');
       const klik = canEdit ? `onclick="toggleBayar('${p.id}','${x.id}')"` : '';
       return `<tr>
@@ -1518,8 +1590,10 @@
     const arisan = await ambilArisan();
     const p = arisan[periodeId];
     if(!p || p.status==='selesai') return;
-    const anggota = p.pembayaran.find(x=>x.id===anggotaId);
+    const listBayar = p.pembayaran ? (Array.isArray(p.pembayaran) ? p.pembayaran : Object.values(p.pembayaran)) : [];
+    const anggota = listBayar.find(x=>x.id===anggotaId);
     if(anggota) anggota.lunas = !anggota.lunas;
+    p.pembayaran = listBayar;
     await simpanSatuArisan(periodeId, p);
     renderTabelBayar(p);
     renderPeriode();

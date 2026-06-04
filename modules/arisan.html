@@ -21,28 +21,46 @@
         .sidebar-header { padding: 1.8rem 1.5rem 1.2rem; border-bottom: 1px solid rgba(201,168,76,0.12); }
         .sidebar-logo { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--em); text-transform: uppercase; margin-bottom: 0.3rem; font-weight: 700; }
         .sidebar-nama { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--kr); line-height: 1.3; }
-        .nav-label { font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.2em; color: var(--em); text-transform: uppercase; padding: 1.2rem 1.5rem 0.4rem; display: block; border-bottom: 1px solid rgba(201,168,76,0.1); margin-bottom: 0.4rem; }
-        .side-btn { display: flex; align-items: center; gap: 0.8rem; padding: 0.65rem 1.5rem; cursor: pointer; color: rgba(245,236,215,0.7); font-size: 0.85rem; transition: all 0.25s; border-left: 3px solid transparent; background: transparent; border: none; width: 100%; text-align: left; font-family: 'Lora', serif; }
-        .side-btn:hover { color: var(--kr); background: rgba(201,168,76,0.06); }
-        .side-btn.active { color: var(--em); border-left-color: var(--em); background: rgba(201,168,76,0.08); font-weight: 600; }
-        .side-btn.soon { opacity: 0.4; cursor: not-allowed; }
+        .nav-label {
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem; 
+            font-weight: 800; 
+            letter-spacing: 0.2em;
+            color: var(--em); 
+            text-transform: uppercase;
+            padding: 1.5rem 1.5rem 0.5rem;
+            border-bottom: 2px solid rgba(201,168,76, 0.3);
+            margin-bottom: 0.8rem;
+            display: block;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        .nav-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.5rem;cursor:pointer;color:rgba(245,236,215,0.8);font-size:.85rem;transition:all .25s;border-left:2px solid transparent;user-select:none}
+        .nav-item:hover{color:var(--kr);background:rgba(201,168,76,.06)}
+        .nav-item.aktif{color:var(--em);border-left-color:var(--em);background:rgba(201,168,76,.08)}
+        .nav-item .ni{font-size:1rem;width:1.2rem;text-align:center}
+        .nav-item.soon { opacity: 0.4; cursor: not-allowed; }
         .badge-soon { font-family: 'Cinzel', serif; font-size: 0.45rem; background: rgba(201,168,76,0.2); color: var(--em); padding: 1px 5px; border-radius: 2px; margin-left: auto; }
 
         /* MAIN CONTENT AREA */
         .konten-utama { margin-left: 240px; flex: 1; min-height: 100vh; background: radial-gradient(ellipse at 80% 10%,rgba(169,98,42,0.06) 0%,transparent 50%),var(--ct); display: flex; flex-direction: column; }
         
         /* TOPBAR (Match Dashboard) */
-        .topbar { padding: 0.8rem 1.2rem; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(59,31,14,0.95); backdrop-filter: blur(10px); z-index: 50; }
-        .topbar-judul { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.3em; color: var(--em); text-transform: uppercase; }
-        .btn-kembali-dash { color: var(--cb); text-decoration: none; font-size: 0.6rem; font-family: 'Cinzel', serif; transition: 0.3s; }
-        .btn-kembali-dash:hover { color: var(--em); }
+        .topbar { padding: 1.2rem 2rem; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(59,31,14,0.95); backdrop-filter: blur(10px); z-index: 50; }
+        .topbar-judul { font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 0.15em; color: var(--em); text-transform: uppercase; font-weight: 600; }
+        .topbar-user {
+            font-size: 0.9rem;
+            color: var(--cb);
+            font-style: italic;
+            text-align: right;
+            line-height: 1.2;
+        }
         .hamburger { display: none; background: none; border: none; color: var(--em); font-size: 1.3rem; cursor: pointer; }
         .overlay-sb { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 99; }
         .overlay-sb.aktif { display: block; }
 
         /* PANELS (Match Dashboard Styles) */
         .arisan-main { padding: 1rem; flex: 1; }
-        .panel { background: var(--cs); border: 1px solid rgba(201,168,76,0.2); padding: 1rem; position: relative; margin-bottom: 1rem; animation: fadeInUp 0.4s ease; }
+        .panel { background: var(--cs); border: 1px solid rgba(201,168,76,0.8); padding: 1rem; position: relative; margin-bottom: 1rem; animation: fadeInUp 0.4s ease; border-radius: 12px; overflow: hidden; }
         .panel::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,var(--em),transparent); opacity: 0.6; }
         .panel h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--kr); margin-bottom: 0.8rem; }
         .panel h3 em { color: var(--em); font-style: italic; }
@@ -51,15 +69,15 @@
 
         /* FORM STYLES */
         .form-group { margin-bottom: 0.7rem; }
-        .form-group label { display: block; font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em; color: var(--em); text-transform: uppercase; margin-bottom: 0.35rem; }
-        .form-control, .form-control-small { width: 100%; padding: 0.4rem 0.7rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); color: var(--kr); font-family: 'Lora', serif; font-size: 0.8rem; outline: none; transition: 0.3s; }
+        .form-group label { display: block; font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.15em; color: var(--em); text-transform: uppercase; margin-bottom: 0.35rem; font-weight: 600; }
+        .form-control, .form-control-small { width: 100%; padding: 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.15); color: var(--kr); font-family: 'Lora', serif; font-size: 1rem; outline: none; transition: 0.3s; }
         .form-control:focus { border-color: var(--em); background: rgba(255,255,255,0.06); }
         .form-control-small { width: 90px; }
         select.form-control { background-color: var(--cs); color: var(--kr); } /* Memastikan dropdown tidak putih */
         select option { background: var(--cs); color: var(--kr); }
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; } /* Ikon kalender terang */
 
-        .checkbox-card { background: rgba(107,58,31,0.15); padding: 0.5rem 0.8rem; border: 1px solid rgba(201,168,76,0.12); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.65rem; transition: 0.3s; }
+        .checkbox-card { background: rgba(107,58,31,0.15); padding: 0.5rem 0.8rem; border: 1px solid rgba(201,168,76,0.12); margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.65rem; transition: 0.3s; border-radius: 8px; }
         .checkbox-card:hover { border-color: var(--em); }
         
         /* Custom extra small checkbox styling global for Arisan module */
@@ -83,7 +101,7 @@
         .checkbox-card label { color: var(--kr); font-size: 0.8rem; cursor: pointer; flex: 1; opacity: 0.8; }
         .checkbox-card:hover label { opacity: 1; }
 
-        .btn-primary { background: var(--em); color: var(--ct); border: none; padding: 0.6rem 1.2rem; font-family: 'Cinzel', serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--em); color: var(--ct); border: none; padding: 0.6rem 1.2rem; font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
         .btn-primary:hover { background: var(--el); transform: translateY(-2px); }
 
         /* TABLE STYLES (Match Dashboard Classic) */
@@ -111,15 +129,25 @@
         .status-bukan { background: rgba(255,255,255,0.1); color: var(--kr); border: 1px solid rgba(245,236,215,0.3); }
 
         /* FOOTER */
-        footer { padding: 1.5rem 1rem; border-top: 1px solid rgba(201,168,76,0.1); text-align: center; margin-top: auto; }
+        footer { padding: 1.2rem 1rem; border-top: 1px solid rgba(201,168,76,0.1); text-align: center; margin-top: auto; position: sticky; bottom: 0; background: rgba(59,31,14,0.95); backdrop-filter: blur(10px); z-index: 50; }
         .footer-nama { font-family: 'Cinzel', serif; font-size: 0.75rem; letter-spacing: 0.3em; color: var(--em); margin-bottom: 0.5rem; }
         .footer-tahun { font-size: 0.7rem; color: var(--cb); letter-spacing: 1px; opacity: 0.7; }
+
+        /* SIDEBAR FOOTER & TOMBOL KELUAR STYLE */
+        .sidebar-footer { padding: 1.2rem 1.5rem; border-top: 1px solid rgba(201,168,76,0.12); margin-top: auto; }
+        .tombol-keluar { width: 100%; padding: .6rem; background: transparent; border: 1px solid rgba(201,168,76,.5); color: var(--cb); font-family: 'Cinzel', serif; font-size: .8rem; letter-spacing: .2em; text-transform: uppercase; cursor: pointer; transition: all .3s; font-weight: 700; }
+        .tombol-keluar:hover { border-color: var(--em); color: var(--em); }
+
+        /* Style untuk menonjolkan Anggota Pokok */
+        .non-pokok-row { opacity: 0.55; transition: opacity 0.3s; }
+        .non-pokok-row:hover { opacity: 1; }
 
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); transition: 0.3s; }
             .sidebar.aktif { transform: translateX(0); }
             .konten-utama { margin-left: 0; }
             .hamburger { display: block; }
+            .topbar-judul { margin-left: 1rem; flex: 1; }
         }
     </style>
 </head>
@@ -134,19 +162,43 @@
             <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
         </div>
         <div class="sidebar-nav">
-            <span class="nav-label">Menu Arisan</span>
-            <button class="side-btn active" data-target="panel-daftar-peserta" onclick="showPanel('panel-daftar-peserta')">👥 Daftar Peserta</button>
-            <button class="side-btn" data-target="panel-cek-pembayaran" onclick="showPanel('panel-cek-pembayaran')">💳 Iuran & Presensi</button>
-            <button class="side-btn" data-target="panel-pengeluaran" onclick="showPanel('panel-pengeluaran')">📉 Catat Pengeluaran</button>
-            <button class="side-btn" data-target="panel-atur-anggota" onclick="showPanel('panel-atur-anggota')">⚙️ Pengaturan Tipe</button>
-            <button class="side-btn" data-target="panel-jadwal" onclick="showPanel('panel-jadwal')">📅 Catat Penerima</button>
-            
-            <button class="side-btn" onclick="location.href='laporan.html'">📊 Laporan Keuangan</button>
+            <p class="nav-label">Navigasi Utama</p>
+            <div class="nav-item" onclick="location.href='../dashboard.html'">
+                <span class="ni">🏠</span> Menu Utama
+            </div>
+            <div class="nav-item" onclick="location.href='laporan.html'">
+                <span class="ni">📊</span> Laporan Keuangan
+            </div>
 
-            <button class="side-btn" style="color: #e8a0a0; margin-top: 2rem; border-top: 1px solid rgba(232,160,160,0.2); padding-top: 1rem;" onclick="resetSemuaDataArisan()">⚠️ Reset Data Uji</button>
+            <p class="nav-label" style="margin-top:1rem;">Manajemen Arisan</p>
+            <div class="nav-item aktif" data-target="panel-daftar-peserta" onclick="showPanel('panel-daftar-peserta', this)">
+                <span class="ni">👥</span> Daftar Peserta
+            </div>
+            <div class="nav-item" data-target="panel-cek-pembayaran" onclick="showPanel('panel-cek-pembayaran', this)">
+                <span class="ni">💳</span> Iuran & Presensi
+            </div>
+            <div class="nav-item" data-target="panel-pengeluaran" onclick="showPanel('panel-pengeluaran', this)">
+                <span class="ni">📉</span> Catat Pengeluaran
+            </div>
+            <div class="nav-item" data-target="panel-atur-anggota" onclick="showPanel('panel-atur-anggota', this)">
+                <span class="ni">⚙️</span> Pengaturan Tipe
+            </div>
+            <div class="nav-item" data-target="panel-jadwal" onclick="showPanel('panel-jadwal', this)">
+                <span class="ni">📅</span> Catat Penerima
+            </div>
+            
+            <div class="nav-item" style="color: #e8a0a0; margin-top: 2rem; border-top: 1px solid rgba(232,160,160,0.2); padding-top: 1rem;" onclick="resetSemuaDataArisan()">
+                <span class="ni">⚠️</span> Reset Data Uji
+            </div>
 
             <span class="nav-label" style="margin-top:1rem">Masa Depan</span>
-            <button class="side-btn soon">🎓 Tabungan Pendidikan <span class="badge-soon">SOON</span></button>
+            <div class="nav-item soon">
+                <span class="ni">🎓</span> Tabungan Pendidikan <span class="badge-soon">SOON</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="tombol-keluar" onclick="location.href='../dashboard.html'">✦ Kembali ke Beranda</button>
         </div>
     </nav>
 
@@ -155,7 +207,7 @@
         <div class="topbar">
             <button class="hamburger" onclick="window.bukaSidebar()">☰</button>
             <p class="topbar-judul" id="topbar-judul">Manajemen Arisan</p>
-            <a href="../dashboard.html" class="btn-kembali-dash">← Kembali Ke Menu Utama</a>
+            <p class="topbar-user" id="topbar-user"></p>
         </div>
 
         <div class="arisan-main">
@@ -328,17 +380,27 @@ const ARISAN_KEY = "kromoredjo_arisan";
 window.semuaAnggota = [];
 window.storageArisan = { jadwal: [], pengeluaran: [], iuran_bulanan: [] };
 
-async function initArisanPage() {
+window.updateTopbarUser = async function() {
+    const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
+    if (user) {
+        const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
+        const roleText = levelMap[user.level] || '';
+        const topbarUserEl = document.getElementById('topbar-user');
+        if (topbarUserEl) topbarUserEl.innerHTML = `${roleText}<br>${user.nama}`;
+    }
+}
+
+window.initArisanPage = async function() {
     // Proteksi UI Anggota: Sembunyikan menu yang tidak boleh diakses
     const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
     if (user && user.level === 'anggota') {
         const targets = ['panel-cek-pembayaran', 'panel-pengeluaran', 'panel-atur-anggota', 'panel-jadwal'];
         targets.forEach(t => {
-            const btn = document.querySelector(`.side-btn[data-target="${t}"]`);
+            const btn = document.querySelector(`.nav-item[data-target="${t}"]`);
             if (btn) btn.style.display = 'none';
         });
         // Sembunyikan tombol reset data uji untuk anggota
-        const btnReset = document.querySelector('.side-btn[onclick*="resetSemuaDataArisan"]');
+        const btnReset = document.querySelector('.nav-item[onclick*="resetSemuaDataArisan"]');
         if (btnReset) btnReset.style.display = 'none';
     }
 
@@ -387,7 +449,7 @@ window.tutupSidebar = function() {
     document.getElementById('overlay-sb').classList.remove('aktif');
 };
 
-function showPanel(panelId) {
+window.showPanel = function(panelId, el) {
     const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
     const restricted = ['panel-cek-pembayaran', 'panel-pengeluaran', 'panel-atur-anggota', 'panel-jadwal'];
     if (user && user.level === 'anggota' && restricted.includes(panelId)) {
@@ -399,21 +461,19 @@ function showPanel(panelId) {
     document.querySelectorAll('.arisan-main .panel').forEach(p => {
         p.style.display = 'none';
     });
-    document.querySelectorAll('.sidebar .side-btn').forEach(btn => {
-        const onClick = btn.getAttribute('onclick') || '';
-        btn.classList.toggle('active', onClick.includes(panelId));
-    });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('aktif'));
+    if (el) el.classList.add('aktif');
+
     target.style.display = '';
     window.tutupSidebar(); // Tutup sidebar otomatis setelah pilih menu di HP
-}
-window.showPanel = showPanel;
+};
 
 function hidePanel(panelId) {
     const target = document.getElementById(panelId);
     if (!target) return;
     target.style.display = 'none';
-    const btn = document.querySelector(`.sidebar .side-btn[onclick*="${panelId}"]`);
-    if (btn) btn.classList.remove('active');
+    const btn = document.querySelector(`.sidebar .nav-item[data-target="${panelId}"]`);
+    if (btn) btn.classList.remove('aktif');
 }
 
 function renderPesertaDropdown() {
@@ -606,8 +666,9 @@ function renderPesertaTable() {
                 komponen.tabungan ? 'Tabungan' : null
             ].filter(Boolean).join(', ') || '-';
 
+            const isNonPokok = tipe === 'non-pokok';
             return `
-                <tr>
+                <tr class="${isNonPokok ? 'non-pokok-row' : ''}">
                     <td>${m.nama}</td>
                     <td>${tipeText}</td>
                     <td>${komponenText}</td>
@@ -856,8 +917,9 @@ function renderPayChecklist() {
         if (paid) grandTotalTerbayar += totalNominal;
 
         const nominalText = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+        const isNonPokok = p.tipeArisan === 'non-pokok';
         return `
-            <tr>
+            <tr class="${isNonPokok ? 'non-pokok-row' : ''}">
                 <td style="font-weight:600; vertical-align:middle;">${p.nama}</td>
                 <td style="text-align:right; vertical-align:middle;">${nominalText}</td>
                 <td style="text-align:center; vertical-align:middle;"><input type="checkbox" class="hadir-chk" ${hadir ? 'checked' : ''}></td>

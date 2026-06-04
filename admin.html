@@ -54,11 +54,13 @@
     .login-box {
       width: 100%;
       max-width: 420px;
-      border: 1px solid rgba(201,168,76,0.25);
+      border: 1px solid rgba(201,168,76,0.6);
       padding: 3rem 2.5rem;
       text-align: center;
       animation: fadeInUp 0.8s ease both;
       position: relative;
+      border-radius: 15px;
+      overflow: hidden;
     }
 
     .login-box::before {
@@ -107,20 +109,21 @@
     .form-group label {
       display: block;
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
-      letter-spacing: 0.25em;
-      color: var(--emas);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: var(--emas-muda);
       text-transform: uppercase;
       margin-bottom: 0.5rem;
+      font-weight: 600;
     }
     .form-group input {
       width: 100%;
-      padding: 0.8rem 1rem;
+      padding: 1rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(201,168,76,0.2);
       color: var(--krem);
       font-family: 'Lora', serif;
-      font-size: 0.9rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.3s;
     }
@@ -144,11 +147,11 @@
       color: var(--coklat-tua);
       border: none;
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
+      font-size: 0.95rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 800;
       transition: background 0.3s, transform 0.2s;
     }
     .tombol-utama:hover { background: var(--emas-muda); transform: translateY(-1px); }
@@ -237,14 +240,15 @@
       width: 100%;
       padding: 0.6rem;
       background: transparent;
-      border: 1px solid rgba(201,168,76,0.2);
+      border: 1px solid rgba(201,168,76,0.8);
       color: var(--coklat-terang);
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.3s;
+      font-weight: 700;
     }
     .tombol-keluar:hover { border-color: var(--emas); color: var(--emas); }
 
@@ -273,16 +277,19 @@
 
     .topbar-judul {
       font-family: 'Cinzel', serif;
-      font-size: 0.7rem;
-      letter-spacing: 0.3em;
+      font-size: 1.1rem;
+      letter-spacing: 0.15em;
       color: var(--emas);
       text-transform: uppercase;
+      font-weight: 600;
     }
 
     .topbar-user {
-      font-size: 0.75rem;
+      font-size: 0.9rem;
       color: var(--coklat-terang);
       font-style: italic;
+      text-align: right;
+      line-height: 1.2;
     }
 
     .hamburger {
@@ -324,11 +331,19 @@
     }
 
     .stat-card {
-      border: 1px solid rgba(201,168,76,0.2);
+      background: rgba(60, 20, 50, 0.85);
+      border: 1px solid rgba(201,168,76,0.5);
       padding: 1.5rem;
       position: relative;
       overflow: hidden;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 165px;
       transition: border-color 0.3s, transform 0.3s;
+      border-radius: 12px;
     }
     .stat-card::before {
       content: '';
@@ -344,11 +359,12 @@
 
     .stat-card-label {
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
-      letter-spacing: 0.3em;
-      color: var(--coklat-terang);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: var(--emas);
       text-transform: uppercase;
       margin-bottom: 0.8rem;
+      font-weight: 600;
     }
     .stat-card-angka {
       font-family: 'Playfair Display', serif;
@@ -364,17 +380,19 @@
     }
 
     .dashboard-info {
-      border: 1px solid rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.6);
       padding: 1.5rem;
       background: rgba(107,58,31,0.15);
+      border-radius: 12px;
     }
     .dashboard-info h3 {
       font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
+      font-size: 0.95rem;
+      letter-spacing: 0.2em;
       color: var(--emas);
       text-transform: uppercase;
       margin-bottom: 1rem;
+      font-weight: 600;
     }
     .dashboard-info p {
       font-size: 0.85rem;
@@ -411,11 +429,11 @@
       color: var(--coklat-tua);
       border: none;
       font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
+      font-size: 0.85rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 800;
       transition: background 0.3s, transform 0.2s;
     }
     .tombol-tambah:hover { background: var(--emas-muda); transform: translateY(-1px); }
@@ -431,16 +449,17 @@
       padding: 0.4rem 1rem;
       border: 1px solid rgba(201,168,76,0.25);
       background: transparent;
-      color: rgba(245,236,215,0.6);
+      color: rgba(245,236,215,1);
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.25s;
+      font-weight: 700;
     }
     .filter-btn:hover { border-color: var(--emas); color: var(--emas); }
-    .filter-btn.aktif { border-color: var(--emas); color: var(--coklat-tua); background: var(--emas); }
+    .filter-btn.aktif { border-color: var(--emas); color: #000000; background: var(--emas); font-weight: 800; box-shadow: 0 0 10px rgba(201,168,76,0.3); }
 
     .search-box {
       padding: 0.5rem 1rem;
@@ -467,11 +486,12 @@
     }
     .generasi-label span {
       font-family: 'Cinzel', serif;
-      font-size: 0.65rem;
-      letter-spacing: 0.3em;
-      color: var(--emas);
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      color: var(--emas-muda);
       text-transform: uppercase;
-      white-space: nowrap;
+      white-space: normal;
+      font-weight: 600;
     }
     .generasi-label::after {
       content: '';
@@ -487,11 +507,16 @@
     }
 
     .anggota-card {
-      border: 1px solid rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.8);
       padding: 1.3rem;
       position: relative;
       transition: all 0.3s;
       cursor: default;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 250px;
     }
     .anggota-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-3px); }
     .anggota-card::before {
@@ -516,7 +541,7 @@
       font-size: 1.1rem;
       color: var(--emas);
       margin-bottom: 0.8rem;
-      border: 1px solid rgba(201,168,76,0.25);
+      border: 1px solid rgba(201,168,76,0.6);
     }
 
     .anggota-nama {
@@ -527,10 +552,18 @@
     }
 
     .anggota-panggilan {
-      font-size: 0.75rem;
+      font-size: 0.95rem;
       color: var(--emas);
       font-style: italic;
       margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    .anggota-urutan {
+      font-size: 0.85rem;
+      color: var(--coklat-terang);
+      margin-bottom: 0.2rem;
+      font-style: italic;
     }
 
     .anggota-info {
@@ -554,7 +587,7 @@
     .anggota-aksi {
       display: flex;
       gap: 0.5rem;
-      margin-top: 1rem;
+      margin-top: auto;
       padding-top: 0.8rem;
       border-top: 1px solid rgba(201,168,76,0.1);
     }
@@ -566,11 +599,12 @@
       border: 1px solid rgba(201,168,76,0.2);
       color: var(--coklat-terang);
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
+      font-size: 0.75rem;
       letter-spacing: 0.15em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.25s;
+      font-weight: 700;
     }
     .btn-aksi:hover { border-color: var(--emas); color: var(--emas); }
     .btn-aksi.hapus:hover { border-color: #e8a0a0; color: #e8a0a0; }
@@ -603,11 +637,12 @@
       background: var(--coklat-sedang);
       border: 1px solid rgba(201,168,76,0.25);
       width: 100%;
-      max-width: 500px;
+      max-width: 650px;
       max-height: 90vh;
       overflow-y: auto;
       animation: fadeInUp 0.3s ease;
       position: relative;
+      border-radius: 15px;
     }
 
     .modal-box::before {
@@ -628,10 +663,11 @@
 
     .modal-judul {
       font-family: 'Cinzel', serif;
-      font-size: 0.75rem;
-      letter-spacing: 0.25em;
-      color: var(--emas);
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      color: var(--emas-muda);
       text-transform: uppercase;
+      font-weight: 600;
     }
 
     .modal-tutup {
@@ -653,22 +689,23 @@
     .modal-form .form-group label {
       display: block;
       font-family: 'Cinzel', serif;
-      font-size: 0.55rem;
-      letter-spacing: 0.2em;
-      color: var(--emas);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      color: var(--emas-muda);
       text-transform: uppercase;
       margin-bottom: 0.4rem;
+      font-weight: 600;
     }
     .modal-form .form-group input,
     .modal-form .form-group select,
     .modal-form .form-group textarea {
       width: 100%;
-      padding: 0.7rem 0.9rem;
+      padding: 1rem;
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(201,168,76,0.2);
       color: var(--krem);
       font-family: 'Lora', serif;
-      font-size: 0.85rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.3s;
     }
@@ -691,11 +728,12 @@
       border: 1px solid rgba(201,168,76,0.25);
       color: var(--coklat-terang);
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
       transition: all 0.25s;
+      font-weight: 700;
     }
     .btn-batal:hover { border-color: var(--emas); color: var(--emas); }
 
@@ -705,11 +743,11 @@
       border: none;
       color: var(--coklat-tua);
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 800;
       transition: background 0.25s;
     }
     .btn-simpan:hover { background: var(--emas-muda); }
@@ -724,11 +762,12 @@
       border: 1px solid rgba(139,46,46,0.6);
       color: #f0c0c0;
       font-family: 'Cinzel', serif;
-      font-size: 0.6rem;
+      font-size: 0.8rem;
       letter-spacing: 0.2em;
       text-transform: uppercase;
       cursor: pointer;
       transition: background 0.25s;
+      font-weight: 700;
     }
     .btn-hapus-confirm:hover { background: rgba(139,46,46,1); }
 
@@ -766,9 +805,27 @@
       .sidebar.buka { transform: translateX(0); }
       .konten-utama { margin-left: 0; }
       .hamburger { display: block; }
-      .form-row { grid-template-columns: 1fr; }
+      .topbar-judul { margin-left: 1rem; flex: 1; }
+      .topbar { padding: 1.2rem 1rem; }
+      .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
+      .modal-overlay { padding: 0; align-items: flex-start; overflow-y: auto; justify-content: flex-start; }
+      .modal-box { width: 100%; max-width: 100%; height:100vh; border-radius: 0; margin: 0; border: none; overflow-x: hidden; }
+      .modal-header, .modal-body, .modal-footer { padding: 1rem !important; }
+      .modal-footer { flex-direction: column; gap: 0.5rem; }
+      .modal-footer button { width: 100%; }
+      .form-group div[style*="display:flex"] { flex-wrap: wrap; gap: 0.8rem !important; }
+      .login-box { padding: 2rem 1.5rem; width: 100%; }
       .panel { padding: 1.2rem; }
       .stats-dashboard { grid-template-columns: repeat(2, 1fr); }
+      /* Skala Konten Kartu Anggota Mobile */
+      .anggota-avatar { width: 60px; height: 60px; font-size: 1.3rem; }
+      .anggota-nama { font-size: 1.15rem; }
+      .anggota-panggilan { font-size: 1.05rem; }
+      .anggota-urutan { font-size: 0.95rem; }
+      .anggota-info { font-size: 0.85rem; }
+      .anggota-status { font-size: 0.65rem; padding: 0.3rem 0.8rem; }
+      .btn-aksi { padding: 0.6rem; font-size: 0.75rem; }
+      .anggota-card { height: auto; min-height: 250px; }
     }
   </style>
 </head>
@@ -1001,28 +1058,34 @@
 <!-- ══ TOAST ══ -->
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
   // ══ KONFIGURASI ══
   const AKUN = [
     { username: 'admin', password: 'kromoredjo1981', nama: 'Admin Paguyuban' },
     { username: 'pengurus', password: 'paguyuban', nama: 'Pengurus' }
   ];
 
-  // ══ STATE ══
-  let filterAktif = 'semua';
-  let idHapusPending = null;
-  let penggunaLogin = null;
+  // ══ FIREBASE INTEGRATION ══
+  import { db } from './js/firebase-config.js';
+  import { ref, get, set, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // ══ STORAGE ══
-  function ambilAnggota() {
-    return JSON.parse(localStorage.getItem('kromoredjo_anggota') || '[]');
+  let filterAktif = 'semua', idHapusPending = null, penggunaLogin = null;
+
+  async function ambilAnggota() {
+    const snapshot = await get(ref(db, "anggota"));
+    return snapshot.exists() ? Object.values(snapshot.val()) : [];
   }
-  function simpanStorage(data) {
-    localStorage.setItem('kromoredjo_anggota', JSON.stringify(data));
+
+  async function simpanSatu(anggota) {
+    await set(ref(db, "anggota/" + anggota.id), anggota);
+  }
+
+  async function hapusSatu(id) {
+    await remove(ref(db, "anggota/" + id));
   }
 
   // ══ LOGIN ══
-  function login() {
+  window.login = async function() {
     const user = document.getElementById('input-user').value.trim();
     const pass = document.getElementById('input-pass').value;
     const akun = AKUN.find(a => a.username === user && a.password === pass);
@@ -1031,7 +1094,7 @@
       penggunaLogin = akun;
       sessionStorage.setItem('kromoredjo_user', JSON.stringify(akun));
       document.getElementById('pesan-error').style.display = 'none';
-      masukApp();
+      await masukApp();
     } else {
       document.getElementById('pesan-error').style.display = 'block';
       document.getElementById('input-pass').value = '';
@@ -1039,16 +1102,17 @@
     }
   }
 
-  function masukApp() {
+  async function masukApp() {
     document.getElementById('halaman-login').classList.remove('aktif');
     document.getElementById('halaman-app').classList.add('aktif');
     document.getElementById('salam-nama').textContent = penggunaLogin.nama;
-    document.getElementById('topbar-user').textContent = penggunaLogin.nama;
-    updateStats();
-    renderAnggota();
+    const roleLabel = penggunaLogin.username === 'admin' ? '👑 Admin' : '🛡️ Pengurus';
+    document.getElementById('topbar-user').innerHTML = `${roleLabel}<br>${penggunaLogin.nama}`;
+    await updateStats();
+    await renderAnggota();
   }
 
-  function keluar() {
+  window.keluar = function() {
     sessionStorage.removeItem('kromoredjo_user');
     penggunaLogin = null;
     document.getElementById('halaman-app').classList.remove('aktif');
@@ -1058,7 +1122,7 @@
   }
 
   // ══ NAVIGASI ══
-  function bukaPanel(nama, el) {
+  window.bukaPanel = async function(nama, el) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('aktif'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('aktif'));
     document.getElementById('panel-' + nama).classList.add('aktif');
@@ -1067,37 +1131,36 @@
     const judul = { dashboard: 'Beranda', anggota: 'Anggota' };
     document.getElementById('topbar-judul').textContent = judul[nama] || nama;
 
-    if (nama === 'anggota') renderAnggota();
-    if (nama === 'dashboard') updateStats();
+    if (nama === 'anggota') await renderAnggota();
+    if (nama === 'dashboard') await updateStats();
     tutupSidebar();
   }
-
-  function bukaSidebar() {
+  window.bukaSidebar = function() {
     document.getElementById('sidebar').classList.add('buka');
     document.getElementById('overlay-sidebar').classList.add('aktif');
   }
-  function tutupSidebar() {
+  window.tutupSidebar = function() {
     document.getElementById('sidebar').classList.remove('buka');
     document.getElementById('overlay-sidebar').classList.remove('aktif');
   }
 
   // ══ STATS ══
-  function updateStats() {
-    const data = ambilAnggota();
+  async function updateStats() {
+    const data = await ambilAnggota();
     document.getElementById('stat-total').textContent = data.length;
     document.getElementById('stat-aktif').textContent = data.filter(a => a.status === 'aktif').length;
   }
 
   // ══ RENDER ANGGOTA ══
-  function filterGenerasi(gen, el) {
+  window.filterGenerasi = async function(gen, el) {
     filterAktif = gen;
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('aktif'));
     if (el) el.classList.add('aktif');
-    renderAnggota();
+    await renderAnggota();
   }
 
-  function renderAnggota() {
-    const data = ambilAnggota();
+  window.renderAnggota = async function() {
+    const data = await ambilAnggota();
     const cari = (document.getElementById('search-anggota')?.value || '').toLowerCase();
 
     let filtered = data.filter(a => {
@@ -1136,13 +1199,16 @@
   }
 
   function kartuAnggota(a) {
-    const inisial = a.nama.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
-    const lahir = a.lahir ? new Date(a.lahir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+    const inisial = (a.nama || '??').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const lahir = (a.lahir || a.tanggalLahir) ? new Date(a.lahir || a.tanggalLahir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+    const valUrut = a.urutan || a.urutan_anak;
+    const urutanTeks = valUrut ? `<p class="anggota-urutan">✦ Anak ke-${valUrut}</p>` : '';
     return `
       <div class="anggota-card">
         <div class="anggota-avatar">${inisial}</div>
         <p class="anggota-nama">${a.nama}</p>
         <p class="anggota-panggilan">${a.panggilan ? '"' + a.panggilan + '"' : ''}</p>
+        ${urutanTeks}
         <div class="anggota-info">
           ${a.hp ? '📱 ' + a.hp + '<br>' : ''}
           ${a.lahir ? '🎂 ' + lahir + '<br>' : ''}
@@ -1150,14 +1216,14 @@
         </div>
         <span class="anggota-status ${a.status}">${a.status === 'aktif' ? 'Aktif' : 'Tidak Aktif'}</span>
         <div class="anggota-aksi">
-          <button class="btn-aksi" onclick="bukaFormEdit('${a.id}')">✏ Edit</button>
-          <button class="btn-aksi hapus" onclick="bukaKonfirmasiHapus('${a.id}', '${a.nama.replace(/'/g, "\\'")}')">🗑 Hapus</button>
+          <button class="btn-aksi" onclick="window.bukaFormEdit('${a.id}')">✏ Edit</button>
+          <button class="btn-aksi hapus" onclick="window.bukaKonfirmasiHapus('${a.id}', '${a.nama.replace(/'/g, "\\'")}')">🗑 Hapus</button>
         </div>
       </div>`;
   }
 
   // ══ FORM TAMBAH / EDIT ══
-  function bukaFormTambah() {
+  window.bukaFormTambah = function() {
     document.getElementById('modal-judul-anggota').textContent = 'Tambah Anggota Baru';
     document.getElementById('form-id').value = '';
     document.getElementById('form-nama').value = '';
@@ -1170,8 +1236,8 @@
     bukaModal('modal-anggota');
   }
 
-  function bukaFormEdit(id) {
-    const data = ambilAnggota();
+  window.bukaFormEdit = async function(id) {
+    const data = await ambilAnggota();
     const a = data.find(x => x.id === id);
     if (!a) return;
     document.getElementById('modal-judul-anggota').textContent = 'Edit Data Anggota';
@@ -1181,16 +1247,15 @@
     document.getElementById('form-generasi').value = a.generasi;
     document.getElementById('form-status').value = a.status;
     document.getElementById('form-hp').value = a.hp || '';
-    document.getElementById('form-lahir').value = a.lahir || '';
+    document.getElementById('form-lahir').value = a.lahir || a.tanggalLahir || '';
     document.getElementById('form-alamat').value = a.alamat || '';
     bukaModal('modal-anggota');
   }
 
-  function simpanAnggota() {
+  window.simpanAnggota = async function() {
     const nama = document.getElementById('form-nama').value.trim();
     if (!nama) { tampilToast('Nama lengkap wajib diisi.'); return; }
 
-    const data = ambilAnggota();
     const id = document.getElementById('form-id').value;
 
     const anggota = {
@@ -1201,45 +1266,38 @@
       status: document.getElementById('form-status').value,
       hp: document.getElementById('form-hp').value.trim(),
       lahir: document.getElementById('form-lahir').value,
+      tanggalLahir: document.getElementById('form-lahir').value,
       alamat: document.getElementById('form-alamat').value.trim(),
     };
 
-    if (id) {
-      const idx = data.findIndex(x => x.id === id);
-      if (idx !== -1) data[idx] = anggota;
-      tampilToast('Data anggota berhasil diperbarui.');
-    } else {
-      data.push(anggota);
-      tampilToast('Anggota baru berhasil ditambahkan.');
-    }
+    await simpanSatu(anggota);
+    tampilToast(id ? 'Data anggota berhasil diperbarui.' : 'Anggota baru berhasil ditambahkan.');
 
-    simpanStorage(data);
     tutupModal('modal-anggota');
-    renderAnggota();
-    updateStats();
+    await renderAnggota();
+    await updateStats();
   }
 
   // ══ HAPUS ══
-  function bukaKonfirmasiHapus(id, nama) {
+  window.bukaKonfirmasiHapus = function(id, nama) {
     idHapusPending = id;
     document.getElementById('konfirmasi-nama').textContent = nama;
     bukaModal('modal-hapus');
   }
 
-  function konfirmasiHapus() {
+  window.konfirmasiHapus = async function() {
     if (!idHapusPending) return;
-    const data = ambilAnggota().filter(a => a.id !== idHapusPending);
-    simpanStorage(data);
+    await hapusSatu(idHapusPending);
     idHapusPending = null;
-    tutupModal('modal-hapus');
-    renderAnggota();
-    updateStats();
+    window.tutupModal('modal-hapus');
+    await renderAnggota();
+    await updateStats();
     tampilToast('Anggota berhasil dihapus.');
   }
 
   // ══ MODAL ══
-  function bukaModal(id) { document.getElementById(id).classList.add('aktif'); }
-  function tutupModal(id) { document.getElementById(id).classList.remove('aktif'); }
+  window.bukaModal = function(id) { document.getElementById(id).classList.add('aktif'); }
+  window.tutupModal = function(id) { document.getElementById(id).classList.remove('aktif'); }
 
   // Tutup modal klik overlay
   document.querySelectorAll('.modal-overlay').forEach(m => {
@@ -1257,13 +1315,13 @@
   }
 
   // ══ CEK SESSION ══
-  window.addEventListener('load', () => {
+  window.addEventListener('load', async () => {
     const saved = sessionStorage.getItem('kromoredjo_user');
     if (saved) {
       penggunaLogin = JSON.parse(saved);
-      masukApp();
+      await masukApp();
     }
   });
-</script>
+ </script>
 </body>
 </html>
