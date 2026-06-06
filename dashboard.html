@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Paguyuban Keluarga Eyang Kromoredjo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     HALAMAN LOGIN (Pindahan dari admin.html)
+══════════════════════════════════ -->
+<div id="halaman-login" class="halaman aktif">
+  <div class="login-box" style="margin: auto;">
+    <p class="login-logo">Paguyuban Keluarga</p>
+    <h1 class="login-judul">Eyang Kromoredjo</h1>
+    <p class="login-sub">Sistem Informasi Keluarga</p>
+    <div class="ornamen-mini">
+      <div class="l"></div><div class="d"></div><div class="r"></div>
+    </div>
+
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" id="input-username" placeholder="Contoh: admin" autocomplete="off"/>
+    </div>
+    <div class="form-group">
+      <label>Kata Sandi</label>
+      <input type="password" id="input-pass" placeholder="Masukkan kata sandi" onkeydown="if(event.key==='Enter')window.handleLogin()"/>
+    </div>
+
+    <div class="pesan-error" id="pesan-error">Nama pengguna atau kata sandi salah.</div>
+
+    <button class="tombol-utama" onclick="window.handleLogin()">Masuk ke Paguyuban</button>
+    <p class="login-hint" style="margin-top: 1.5rem; font-size: 0.85rem; color: rgba(240, 156, 77, 0.705); font-style: italic;">
+      * Untuk mendaftar, silahkan menghubungi Admin terlebih dahulu
+    </p>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="halaman-app" class="halaman">
+  <div class="overlay-sb" id="overlay-sb" onclick="window.tutupSidebar()"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="logo PKEK.jpg" alt="Logo" class="sidebar-logo-img">
+      <p class="sidebar-logo">Paguyuban Keluarga</p>
+      <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
+    </div>
+    <div class="sidebar-nav">
+      <p class="nav-label">Menu Utama</p>
+      <div class="nav-item aktif" onclick="window.bukaPanel('dashboard',this)"><span class="ni">🏠</span> Beranda</div>
+      <div id="nav-pengurus" style="display:none">
+        <div class="nav-item" onclick="window.bukaPanel('anggota',this)"><span class="ni">👥</span> Anggota</div>
+        <div class="nav-item" onclick="location.href='modules/arisan.html'"><span class="ni">💰</span> Arisan</div>
+        <div class="nav-item" onclick="location.href='bukubesar.html'"><span class="ni">📖</span> Buku Besar</div>
+        <div class="nav-item" onclick="location.href='silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
+        <div class="nav-item" onclick="location.href='modules/laporan.html'"><span class="ni">📊</span> Laporan</div>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <p class="sidebar-level" id="sidebar-level"></p>
+      <button id="btn-login-sidebar" class="tombol-keluar" onclick="window.tampilLogin()" style="margin-bottom:.5rem;display:block">✦ Login Pengurus</button>
+      <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="window.keluar()" style="display:none">✦ Keluar</button>
+      <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
+    </div>
+  </nav>
+
+  <main class="konten-utama">
+    <div class="topbar">
+      <button class="hamburger" onclick="window.bukaSidebar()">☰</button>
+      <p class="topbar-judul" id="topbar-judul">Beranda</p>
+      <p class="topbar-user" id="topbar-user"></p>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="panel aktif" id="panel-dashboard">
+      <div class="dash-salam">
+        <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.4rem,3vw,2rem);color:var(--kr);margin-bottom:.3rem">Paguyuban Keluarga <em style="color:var(--em)">Eyang Kromoredjo</em></h2>
+        <p style="font-size:.82rem;color:var(--cb);font-style:italic">Berdiri 1981 · Jakarta</p>
+      </div>
+
+      <!-- Stats utama -->
+      <div class="stats-grid" style="margin-bottom:1rem">
+        <div class="stat-card"><p class="stat-lbl">Total Anggota</p><p class="stat-num" id="stat-total">0</p><p class="stat-sub">terdaftar</p></div>
+        <div class="stat-card"><p class="stat-lbl">Masih Hidup</p><p class="stat-num" id="stat-aktif">0</p><p class="stat-sub">orang</p></div>
+        <div class="stat-card"><p class="stat-lbl">Telah Wafat</p><p class="stat-num" id="stat-wafat">0</p><p class="stat-sub">orang</p></div>
+        <div class="stat-card"><p class="stat-lbl">Tahun Berjalan</p><p class="stat-num" id="stat-tahun-berjalan">0</p><p class="stat-sub">sejak 1981</p></div>
+      </div>
+
+      <!-- Stats per generasi -->
+      <div style="margin-bottom:.6rem">
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Anggota per Generasi</p>
+        <div class="stats-grid" id="stats-per-gen"></div>
+      </div>
+
+      <!-- Info paguyuban -->
+      <div class="dash-info" style="margin-top:1.2rem">
+        <h3>✦ Tentang Paguyuban</h3>
+        <p>Bermula dari tanah Solo yang kaya budaya, para pendahulu keluarga Kromoredjo merantau ke Jakarta membawa nilai-nilai luhur: kebersamaan, gotong royong, dan silaturahmi yang tak putus. Selama 45 tahun dan lima generasi, paguyuban ini terus tumbuh — bukan sekadar ikatan darah, melainkan ikatan hati.</p>
+      </div>
+
+      <!-- Info arisan (hanya jika sudah login) -->
+      <div id="dash-arisan-info" style="display:none;margin-top:1rem">
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Ringkasan Saldo Secara Keseluruhan</p>
+        <div class="stats-grid">
+          <div class="stat-card" style="background: rgba(46, 125, 50, 0.15); border-color: rgba(76, 175, 80, 0.6);">
+            <p class="stat-lbl" style="color: #A5D6A7;">🏮 Saldo Dana Sosial</p>
+            <p class="stat-num" id="dash-sosial" style="font-size:1.7rem; color: #C8E6C9;">Rp 0</p>
+            <p class="stat-sub">Setelah dipotong bantuan sosial</p>
+          </div>
+          <div class="stat-card" style="background: rgba(43, 85, 133, 0.15); border-color: rgba(67, 133, 204, 0.6);">
+            <p class="stat-lbl" style="color: #A3C9F8;">🎓 Saldo Dana Tabungan</p>
+            <p class="stat-num" id="dash-tabungan" style="font-size:1.7rem; color: #D1E4FD;">Rp 0</p>
+            <p class="stat-sub">Akumulasi tabungan mandiri</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANGGOTA -->
+    <div class="panel" id="panel-anggota">
+      <div class="panel-header">
+        <h2 class="panel-judul">Daftar <em>Anggota</em></h2>
+        <button class="btn-tambah" id="btn-tambah-anggota" onclick="window.bukaFormTambah()">+ Tambah Anggota</button>
+      </div>
+      <div class="filter-bar">
+        <input type="text" class="search-box" id="search-anggota" placeholder="🔍 Cari nama..." oninput="window.renderAnggota()"/>
+        <button class="fbtn aktif" onclick="window.filterGen('semua',this)">Semua</button>
+        <button class="fbtn" onclick="window.filterGen('0',this)">Gen 0</button>
+        <button class="fbtn" onclick="window.filterGen('1',this)">Gen 1</button>
+        <button class="fbtn" onclick="window.filterGen('2',this)">Gen 2</button>
+        <button class="fbtn" onclick="window.filterGen('3',this)">Gen 3</button>
+        <button class="fbtn" onclick="window.filterGen('4',this)">Gen 4</button>
+        <button class="fbtn" onclick="window.filterGen('5',this)">Gen 5</button>
+        <button class="fbtn" onclick="window.filterGen('6',this)">Gen 6</button>
+        <button class="fbtn" onclick="window.filterGen('7',this)">Gen 7</button>
+        <button class="fbtn" onclick="window.filterGen('wafat',this)">🪦 Wafat</button>
+      </div>
+      <div id="daftar-anggota"></div>
+    </div>
+
+    <!-- ARISAN -->
+    <div class="panel" id="panel-arisan">
+      <div class="panel-header">
+        <h2 class="panel-judul">Kelola <em>Arisan</em></h2>
+        <button class="btn-tambah" id="btn-buat-periode" onclick="window.bukaBuatPeriode()">+ Buat Periode Baru</button>
+      </div>
+      <div class="arisan-setting">
+        <div class="arisan-setting-info">
+          <strong id="label-nominal">Rp 0</strong>
+          Nominal iuran per bulan
+        </div>
+        <button class="btn-setting" onclick="window.bukaSettingNominal()">&#9881; Ubah Nominal</button>
+      </div>
+      <div id="daftar-periode"><div class="kosong-info">Belum ada periode arisan. Buat periode baru untuk memulai.</div></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL SETTING NOMINAL -->
+<div class="modal-overlay" id="modal-nominal">
+  <div class="modal-box" style="max-width:360px">
+    <div class="modal-header">
+      <p class="modal-judul">Atur Nominal Iuran</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-nominal')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nominal Iuran per Bulan (Rp)</label>
+        <input type="number" id="input-nominal" placeholder="Contoh: 150000" min="0"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-nominal')">Batal</button>
+      <button class="btn-simpan" onclick="window.simpanNominal()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL BUAT PERIODE -->
+<div class="modal-overlay" id="modal-periode">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header">
+      <p class="modal-judul">Buat Periode Arisan</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-periode')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Bulan</label>
+          <select id="input-bulan">
+            <option value="1">Januari</option><option value="2">Februari</option>
+            <option value="3">Maret</option><option value="4">April</option>
+            <option value="5">Mei</option><option value="6">Juni</option>
+            <option value="7">Juli</option><option value="8">Agustus</option>
+            <option value="9">September</option><option value="10">Oktober</option>
+            <option value="11">November</option><option value="12">Desember</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tahun</label>
+          <input type="number" id="input-tahun" value="2026" min="2000" max="2100"/>
+        </div>
+      </div>
+      <p style="font-size:.78rem;color:var(--cb);font-style:italic">Semua anggota aktif akan otomatis dimasukkan ke periode ini.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-periode')">Batal</button>
+      <button class="btn-simpan" onclick="window.simpanPeriode()">Buat Periode</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETAIL PERIODE -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal-box" style="max-width:620px">
+    <div class="modal-header">
+      <p class="modal-judul" id="detail-judul">Detail Periode</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-detail')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <div id="undian-box" class="undian-box" style="display:none">
+        <p style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.3em;color:var(--cb);margin-bottom:.8rem">UNDIAN PENERIMA ARISAN</p>
+        <div class="undian-nama" id="undian-nama">&#8212;</div>
+        <p id="undian-sub">Klik tombol undian untuk mengocok nama</p>
+        <button class="btn-sm solid" style="margin-top:1rem" onclick="window.mulaiUndian()" id="btn-undian">&#127922; Kocok Undian</button>
+      </div>
+      <div style="margin-bottom:.8rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem">
+        <p style="font-size:.8rem;color:var(--cb)">Klik status untuk toggle lunas/belum</p>
+        <span id="detail-progress-label" style="font-family:'Cinzel',serif;font-size:.6rem;color:var(--em)"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="detail-progress-fill" style="width:0%"></div></div>
+      <div style="margin-top:1rem; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+        <table class="tabel-bayar">
+          <thead><tr><th>Nama Anggota</th><th>Generasi</th><th>Status Bayar</th></tr></thead>
+          <tbody id="tabel-bayar-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-detail')">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TUTUP PERIODE -->
+<div class="modal-overlay" id="modal-tutup-periode">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <p class="modal-judul">Tutup Periode</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-tutup-periode')">&#x2715;</button>
+    </div>
+    <div class="modal-body">
+      <p class="konfirm-teks">Periode ini akan ditandai <strong style="color:var(--em)">Selesai</strong> dan tidak bisa diubah lagi. Pastikan semua pembayaran sudah dicatat.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-tutup-periode')">Batal</button>
+      <button class="btn-hapus-ok" id="btn-konfirm-tutup" onclick="window.konfirmasiTutupPeriode()" style="background:rgba(46,107,62,.8);border-color:rgba(46,107,62,.6);color:#7ec894">Ya, Tutup Periode</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL FORM ANGGOTA -->
+<div class="modal-overlay" id="modal-anggota">
+  <div class="modal-box">
+    <div class="modal-header">
+      <p class="modal-judul" id="modal-judul-form">Tambah Anggota</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-anggota')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="modal-form" onsubmit="return false">
+        <input type="hidden" id="form-id"/>
+        <div class="form-row">
+          <div class="form-group"><label>Nama Lengkap *</label><input type="text" id="form-nama" placeholder="Nama lengkap"/></div>
+          <div class="form-group"><label>Nama Panggilan</label><input type="text" id="form-panggilan" placeholder="Nama panggilan"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Generasi *</label>
+            <select id="form-generasi" onchange="window.updateFormOptions()">
+              <option value="0">Generasi 0 (Induk)</option>
+              <option value="1">Generasi 1</option>
+              <option value="2">Generasi 2</option>
+              <option value="3">Generasi 3</option>
+              <option value="4" selected>Generasi 4</option>
+              <option value="5">Generasi 5</option>
+              <option value="6">Generasi 6</option>
+              <option value="7">Generasi 7</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Orang Tua (Garis Keturunan) *</label>
+            <select id="form-id-orang-tua"><option value="">- Tanpa Data (Akar) -</option></select>
+          </div>
+          <div class="form-group">
+            <label>Pasangan (Suami/Istri)</label>
+            <select id="form-id-pasangan"><option value="">- Tanpa Pasangan -</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Anak Ke- (Urutan)</label>
+            <input type="number" id="form-urutan" placeholder="Contoh: 1" min="1"/>
+          </div>
+          <div class="form-group">
+            <label>Jenis Kelamin *</label>
+            <div style="display:flex;flex-direction:column;gap:.6rem;margin-top:.5rem">
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="form-gender" value="L" checked style="width:auto"> Laki-laki
+              </label>
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="form-gender" value="P" style="width:auto"> Perempuan
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Status Keaktifan</label>
+            <select id="form-status"><option value="aktif">Aktif</option><option value="tidak-aktif">Tidak Aktif</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Status Kehidupan *</label>
+            <select id="form-kehidupan" onchange="window.toggleTglWafat()">
+              <option value="hidup">Masih Hidup</option>
+              <option value="wafat">Wafat</option>
+            </select>
+          </div>
+          <div class="form-group" id="group-tgl-wafat" style="opacity:.3">
+            <label>Tanggal Wafat</label>
+            <input type="date" id="form-tgl-wafat" disabled/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>No. HP / WhatsApp</label><input type="tel" id="form-hp" placeholder="08xx-xxxx-xxxx"/></div>
+          <div class="form-group"><label>Tanggal Lahir</label><input type="date" id="form-lahir"/></div>
+        </div>
+        <div class="form-group"><label>Alamat</label><textarea id="form-alamat" placeholder="Alamat lengkap"></textarea></div>
+      <div class="form-group">
+        <label>Foto Profil</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="form-foto" placeholder="Link URL atau data gambar..." style="flex:1"/>
+          <button type="button" class="btn-sm solid" onclick="document.getElementById('input-file-foto').click()" style="padding:0 1rem; height:48px; white-space:nowrap; background:var(--em); color:var(--ct); border:none; font-family:'Cinzel'; font-weight:800; font-size:0.7rem; cursor:pointer;">📸 Ambil Foto</button>
+        </div>
+        <input type="file" id="input-file-foto" accept="image/*" capture="environment" style="display:none" onchange="window.prosesUploadFoto(this)">
+        <p style="font-size:0.65rem; color:var(--cb); margin-top:5px; font-style:italic;">* Bisa ambil dari kamera HP atau galeri. Foto akan dikompres otomatis.</p>
+      </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-anggota')">Batal</button>
+      <button class="btn-simpan" onclick="window.simpanAnggota()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL TRANSAKSI -->
+<div class="modal-overlay" id="modal-transaksi">
+  <div class="modal-box" style="max-width:450px">
+    <div class="modal-header">
+      <p class="modal-judul" id="modal-trx-judul">Pencatatan Transaksi</p>
+      <button class="modal-tutup" onclick="tutupModal('modal-transaksi')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="modal-form" onsubmit="return false">
+        <input type="hidden" id="trx-id">
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="trx-tanggal" required/>
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <input type="text" id="trx-deskripsi" placeholder="Contoh: Iuran Arisan Januari" required/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori</label>
+            <select id="trx-kategori">
+              <option value="Saldo Awal">Saldo Awal / Rekap</option>
+              <option value="Sosial">Dana Sosial</option>
+              <option value="kas">Kas</option>
+              <option value="Tabungan">Tabungan Mandiri</option>
+              <option value="Operasional">Operasional/Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipe</label>
+            <div style="display:flex;flex-direction:column;gap:.6rem;margin-top:.5rem">
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="trx-tipe" value="masuk" checked style="width:auto"> Uang Masuk
+              </label>
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="trx-tipe" value="keluar" style="width:auto"> Uang Keluar
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="trx-jumlah" placeholder="0" required/>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="tutupModal('modal-transaksi')">Batal</button>
+      <button class="btn-simpan" onclick="window.simpanTransaksi()">Simpan Transaksi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL HAPUS (tetap di dashboard.html karena digunakan oleh anggota) -->
+<!-- MODAL HAPUS -->
+<div class="modal-overlay" id="modal-hapus">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <p class="modal-judul">Konfirmasi Hapus</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-hapus')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="konfirm-teks">Apakah Anda yakin ingin menghapus anggota<br>
+        <span class="konfirm-nama" id="konfirm-nama"></span>?<br>
+        <small style="color:rgba(245,236,215,.4);font-size:.75rem">Data yang dihapus tidak dapat dikembalikan.</small>
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-hapus')">Batal</button>
+      <button class="btn-hapus-ok" onclick="window.konfirmasiHapus()">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
