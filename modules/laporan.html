@@ -56,6 +56,8 @@
         .form-group label { font-family: 'Cinzel', serif; font-size: 0.75rem; color: var(--em); letter-spacing: 0.1em; }
         .form-control { background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.2); color: var(--kr); padding: 0.4rem 0.6rem; font-family: 'Lora', serif; font-size: 0.8rem; outline: none; transition: 0.3s; }
         .form-control:focus { border-color: var(--em); }
+        select.form-control { background-color: var(--cs); color: var(--kr); }
+        select option { background: var(--cs); color: var(--kr); }
         
         .status-pill { padding: 2px 8px; border-radius: 10px; font-size: 0.55rem; font-family: 'Cinzel', serif; font-weight: bold; }
         .status-lunas { background: rgba(46,107,62,0.2); color: #7ec894; border: 1px solid #7ec894; }
@@ -161,9 +163,13 @@
                     </div>
 
                     <div class="filter-section">
-                        <div class="form-group">
-                            <label>Pilih Periode Pertemuan</label>
-                            <select id="filter-periode" class="form-control" onchange="renderIuranReport()"></select>
+                        <div class="form-group" style="flex: 1; min-width: 140px;">
+                            <label>Periode Mulai</label>
+                            <select id="filter-periode-start" class="form-control" onchange="renderIuranReport()"></select>
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 140px;">
+                            <label>Sampai (Opsional)</label>
+                            <select id="filter-periode-end" class="form-control" onchange="renderIuranReport()"></select>
                         </div>
                     </div>
                     <div class="table-wrapper">
@@ -359,26 +365,44 @@
         }
 
         function populatePeriodeFilter() {
-            const select = document.getElementById('filter-periode');
-            const currentVal = select.value;
+            const startSelect = document.getElementById('filter-periode-start');
+            const endSelect = document.getElementById('filter-periode-end');
+            if (!startSelect || !endSelect) return;
+            
+            const currentStart = startSelect.value;
             const listIuran = Array.isArray(window.dataMaster.arisan.iuran_bulanan) ? window.dataMaster.arisan.iuran_bulanan : Object.values(window.dataMaster.arisan.iuran_bulanan || {});
-            const periods = listIuran.map(e => e.periode).sort().reverse();
+            const periods = listIuran.map(e => e.periode).sort();
+            const displayPeriods = [...periods].reverse();
             
             if (periods.length === 0) {
-                select.innerHTML = '<option value="">Belum ada data</option>';
+                startSelect.innerHTML = '<option value="">Belum ada data</option>';
+                endSelect.innerHTML = '<option value="">-</option>';
                 return;
             }
-            select.innerHTML = periods.map(p => `<option value="${p}" ${p === currentVal ? 'selected' : ''}>${p}</option>`).join('');
+            const html = displayPeriods.map(p => `<option value="${p}">${p}</option>`).join('');
+            startSelect.innerHTML = html;
+            endSelect.innerHTML = '<option value="">Hanya Satu Pertemuan</option>' + html;
         }
 
         window.renderIuranReport = function() {
-            const periode = document.getElementById('filter-periode').value;
+            const startP = document.getElementById('filter-periode-start').value;
+            const endP = document.getElementById('filter-periode-end').value;
             const tbody = document.getElementById('body-report-iuran');
             
             const listIuran = Array.isArray(window.dataMaster.arisan.iuran_bulanan) ? window.dataMaster.arisan.iuran_bulanan : Object.values(window.dataMaster.arisan.iuran_bulanan || {});
-            const entry = listIuran.find(e => e.periode === periode);
+
+            // Logika Penentuan Range
+            let selectedEntries = [];
+            if (!endP || startP === endP) {
+                const e = listIuran.find(x => x.periode === startP);
+                if (e) selectedEntries = [e];
+            } else {
+                const minP = startP < endP ? startP : endP;
+                const maxP = startP < endP ? endP : startP;
+                selectedEntries = listIuran.filter(e => e.periode >= minP && e.periode <= maxP);
+            }
             
-            if (!entry) { 
+            if (selectedEntries.length === 0) { 
                 tbody.innerHTML = '<tr><td colspan="6" class="text-center">Data tidak ditemukan</td></tr>'; 
                 document.getElementById('foot-lunas-count').textContent = '0';
                 document.getElementById('foot-total-pokok').textContent = 'Rp 0';
@@ -390,36 +414,63 @@
                 return; 
             }
 
-            const listPay = Array.isArray(entry.pembayaran) ? entry.pembayaran : Object.values(entry.pembayaran || {});
+            // Agregasi Data Per Anggota
+            const memberAgg = {};
+            selectedEntries.forEach(entry => {
+                const listPay = Array.isArray(entry.pembayaran) ? entry.pembayaran : Object.values(entry.pembayaran || {});
+                listPay.forEach(p => {
+                    if (!memberAgg[p.memberId]) memberAgg[p.memberId] = { lunasCount: 0, tPokok: 0, tSosial: 0, tTab: 0, methods: new Set() };
+                    
+                    if (p.paid) {
+                        const m = window.dataMaster.anggota.find(x => String(x.id) === String(p.memberId));
+                        if (!m) return;
+                        const nom = m.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+                        const kom = m.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
+
+                        memberAgg[p.memberId].lunasCount++;
+                        if (kom.arisan) memberAgg[p.memberId].tPokok += (parseInt(nom.arisan) || 0);
+                        if (kom.sosial) memberAgg[p.memberId].tSosial += (parseInt(nom.sosial) || 0);
+                        if (kom.tabungan) memberAgg[p.memberId].tTab += (parseInt(nom.tabungan) || 0);
+                        if (p.metodeBayar) memberAgg[p.memberId].methods.add(p.metodeBayar);
+                    }
+                });
+            });
+
+            const sortedIds = Object.keys(memberAgg).sort((a,b) => {
+                const ma = window.dataMaster.anggota.find(m => String(m.id) === a);
+                const mb = window.dataMaster.anggota.find(m => String(m.id) === b);
+                return (ma?.nama || '').localeCompare(mb?.nama || '');
+            });
+
             let tPokok = 0, tSosial = 0, tTab = 0, tGrand = 0, cLunas = 0;
 
-            tbody.innerHTML = listPay.map(p => {
-                const member = window.dataMaster.anggota.find(m => String(m.id) === String(p.memberId));
+            tbody.innerHTML = sortedIds.map(mid => {
+                const agg = memberAgg[mid];
+                const member = window.dataMaster.anggota.find(m => String(m.id) === mid);
                 if (!member) return '';
-                
-                let nPokok = 0, nSosial = 0, nTab = 0;
-                const nom = member.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
-                const kom = member.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
-                
-                if (kom.arisan) nPokok = parseInt(nom.arisan) || 0;
-                if (kom.sosial) nSosial = parseInt(nom.sosial) || 0;
-                if (kom.tabungan) nTab = parseInt(nom.tabungan) || 0;
-                const total = nPokok + nSosial + nTab;
 
-                if (p.paid) {
-                    tPokok += nPokok;
-                    tSosial += nSosial;
-                    tTab += nTab;
-                    tGrand += total;
-                    cLunas++;
+                const total = agg.tPokok + agg.tSosial + agg.tTab;
+                tPokok += agg.tPokok; tSosial += agg.tSosial; tTab += agg.tTab; tGrand += total;
+
+                let statusHtml = '';
+                if (selectedEntries.length === 1) {
+                    const isLunas = agg.lunasCount > 0;
+                    if (isLunas) cLunas++;
+                    statusHtml = `<span class="status-pill ${isLunas ? 'status-lunas' : 'status-belum'}">${isLunas ? 'LUNAS' : 'BELUM'}</span>`;
+                } else {
+                    const fullyPaid = agg.lunasCount === selectedEntries.length;
+                    if (fullyPaid) cLunas++;
+                    statusHtml = `<span class="status-pill ${fullyPaid ? 'status-lunas' : 'status-belum'}" style="font-size:0.5rem">${agg.lunasCount}/${selectedEntries.length} BLN</span>`;
                 }
 
+                const methodList = Array.from(agg.methods).join(', ') || '-';
+
                 return `<tr>
-                    <td><div style="font-weight:600">${member.nama}</div><div style="font-size:0.65rem; opacity:0.6; text-transform:capitalize;">${p.metodeBayar || 'Cash'}</div></td>
-                    <td class="text-center"><span class="status-pill ${p.paid ? 'status-lunas' : 'status-belum'}">${p.paid ? 'LUNAS' : 'BELUM'}</span></td>
-                    <td class="text-right" style="opacity:0.7">${formatRp(nPokok)}</td>
-                    <td class="text-right" style="opacity:0.7">${formatRp(nSosial)}</td>
-                    <td class="text-right" style="opacity:0.7">${formatRp(nTab)}</td>
+                    <td><div style="font-weight:600">${member.nama}</div><div style="font-size:0.65rem; opacity:0.6; text-transform:capitalize;">${methodList}</div></td>
+                    <td class="text-center">${statusHtml}</td>
+                    <td class="text-right" style="opacity:0.7">${formatRp(agg.tPokok)}</td>
+                    <td class="text-right" style="opacity:0.7">${formatRp(agg.tSosial)}</td>
+                    <td class="text-right" style="opacity:0.7">${formatRp(agg.tTab)}</td>
                     <td class="text-right" style="color:var(--em); font-weight:600;">${formatRp(total)}</td>
                 </tr>`;
             }).join('');
@@ -433,8 +484,12 @@
 
             // Update Summary Cards
             const listJadwal = Array.isArray(window.dataMaster.arisan.jadwal) ? window.dataMaster.arisan.jadwal : Object.values(window.dataMaster.arisan.jadwal || {});
-            const winner = listJadwal.find(j => j.periode === periode);
-            document.getElementById('val-period-winner').textContent = winner ? winner.penerimaNama : 'Belum Ada';
+            if (selectedEntries.length === 1) {
+                const winner = listJadwal.find(j => j.periode === startP);
+                document.getElementById('val-period-winner').textContent = winner ? winner.penerimaNama : 'Belum Ada';
+            } else {
+                document.getElementById('val-period-winner').textContent = 'Mode Rentang';
+            }
             document.getElementById('val-period-total').textContent = formatRp(tGrand);
         }
 

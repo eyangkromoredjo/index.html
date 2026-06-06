@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -113,8 +113,8 @@
         td strong { color: var(--em); }
         tbody tr:hover { background: rgba(201,168,76,0.04); }
         
-        .badge-lunas { color: #7ec894; border: 1px solid rgba(46,107,62,0.4); background: rgba(46,107,62,0.15); padding: 3px 8px; font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.1em; }
-        .badge-belum { color: #e8a0a0; border: 1px solid rgba(139,46,46,0.4); background: rgba(139,46,46,0.15); padding: 3px 8px; font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.1em; }
+        .badge-lunas { color: #7ec894; border: 1.5px solid rgba(46,107,62,0.6); background: rgba(46,107,62,0.25); padding: 5px 12px; font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 800; border-radius: 4px; display: inline-block; min-width: 40px; text-align: center; }
+        .badge-belum { color: #e8a0a0; border: 1.5px solid rgba(139,46,46,0.6); background: rgba(139,46,46,0.25); padding: 5px 12px; font-family: 'Cinzel', serif; font-size: 0.85rem; letter-spacing: 0.05em; font-weight: 800; border-radius: 4px; display: inline-block; min-width: 40px; text-align: center; }
 
         /* Gaya untuk catatan/hint */
         .note {
@@ -241,6 +241,10 @@
             <!-- PANEL DAFTAR PESERTA -->
             <div class="panel" id="panel-daftar-peserta">
                 <h3>Daftar <em>Peserta Aktif</em></h3>
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label>Cari Peserta</label>
+                    <input type="text" id="search-peserta" class="form-control" placeholder="Cari nama anggota..." oninput="window.renderPesertaTable()">
+                </div>
                 <div class="table-wrapper">
                     <table>
                         <thead>
@@ -258,40 +262,42 @@
                     <label>Pilih Anggota Keluarga</label>
                     <select id="select-anggota" class="form-control" onchange="loadAnggotaSettings()"></select>
                 </div>
-                <div class="form-group">
-                    <label>Kategori Peserta: <span id="label-kategori" class="status-pill status-bukan">Bukan Peserta</span></label>
-                </div>
-                <div class="form-group">
-                    <label>Tentukan Komponen & Nominal Iuran (Rp)</label>
-                    <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-                            <input type="checkbox" id="chk-arisan" onchange="handleArisanCheck()">
-                            <label for="chk-arisan">Iuran Arisan (Pokok)</label>
-                        </div>
-                        <input type="number" id="nominal-arisan" class="form-control" placeholder="Nominal Arisan" value="55000">
+                <div id="settings-iuran-container" style="display: none;">
+                    <div class="form-group">
+                        <label>Kategori Peserta: <span id="label-kategori" class="status-pill status-bukan">Bukan Peserta</span></label>
                     </div>
-                    <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-                            <input type="checkbox" id="chk-sosial" onchange="handleArisanCheck()">
-                            <label for="chk-sosial">Dana Sosial (Santunan)</label>
+                    <div class="form-group">
+                        <label>Tentukan Komponen & Nominal Iuran (Rp)</label>
+                        <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                <input type="checkbox" id="chk-arisan" onchange="handleArisanCheck()">
+                                <label for="chk-arisan">Iuran Arisan (Pokok)</label>
+                            </div>
+                            <input type="number" id="nominal-arisan" class="form-control" placeholder="Nominal Arisan" value="55000">
                         </div>
-                        <input type="number" id="nominal-sosial" class="form-control" placeholder="Nominal Sosial" value="40000">
-                    </div>
-                    <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
-                        <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
-                            <input type="checkbox" id="chk-tabungan" onchange="handleArisanCheck()">
-                            <label for="chk-tabungan">Tabungan Mandiri</label>
+                        <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                <input type="checkbox" id="chk-sosial" onchange="handleArisanCheck()">
+                                <label for="chk-sosial">Dana Sosial (Santunan)</label>
+                            </div>
+                            <input type="number" id="nominal-sosial" class="form-control" placeholder="Nominal Sosial" value="40000">
                         </div>
-                        <input type="number" id="nominal-tabungan" class="form-control" placeholder="Nominal Tabungan" value="5000">
+                        <div class="checkbox-card" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; width: 100%;">
+                                <input type="checkbox" id="chk-tabungan" onchange="handleArisanCheck()">
+                                <label for="chk-tabungan">Tabungan Mandiri</label>
+                            </div>
+                            <input type="number" id="nominal-tabungan" class="form-control" placeholder="Nominal Tabungan" value="5000">
+                        </div>
+                        <div id="pesan-validasi" class="note" style="color: #e8a0a0; display: none; margin-top: 10px;"></div> <!-- Pesan validasi tetap merah -->
+                        <p class="note">Pokok: Centang semua. Non-Pokok: Biasanya Sosial & Tabungan.</p>
                     </div>
-                    <div id="pesan-validasi" class="note" style="color: #e8a0a0; display: none; margin-top: 10px;"></div> <!-- Pesan validasi tetap merah -->
-                    <p class="note">Pokok: Centang semua. Non-Pokok: Biasanya Sosial & Tabungan.</p>
+                    <div class="form-group">
+                        <label>Catatan Khusus Arisan</label>
+                        <textarea id="input-catatan" class="form-control" placeholder="Contoh: Titipan iuran melalui Bp. X..."></textarea>
+                    </div>
+                    <button class="btn-primary" onclick="saveAnggotaSettings()">Simpan Pengaturan Anggota</button>
                 </div>
-                <div class="form-group">
-                    <label>Catatan Khusus Arisan</label>
-                    <textarea id="input-catatan" class="form-control" placeholder="Contoh: Titipan iuran melalui Bp. X..."></textarea>
-                </div>
-                <button class="btn-primary" onclick="saveAnggotaSettings()">Simpan Pengaturan Anggota</button>
             </div>
 
             <!-- PANEL IURAN & HADIR -->
@@ -303,6 +309,10 @@
                         <select id="pay-month" class="form-control-small" onchange="renderPayChecklist()"></select>
                         <select id="pay-year" class="form-control-small" onchange="renderPayChecklist()"></select>
                     </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label>Cari Nama</label>
+                    <input type="text" id="search-pay" class="form-control" placeholder="Ketik nama anggota..." oninput="window.renderPayChecklist()">
                 </div>
                 <div class="table-wrapper">
                     <table>
@@ -337,6 +347,22 @@
                    </div>
                 </div>
                 <button class="btn-primary" style="margin-top:1.5rem;" onclick="savePresensi()">Simpan Presensi & Iuran</button>
+
+                <!-- Tabel Ringkasan Iuran Per Periode -->
+                <div class="table-wrapper" style="margin-top:2.5rem;">
+                    <h4 style="font-family: 'Cinzel', serif; font-size: 0.85rem; color: var(--em); margin-bottom: 0.8rem;">Ringkasan Iuran Per Periode</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Periode</th>
+                                <th style="text-align:right;">Total Nominal</th>
+                                <th style="text-align:center;">Lunas</th>
+                                <th style="text-align:center;">Belum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabel-ringkasan-iuran"></tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- PANEL PENGELUARAN -->
@@ -575,6 +601,7 @@ window.renderPenerimaDropdown = renderPenerimaDropdown;
 function loadAnggotaSettings() {
     const id = document.getElementById("select-anggota")?.value;
     const sel = document.getElementById("select-anggota");
+    const container = document.getElementById("settings-iuran-container");
     const anggota = window.semuaAnggota.find(m => String(m.id) === String(id));
     const inputCatatan = document.getElementById("input-catatan");
 
@@ -583,6 +610,7 @@ function loadAnggotaSettings() {
     }
 
     if (!anggota) {
+        if (container) container.style.display = "none";
         document.getElementById("chk-arisan").checked = false;
         document.getElementById("chk-sosial").checked = false;
         document.getElementById("chk-tabungan").checked = false;
@@ -594,6 +622,7 @@ function loadAnggotaSettings() {
         return;
     }
 
+    if (container) container.style.display = "block";
     const komponen = anggota.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
     const nominal = anggota.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
     document.getElementById("chk-arisan").checked = Boolean(komponen.arisan);
@@ -706,11 +735,13 @@ window.saveAnggotaSettings = saveAnggotaSettings;
 
 function renderPesertaTable() {
     const tbody = document.getElementById("tabel-peserta");
+    const cari = (document.getElementById("search-peserta")?.value || "").toLowerCase();
     if (!tbody) return;
 
     const rows = window.semuaAnggota
         // Konsistensi: Hanya tampilkan yang memang statusnya 'aktif' di Dashboard
         .filter(m => !m.wafat && m.status === 'aktif' && (m.tipeArisan === 'pokok' || m.tipeArisan === 'non-pokok'))
+        .filter(m => m.nama.toLowerCase().includes(cari))
         .sort((a, b) => a.nama.localeCompare(b.nama))
         .map(m => {
             const tipe = m.tipeArisan || "bukan-peserta";
@@ -788,10 +819,6 @@ async function saveWinner() {
     await set(ref(db, "arisan_global"), window.storageArisan);
     
     window.renderJadwalTable();
-    const now = new Date();
-    const mEl = document.getElementById('jadwal-month');
-    const yEl = document.getElementById('jadwal-year');
-    if (mEl && yEl) { mEl.value = String(now.getMonth()+1).padStart(2,'0'); yEl.value = String(now.getFullYear()); }
     document.getElementById("winner-id").value = "";
     document.getElementById("next-loc").value = "";
     showToast("Jadwal arisan manual berhasil disimpan.", "success", 1200);
@@ -841,45 +868,48 @@ function renderJadwalTable() {
 window.renderJadwalTable = renderJadwalTable;
 
 function renderIuranHistory() {
-    const tbody = document.getElementById('tabel-iuran-periode');
-    const badge = document.getElementById('badge-jumlah-periode');
-    if (!tbody || !badge) return;
+    const tbody = document.getElementById('tabel-ringkasan-iuran');
+    if (!tbody) return;
 
     window.storageArisan.iuran_bulanan = window.storageArisan.iuran_bulanan || [];
     if (!window.storageArisan.iuran_bulanan.length) {
-        tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada pembayaran periode yang disimpan.</td></tr>';
-        badge.textContent = '0 periode';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#8A7B6C; padding:18px;">Belum ada data iuran tersimpan.</td></tr>';
         return;
     }
 
     const periods = [...window.storageArisan.iuran_bulanan].sort((a, b) => b.periode.localeCompare(a.periode));
-    badge.textContent = `${periods.length} periode`;
 
-    const rows = periods.map(entry => {
-        const pembayaranBayar = Array.isArray(entry.pembayaran) ? entry.pembayaran.filter(p => p.paid) : [];
-        const jumlahAnggota = pembayaranBayar.length;
-        const totalNominal = pembayaranBayar.reduce((sum, pembayaran) => {
-            const member = window.semuaAnggota.find(m => String(m.id) === String(pembayaran.memberId));
-            if (!member) return sum;
-            const komponen = member.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
-            const nominal = member.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
-            let memberTotal = 0;
-            if (komponen.arisan) memberTotal += nominal.arisan || 55000;
-            if (komponen.sosial) memberTotal += nominal.sosial || 40000;
-            if (komponen.tabungan) memberTotal += nominal.tabungan || 5000;
-            return sum + memberTotal;
+    tbody.innerHTML = periods.map(entry => {
+        const listPay = Array.isArray(entry.pembayaran) ? entry.pembayaran : [];
+        const lunasCount = listPay.filter(p => p.paid).length;
+        const belumCount = listPay.length - lunasCount;
+
+        let totalNominal = 0;
+        listPay.forEach(p => {
+            if (p.paid) {
+                const member = window.semuaAnggota.find(m => String(m.id) === String(p.memberId));
+                if (member) {
+                    const kom = member.iuranKomponen || { arisan: false, sosial: false, tabungan: false };
+                    const nom = member.nominalIuran || { arisan: 55000, sosial: 40000, tabungan: 5000 };
+                    if (kom.arisan) totalNominal += (parseInt(nom.arisan) || 0);
+                    if (kom.sosial) totalNominal += (parseInt(nom.sosial) || 0);
+                    if (kom.tabungan) totalNominal += (parseInt(nom.tabungan) || 0);
+                }
+            }
         }, 0);
-        const formattedTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+
+        const fmtTotal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalNominal);
+
         return `
             <tr>
                 <td>${entry.periode}</td>
-                <td style="text-align:center;">${jumlahAnggota}</td>
-                <td style="text-align:right; font-weight:600; color:#3E7F4C;">${formattedTotal}</td>
+                <td style="text-align:right; font-weight:600; color:var(--em);">${fmtTotal}</td>
+                <td style="text-align:center;"><span class="badge-lunas">${lunasCount}</span></td>
+                <td style="text-align:center;"><span class="badge-belum">${belumCount}</span></td>
             </tr>`;
     }).join('');
-
-    tbody.innerHTML = rows;
 }
+window.renderIuranHistory = renderIuranHistory;
 
 async function saveExpense() {
     const periode = getPeriodeFromSelectors('exp');
@@ -939,6 +969,7 @@ window.renderExpenseTable = renderExpenseTable;
 // =========================================================
 function renderPayChecklist() {
     const periode = getPeriodeFromSelectors('pay');
+    const cari = (document.getElementById("search-pay")?.value || "").toLowerCase();
     const tbody = document.getElementById("pay-tbody");
     if (!tbody) return;
 
@@ -955,7 +986,8 @@ function renderPayChecklist() {
     const peserta = window.semuaAnggota
         // Konsistensi: Anggota yang di-nonaktifkan di Dashboard otomatis hilang dari daftar iuran periode
         .filter(m => !m.wafat && m.status === 'aktif' && (m.tipeArisan === 'pokok' || m.tipeArisan === 'non-pokok'))
-        .sort((a, b) => a.nama.localeCompare(b.nama));
+        .sort((a, b) => a.nama.localeCompare(b.nama))
+        .filter(m => m.nama.toLowerCase().includes(cari));
 
     if (!peserta.length) {
         tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#8A7B6C; padding:18px;">Tidak ada peserta aktif.</td></tr>';
@@ -1055,7 +1087,7 @@ function populatePeriodeSelectors() {
     const now = new Date();
     const currentYear = now.getFullYear();
     const years = [];
-    for (let y = currentYear - 1; y <= currentYear + 2; y++) years.push(y);
+    for (let y = currentYear - 1; y <= currentYear + 10; y++) years.push(y);
 
     ['pay','jadwal','exp'].forEach(prefix => {
         const mEl = document.getElementById(`${prefix}-month`); // Perbaikan ID
@@ -1223,6 +1255,8 @@ initArisanPage();
 function resetAturAnggotaForm() {
     const sel = document.getElementById('select-anggota');
     if (sel) sel.value = '';
+    const container = document.getElementById('settings-iuran-container');
+    if (container) container.style.display = 'none';
     const chkAr = document.getElementById('chk-arisan'); if (chkAr) chkAr.checked = false;
     const chkSo = document.getElementById('chk-sosial'); if (chkSo) chkSo.checked = false;
     const chkTa = document.getElementById('chk-tabungan'); if (chkTa) chkTa.checked = false;
