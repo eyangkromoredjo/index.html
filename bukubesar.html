@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Buku Besar Keuangan - Paguyuban Keluarga Eyang Kromoredjo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+
+<!-- APP (Minimal structure for Buku Besar page) -->
+<div id="halaman-app" class="halaman aktif">
+  <div class="overlay-sb" id="overlay-sb" onclick="window.tutupSidebar()"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <img src="logo PKEK.jpg" alt="Logo" class="sidebar-logo-img">
+      <p class="sidebar-logo">Paguyuban Keluarga</p>
+      <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
+    </div>
+    <div class="sidebar-nav">
+      <p class="nav-label">Menu Utama</p>
+      <div class="nav-item" onclick="location.href='dashboard.html'"><span class="ni">🏠</span> Beranda</div>
+      <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
+      <div class="nav-item" onclick="location.href='modules/arisan.html'"><span class="ni">💰</span> Arisan</div>
+      <div class="nav-item aktif" onclick="window.tutupSidebar()"><span class="ni">📖</span> Buku Besar</div>
+      <div class="nav-item" onclick="location.href='silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
+      <div class="nav-item" onclick="location.href='modules/laporan.html'"><span class="ni">📊</span> Laporan</div>
+    </div>
+    <div class="sidebar-footer">
+      <p class="sidebar-level" id="sidebar-level"></p>
+      <button id="btn-login-sidebar" class="tombol-keluar" onclick="window.tampilLogin()" style="margin-bottom:.5rem;display:block">✦ Login Pengurus</button>
+      <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="window.keluar()" style="display:none">✦ Keluar</button>
+      <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
+    </div>
+  </nav>
+
+  <main class="konten-utama">
+    <div class="topbar">
+      <button class="hamburger" onclick="window.bukaSidebar()">☰</button>
+      <p class="topbar-judul" id="topbar-judul">Buku Besar Keuangan</p>
+      <p class="topbar-user" id="topbar-user"></p>
+    </div>
+
+    <!-- BUKU BESAR (LEDGER) PANEL -->
+    <div class="panel aktif" id="panel-buku-besar" style="padding: 2rem;">
+      <div class="panel-header">
+        <h2 class="panel-judul">Buku Besar <em>Keuangan</em></h2>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
+          <button class="btn-tambah" onclick="window.resetTrxForm(); window.bukaModal('modal-transaksi')">+ Transaksi Baru</button>
+          <button class="btn-tambah" style="background:rgba(201,168,76,.14);color:var(--kr);border-color:rgba(201,168,76,.25);" onclick="window.importLedgerFile()">+ Import Excel</button>
+          <button class="btn-sm danger" id="btn-bersihkan-ledger" onclick="window.hapusSemuaTransaksi()" style="display:none; padding:0.7rem 1.5rem; font-size:0.85rem; height:48px">🗑 Bersihkan Data</button>
+        </div>
+      </div>
+
+      <!-- FILTER BUKU BESAR -->
+      <div class="filter-bar" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1.2rem; background: rgba(107, 58, 31, 0.2); padding: 1.2rem; border-radius: 8px; border: 1px solid rgba(201,168,76,0.1);">
+        <div style="display:flex; flex-direction: column; gap:0.4rem; width: 100%;">
+          <label style="font-size: 0.6rem; color: var(--el); font-family: 'Cinzel'; font-weight: bold;">Mulai</label>
+          <div style="display:flex; gap: 5px;">
+            <select class="search-box" id="filter-mulai-bulan" onchange="window.renderBukuBesar()" style="padding: 0.4rem; flex: 1; height: 38px; min-width: 0;">
+              <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option>
+              <option value="05">Mei</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ags</option>
+              <option value="09">Sep</option><option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
+            </select>
+            <input type="number" class="search-box" id="filter-mulai-tahun" placeholder="Tahun" oninput="window.renderBukuBesar()" style="width: 75px; padding: 0.4rem; height: 38px;">
+          </div>
+        </div>
+        <div style="display:flex; flex-direction: column; gap:0.4rem; width: 100%;">
+          <label style="font-size: 0.6rem; color: var(--el); font-family: 'Cinzel'; font-weight: bold;">Sampai</label>
+          <div style="display:flex; gap: 5px;">
+            <select class="search-box" id="filter-sampai-bulan" onchange="window.renderBukuBesar()" style="padding: 0.4rem; flex: 1; height: 38px; min-width: 0;">
+              <option value="01">Jan</option><option value="02">Feb</option><option value="03">Mar</option><option value="04">Apr</option>
+              <option value="05">Mei</option><option value="06">Jun</option><option value="07">Jul</option><option value="08">Ags</option>
+              <option value="09">Sep</option><option value="10">Okt</option><option value="11">Nov</option><option value="12">Des</option>
+            </select>
+            <input type="number" class="search-box" id="filter-sampai-tahun" placeholder="Tahun" oninput="window.renderBukuBesar()" style="width: 75px; padding: 0.4rem; height: 38px;">
+          </div>
+        </div>
+        <button class="fbtn" onclick="window.resetFilterBukuBesar()" style="padding: 0.5rem 1.5rem; font-size: 0.7rem; border-color: var(--em); color: var(--em); height: 38px; align-self: flex-start; width: fit-content;">Reset Filter</button>
+      </div>
+      
+      <div class="ledger-summary">
+        <div class="ledger-stat"><p>Total Pemasukan</p><h4 id="ledger-total-masuk">Rp 0</h4></div>
+        <div class="ledger-stat"><p>Total Pengeluaran</p><h4 id="ledger-total-keluar">Rp 0</h4></div>
+        <div class="ledger-stat" style="border-color: var(--em);"><p>Saldo Akhir</p><h4 id="ledger-saldo-akhir" style="color: var(--em);">Rp 0</h4></div>
+      </div>
+
+      <div style="margin-bottom: 1.2rem;">
+        <input type="text" id="search-ledger" class="search-box" placeholder="🔍 Cari transaksi (Ketik keterangan atau kategori)..." oninput="window.renderBukuBesar()" style="padding: 0.6rem 1rem; height: 42px; width: 100%; background: rgba(0,0,0,0.2); border-color: rgba(201,168,76,0.3); border-radius: 8px;">
+      </div>
+
+      <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; border: 1px solid rgba(201,168,76,0.15);">
+        <table class="tabel-ledger">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Keterangan</th>
+              <th>Kategori</th>
+              <th>Masuk</th>
+              <th>Keluar</th>
+              <th style="text-align:center">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="ledger-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL TRANSAKSI (Moved from dashboard.html) -->
+<div class="modal-overlay" id="modal-transaksi">
+  <div class="modal-box" style="max-width:450px">
+    <div class="modal-header">
+      <p class="modal-judul" id="modal-trx-judul">Pencatatan Transaksi</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-transaksi')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form class="modal-form" onsubmit="return false">
+        <input type="hidden" id="trx-id">
+        <div class="form-group">
+          <label>Tanggal</label>
+          <input type="date" id="trx-tanggal" required/>
+        </div>
+        <div class="form-group">
+          <label>Keterangan</label>
+          <input type="text" id="trx-deskripsi" placeholder="Contoh: Iuran Arisan Januari" required/>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kategori</label>
+            <select id="trx-kategori">
+              <option value="Saldo Awal">Saldo Awal / Rekap</option>
+              <option value="Sosial">Dana Sosial</option>
+              <option value="kas">Kas</option>
+              <option value="Tabungan">Tabungan Mandiri</option>
+              <option value="Operasional">Operasional/Lainnya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipe</label>
+            <div style="display:flex;flex-direction:column;gap:.6rem;margin-top:.5rem">
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="trx-tipe" value="masuk" checked style="width:auto"> Uang Masuk
+              </label>
+              <label style="display:flex;align-items:center;gap:.5rem;text-transform:none;letter-spacing:normal;cursor:pointer;font-size:.85rem">
+                <input type="radio" name="trx-tipe" value="keluar" style="width:auto"> Uang Keluar
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Jumlah (Rp)</label>
+          <input type="number" id="trx-jumlah" placeholder="0" required/>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-transaksi')">Batal</button>
+      <button class="btn-simpan" onclick="window.simpanTransaksi()">Simpan Transaksi</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="input-import-excel" accept=".xlsx,.xls,.csv" style="display:none" onchange="window.handleImportLedgerFile(this)">
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module" src="js/firebase-config.js"></script>
+<script type="module" src="js/utils.js"></script>
+<script type="module" src="js/bukubesar.js"></script>
+</body>
+</html>
