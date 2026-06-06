@@ -112,6 +112,8 @@ input:-webkit-autofill:focus {
 .gen-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(201,168,76,.3),transparent)}
 .anggota-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
 .a-card{border:1px solid rgba(201,168,76,.9);padding:1.3rem;position:relative;transition:all .3s;border-radius:12px;overflow:hidden;background:var(--ct);display:flex;flex-direction:column;height:auto;min-height:250px;}
+.a-card.male { border-color: #1E88E5; box-shadow: 0 4px 12px rgba(30, 136, 229, 0.15); }
+.a-card.female { border-color: #EC407A; box-shadow: 0 4px 12px rgba(236, 64, 122, 0.15); }
 .a-card:hover{border-color:var(--em);transform:translateY(-3px)}
 .a-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--em),transparent);opacity:0;transition:opacity .3s}
 .a-card:hover::before{opacity:1}

@@ -527,8 +527,8 @@
                 const saudara = listAnggota
                     .filter(m => m.parentId === parentId && !m.spouseId)
                     .sort((a, b) => {
-                        const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-                        const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                        const ua = parseInt(a.urutan || a.urutan_anak) || 9999;
+                        const ub = parseInt(b.urutan || b.urutan_anak) || 9999;
                         if (ua !== ub) return ua - ub;
                         return a.id - b.id;
                     });
@@ -673,17 +673,24 @@
 
                     // Urutkan parentId berdasarkan urutan_anak orang tua di generasi sebelumnya
                     const sortedParentKeys = Object.keys(groupByParent).sort((parentIdA, parentIdB) => {
-                        let urutanA = 9999;
-                        let urutanB = 9999;
-                        
-                        if (parentIdA !== '_no_parent') {
-                            const ortuA = listAnggota.find(a => a.id === parseInt(parentIdA));
-                            urutanA = ortuA && ortuA.urutan_anak ? parseInt(ortuA.urutan_anak) : 9999;
-                        }
-                        if (parentIdB !== '_no_parent') {
-                            const ortuB = listAnggota.find(a => a.id === parseInt(parentIdB));
-                            urutanB = ortuB && ortuB.urutan_anak ? parseInt(ortuB.urutan_anak) : 9999;
-                        }
+                        const getUrutanOrtu = (pId) => {
+                            if (pId === '_no_parent') return 9999;
+                            let ortu = listAnggota.find(a => a.id === parseInt(pId));
+                            if (!ortu) return 9999;
+
+                            // Jika ortu yang dirujuk adalah Menantu (bukan Trah), cari pasangan Trah-nya
+                            const isTrah = !!(ortu.parentId || String(ortu.generasi) === '0');
+                            if (!isTrah && ortu.spouseId) {
+                                const pasanganTrah = listAnggota.find(m => m.id === parseInt(ortu.spouseId));
+                                if (pasanganTrah) ortu = pasanganTrah;
+                            }
+
+                            const val = parseInt(ortu.urutan || ortu.urutan_anak);
+                            return isNaN(val) ? 9999 : val;
+                        };
+
+                        const urutanA = getUrutanOrtu(parentIdA);
+                        const urutanB = getUrutanOrtu(parentIdB);
                         
                         if (urutanA !== urutanB) return urutanA - urutanB;
                         return parentIdA.localeCompare(parentIdB);
@@ -710,8 +717,8 @@
 
                         // Pisahkan anak kandung untuk grup ini
                         const childrenOnly = groupMembers.filter(m => !m.spouseId).sort((a, b) => {
-                            const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-                            const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                            const ua = parseInt(a.urutan || a.urutan_anak) || 9999;
+                            const ub = parseInt(b.urutan || b.urutan_anak) || 9999;
                             if (ua !== ub) return ua - ub;
                             return a.id - b.id;
                         });
@@ -1011,8 +1018,8 @@
             const saudara = listAnggota
                 .filter(m => m.parentId === target.parentId && !m.spouseId)
                 .sort((a, b) => {
-                    const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-                    const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                    const ua = parseInt(a.urutan || a.urutan_anak) || 9999;
+                    const ub = parseInt(b.urutan || b.urutan_anak) || 9999;
                     if (ua !== ub) return ua - ub;
                     return a.id - b.id;
                 });
@@ -1038,8 +1045,8 @@
             const saudara = listAnggota
                 .filter(m => m.parentId === target.parentId && !m.spouseId)
                 .sort((a, b) => {
-                    const ua = a.urutan_anak ? parseInt(a.urutan_anak) : 9999;
-                    const ub = b.urutan_anak ? parseInt(b.urutan_anak) : 9999;
+                    const ua = parseInt(a.urutan || a.urutan_anak) || 9999;
+                    const ub = parseInt(b.urutan || b.urutan_anak) || 9999;
                     if (ua !== ub) return ua - ub;
                     return a.id - b.id;
                 });

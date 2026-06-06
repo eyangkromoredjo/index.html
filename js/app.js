@@ -45,6 +45,7 @@ window.handleLogin = async function() {
 
   if (user) {
     proceedLogin({
+      id: user.id,
       username: user.panggilan,
       nama: user.nama,
       level: user.level || 'anggota'
@@ -223,6 +224,12 @@ window.toggleIzinDaftar = async function(id, val) {
   if(!a) return;
 
   if (val) {
+    // Cegah pemberian akses jika anggota sudah wafat
+    if (a.kehidupan === 'wafat') {
+      toast("Gagal: Anggota yang sudah wafat tidak dapat diberi izin akses.");
+      window.renderAnggota(); // Render ulang untuk meriset UI checkbox
+      return;
+    }
     const tgl = a.tanggalLahir || a.lahir;
     if (!tgl || !a.panggilan) {
       alert('Gagal: Anggota harus punya Nama Panggilan dan Tgl Lahir untuk membuat password otomatis.');
@@ -265,7 +272,8 @@ window.renderAnggota = async function() {
     }
     
     while (cur) {
-      path.unshift((parseInt(cur.urutan || cur.urutan_anak) || 99).toString().padStart(3, '0'));
+      const uVal = parseInt(cur.urutan || cur.urutan_anak);
+      path.unshift((isNaN(uVal) ? 99 : uVal).toString().padStart(3, '0'));
       const pid = cur.idOrangTua || cur.parentId;
       cur = pid ? data.find(x => String(x.id) === String(pid)) : null;
     }
@@ -379,6 +387,7 @@ window.renderAnggota = async function() {
 };
 
 function kartu(a, allData) {
+  const isMale = a.gender === 'L' || a.jenisKelamin === 'L' || a.jenisKelamin === 'Laki-Laki' || a.gender === 'Laki-laki';
   const bday = a.tanggalLahir || a.lahir;
   const ini = a.nama.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
   let usiaTeks = '';
@@ -400,10 +409,12 @@ function kartu(a, allData) {
   if (sId && allData) {
     const spouse = allData.find(m => String(m.id) === String(sId));
     if (spouse) {
-      const isMale = a.gender === 'L' || a.jenisKelamin === 'L';
       infoPasangan = `<p class="a-spouse">${isMale ? 'Suami' : 'Istri'} dari ${spouse.panggilan || spouse.nama}</p>`;
     }
   }
+
+  const valUrut = a.urutan || a.urutan_anak;
+  const urutanTeks = valUrut ? `<p class="a-urutan">✦ Anak ke-${valUrut}</p>` : '';
 
   // Badges
   const isTrah = !!(a.idOrangTua || a.parentId || String(a.generasi) === '0');
@@ -415,12 +426,13 @@ function kartu(a, allData) {
   const canManage = HAK_AKSES[penggunaLogin.level]?.kelolaAkun;
 
   return `
-    <div class="a-card ${sudahWafat ? 'wafat' : ''}">
+    <div class="a-card ${isMale ? 'male' : 'female'} ${sudahWafat ? 'wafat' : ''}">
       <div class="a-top">
         <div class="a-avatar">${a.foto ? `<img src="${a.foto}" alt="${a.nama}" onerror="this.parentElement.innerHTML='${ini}'">` : ini}</div>
         <div>
           <p class="a-nama">${sudahWafat ? '🪦 ' : ''}${a.nama}</p>
           <p class="a-panggilan">${a.panggilan ? '"' + a.panggilan + '"' : ''}</p>
+          ${urutanTeks}
           ${infoPasangan}
         </div>
       </div>
@@ -590,8 +602,10 @@ window.hapusTransaksi = async function(id) {
 
 // 6. STATISTIK REALTIME
 function startRealtimeStats() {
+  let dataAnggotaCached = [];
   onValue(ref(db, "anggota"), (snapshot) => {
     const data = snapshot.exists() ? Object.values(snapshot.val()) : [];
+    dataAnggotaCached = data;
 
     // Pembaruan Stats Utama dengan pengecekan elemen agar tidak crash
     const elTotal = document.getElementById('stat-total');
@@ -625,6 +639,7 @@ function startRealtimeStats() {
       }
       genEl.innerHTML = html;
     }
+    updateTabunganPribadi(dataAnggotaCached);
   });
 
   onValue(ref(db, "transaksi"), (snapshot) => {
@@ -650,6 +665,40 @@ function startRealtimeStats() {
       window.renderBukuBesar();
     }
   });
+
+  // Listener Riwayat Arisan untuk Tabungan Pribadi
+  onValue(ref(db, "arisan_global"), (snapshot) => {
+    window.arisanGlobalData = snapshot.val();
+    updateTabunganPribadi(dataAnggotaCached);
+  });
+}
+
+function updateTabunganPribadi(members) {
+  if (!penggunaLogin || !penggunaLogin.id || !window.arisanGlobalData || !members.length) return;
+
+  const currentMember = members.find(m => String(m.id) === String(penggunaLogin.id));
+  if (!currentMember) return;
+
+  // Default tabungan jika tidak diatur khusus adalah 5.000
+  const nominalTab = parseInt(currentMember.nominalIuran?.tabungan) || 5000;
+  const history = window.arisanGlobalData.iuran_bulanan || [];
+  let totalTabunganUser = 0;
+
+  const historyArray = Array.isArray(history) ? history : Object.values(history);
+  historyArray.forEach(bulan => {
+    const payments = Array.isArray(bulan.pembayaran) ? bulan.pembayaran : Object.values(bulan.pembayaran || {});
+    const myPayment = payments.find(p => String(p.memberId) === String(penggunaLogin.id));
+    if (myPayment && myPayment.paid) {
+      totalTabunganUser += nominalTab;
+    }
+  });
+
+  const box = document.getElementById('user-tabungan-box');
+  const val = document.getElementById('user-tabungan-val');
+  if (box && val) {
+    box.style.display = 'block';
+    val.textContent = formatRp(totalTabunganUser);
+  }
 }
 
 // 7. HELPER UI
@@ -793,21 +842,41 @@ window.konfirmasiHapus = async function() {
 };
 
 window.simpanAnggota = async function() {
-  const nama = document.getElementById('form-nama').value.trim();
+  const rawNama = document.getElementById('form-nama').value.trim();
+  // Fungsi standarisasi: Huruf besar di awal kata
+  const formatTeks = (str) => str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+
+  const nama = formatTeks(rawNama);
+  const gen = document.getElementById('form-generasi').value;
   if (!nama) return toast("Nama lengkap wajib diisi.");
 
   const id = document.getElementById('form-id').value;
+
+  // Cek Duplikasi: Nama dan Generasi yang sama
+  const allData = await window.ambilData();
+  const isDuplicate = allData.some(a => 
+    a.nama.toLowerCase().trim() === nama.toLowerCase() && 
+    String(a.generasi) === String(gen) && 
+    String(a.id) !== String(id)
+  );
+
+  if (isDuplicate) {
+    return toast(`Anggota dengan nama "${nama}" di Generasi ${gen} sudah terdaftar.`);
+  }
+
   const kh = document.getElementById('form-kehidupan').value;
   const gender = document.querySelector('input[name="form-gender"]:checked').value;
 
-  // Jika sedang edit, ambil data lama untuk mempertahankan field sensitif (seperti password)
-  const dataLama = id ? (await window.ambilData()).find(x => String(x.id) === String(id)) : null;
+  // Jika sedang edit, gunakan data yang sudah diambil tadi untuk efisiensi
+  const dataLama = id ? allData.find(x => String(x.id) === String(id)) : null;
 
   const obj = {
     ...dataLama, // Pertahankan data lama (termasuk password, bolehDaftar, dll)
     id: id || 'a_' + Date.now(),
+    bolehDaftar: kh === 'wafat' ? false : (dataLama ? (dataLama.bolehDaftar || false) : false),
+    password: kh === 'wafat' ? null : (dataLama ? (dataLama.password || null) : null),
     nama,
-    panggilan: document.getElementById('form-panggilan').value.trim(),
+    panggilan: formatTeks(document.getElementById('form-panggilan').value.trim()),
     generasi: document.getElementById('form-generasi').value,
     parentId: document.getElementById('form-id-orang-tua').value,
     spouseId: document.getElementById('form-id-pasangan').value,

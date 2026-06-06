@@ -518,6 +518,8 @@
       flex-direction: column;
       min-height: 250px;
     }
+    .anggota-card.male { border-color: #1E88E5; box-shadow: 0 4px 12px rgba(30, 136, 229, 0.15); }
+    .anggota-card.female { border-color: #EC407A; box-shadow: 0 4px 12px rgba(236, 64, 122, 0.15); }
     .anggota-card:hover { border-color: rgba(201,168,76,0.4); transform: translateY(-3px); }
     .anggota-card::before {
       content: '';
@@ -1022,6 +1024,17 @@
           </div>
         </div>
         <div class="form-group">
+          <label>Jenis Kelamin *</label>
+          <div style="display:flex; gap:1.5rem; margin-top:0.5rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; text-transform:none; letter-spacing:normal; cursor:pointer;">
+              <input type="radio" name="form-gender" value="L" checked style="width:auto"> Laki-laki
+            </label>
+            <label style="display:flex; align-items:center; gap:0.5rem; text-transform:none; letter-spacing:normal; cursor:pointer;">
+              <input type="radio" name="form-gender" value="P" style="width:auto"> Perempuan
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
           <label>Alamat</label>
           <textarea id="form-alamat" placeholder="Alamat lengkap"></textarea>
         </div>
@@ -1171,6 +1184,29 @@
       return cocokGen && cocokCari;
     });
 
+    // Fungsi pembantu untuk membuat kunci urutan berdasarkan silsilah (Lineage Sort)
+    const getLineageKey = (m) => {
+      let path = [], cur = m;
+      // Jika Menantu, gunakan jalur pasangan Trah-nya
+      const isTrah = (p) => !!(p.parentId || p.idOrangTua || String(p.generasi) === '0');
+      if (!isTrah(cur) && (cur.spouseId || cur.idPasangan)) {
+        const sId = cur.spouseId || cur.idPasangan;
+        const spouse = data.find(x => String(x.id) === String(sId));
+        if (spouse) cur = spouse;
+      }
+      
+      while (cur) {
+        const uVal = parseInt(cur.urutan || cur.urutan_anak);
+        path.unshift((isNaN(uVal) ? 99 : uVal).toString().padStart(3, '0'));
+        const pid = cur.parentId || cur.idOrangTua;
+        cur = pid ? data.find(x => String(x.id) === String(pid)) : null;
+      }
+      return path.join('-');
+    };
+
+    // Terapkan pengurutan berdasarkan garis keturunan
+    filtered.sort((a, b) => getLineageKey(a).localeCompare(getLineageKey(b)));
+
     const container = document.getElementById('daftar-anggota');
     if (filtered.length === 0) {
       container.innerHTML = '<div class="kosong-info">Belum ada anggota yang terdaftar.</div>';
@@ -1199,12 +1235,14 @@
   }
 
   function kartuAnggota(a) {
+    const isMale = a.gender === 'L' || a.jenisKelamin === 'L' || a.jenisKelamin === 'Laki-Laki' || a.gender === 'Laki-laki';
+    const genderClass = isMale ? 'male' : 'female';
     const inisial = (a.nama || '??').split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
     const lahir = (a.lahir || a.tanggalLahir) ? new Date(a.lahir || a.tanggalLahir).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
     const valUrut = a.urutan || a.urutan_anak;
     const urutanTeks = valUrut ? `<p class="anggota-urutan">✦ Anak ke-${valUrut}</p>` : '';
     return `
-      <div class="anggota-card">
+      <div class="anggota-card ${genderClass}">
         <div class="anggota-avatar">${inisial}</div>
         <p class="anggota-nama">${a.nama}</p>
         <p class="anggota-panggilan">${a.panggilan ? '"' + a.panggilan + '"' : ''}</p>
@@ -1233,6 +1271,8 @@
     document.getElementById('form-hp').value = '';
     document.getElementById('form-lahir').value = '';
     document.getElementById('form-alamat').value = '';
+    const radioL = document.querySelector('input[name="form-gender"][value="L"]');
+    if(radioL) radioL.checked = true;
     bukaModal('modal-anggota');
   }
 
@@ -1249,25 +1289,48 @@
     document.getElementById('form-hp').value = a.hp || '';
     document.getElementById('form-lahir').value = a.lahir || a.tanggalLahir || '';
     document.getElementById('form-alamat').value = a.alamat || '';
+    const genderRadio = document.querySelector(`input[name="form-gender"][value="${a.gender || 'L'}"]`);
+    if(genderRadio) genderRadio.checked = true;
     bukaModal('modal-anggota');
   }
 
   window.simpanAnggota = async function() {
-    const nama = document.getElementById('form-nama').value.trim();
+    const rawNama = document.getElementById('form-nama').value.trim();
+    // Fungsi standarisasi: Huruf besar di awal kata
+    const formatTeks = (str) => str.toLowerCase().split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    
+    const nama = formatTeks(rawNama);
+    const gen = document.getElementById('form-generasi').value;
     if (!nama) { tampilToast('Nama lengkap wajib diisi.'); return; }
 
     const id = document.getElementById('form-id').value;
 
+    // Cek Duplikasi: Nama dan Generasi yang sama (kecuali diri sendiri saat edit)
+    const allData = await ambilAnggota();
+    const isDuplicate = allData.some(a => 
+      a.nama.toLowerCase().trim() === nama.toLowerCase() && 
+      String(a.generasi) === String(gen) && 
+      String(a.id) !== String(id)
+    );
+
+    if (isDuplicate) {
+      tampilToast(`Data "${nama}" di Generasi ${gen} sudah terdaftar.`);
+      return;
+    }
+
+    const gender = document.querySelector('input[name="form-gender"]:checked').value;
+
     const anggota = {
       id: id || 'a_' + Date.now(),
       nama,
-      panggilan: document.getElementById('form-panggilan').value.trim(),
+      panggilan: formatTeks(document.getElementById('form-panggilan').value.trim()),
       generasi: document.getElementById('form-generasi').value,
       status: document.getElementById('form-status').value,
       hp: document.getElementById('form-hp').value.trim(),
       lahir: document.getElementById('form-lahir').value,
       tanggalLahir: document.getElementById('form-lahir').value,
       alamat: document.getElementById('form-alamat').value.trim(),
+      gender: gender
     };
 
     await simpanSatu(anggota);

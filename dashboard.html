@@ -61,7 +61,6 @@
     </div>
     <div class="sidebar-footer">
       <p class="sidebar-level" id="sidebar-level"></p>
-      <button id="btn-login-sidebar" class="tombol-keluar" onclick="window.tampilLogin()" style="margin-bottom:.5rem;display:block">✦ Login Pengurus</button>
       <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="window.keluar()" style="display:none">✦ Keluar</button>
       <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
     </div>
@@ -99,6 +98,16 @@
       <div class="dash-info" style="margin-top:1.2rem">
         <h3>✦ Tentang Paguyuban</h3>
         <p>Bermula dari tanah Solo yang kaya budaya, para pendahulu keluarga Kromoredjo merantau ke Jakarta membawa nilai-nilai luhur: kebersamaan, gotong royong, dan silaturahmi yang tak putus. Selama 45 tahun dan lima generasi, paguyuban ini terus tumbuh — bukan sekadar ikatan darah, melainkan ikatan hati.</p>
+      </div>
+
+      <!-- Info Tabungan Pribadi (Hanya muncul jika login sebagai anggota) -->
+      <div id="user-tabungan-box" style="display:none; margin-top:1.2rem;">
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Tabungan Mandiri Anda</p>
+        <div class="stat-card" style="background: rgba(43, 85, 133, 0.15); border-color: rgba(67, 133, 204, 0.6); min-height: 100px; padding: 1.2rem;">
+          <p class="stat-lbl" style="color: #A3C9F8; margin-bottom: 0.4rem;">💰 Saldo Tabungan Pribadi</p>
+          <p class="stat-num" id="user-tabungan-val" style="font-size:2rem; color: #D1E4FD;">Rp 0</p>
+          <p class="stat-sub">Akumulasi iuran tabungan yang telah dibayarkan</p>
+        </div>
       </div>
 
       <!-- Info arisan (hanya jika sudah login) -->
