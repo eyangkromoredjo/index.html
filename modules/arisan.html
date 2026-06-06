@@ -47,7 +47,7 @@
         
         /* TOPBAR (Match Dashboard) */
         .topbar { padding: 1.2rem 2rem; border-bottom: 1px solid rgba(201,168,76,0.1); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: rgba(59,31,14,0.95); backdrop-filter: blur(10px); z-index: 50; }
-        .topbar-judul { font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 0.15em; color: var(--em); text-transform: uppercase; font-weight: 600; }
+        .topbar-judul { font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 0.15em; color: var(--em); text-transform: uppercase; font-weight: 600; line-height: 1.1; }
         .topbar-user {
             font-size: 0.9rem;
             color: var(--cb);
@@ -101,6 +101,7 @@
 
         .checkbox-card label { color: var(--kr); font-size: 0.8rem; cursor: pointer; flex: 1; opacity: 0.8; }
         .checkbox-card:hover label { opacity: 1; }
+        .checkbox-card .form-control { height: 35px; padding: 0.5rem 0.8rem; }
 
         .btn-primary { background: var(--em); color: var(--ct); border: none; padding: 0.6rem 1.2rem; font-family: 'Cinzel', serif; font-size: 0.85rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
         .btn-primary:hover { background: var(--el); transform: translateY(-2px); }
@@ -211,7 +212,7 @@
     <main class="konten-utama">
         <div class="topbar">
             <button class="hamburger" onclick="window.bukaSidebar()">☰</button>
-            <p class="topbar-judul" id="topbar-judul">Manajemen Arisan</p>
+            <p class="topbar-judul" id="topbar-judul">Manajemen<br>Arisan</p>
             <p class="topbar-user" id="topbar-user"></p>
         </div>
 
@@ -294,7 +295,7 @@
                     </div>
                     <div class="form-group">
                         <label>Catatan Khusus Arisan</label>
-                        <textarea id="input-catatan" class="form-control" placeholder="Contoh: Titipan iuran melalui Bp. X..."></textarea>
+                        <textarea id="input-catatan" class="form-control" placeholder="Contoh: Selalu via transfer"></textarea>
                     </div>
                     <button class="btn-primary" onclick="saveAnggotaSettings()">Simpan Pengaturan Anggota</button>
                 </div>
@@ -431,7 +432,7 @@
 
         <footer>
             <p class="footer-nama">Paguyuban Keluarga Eyang Kromoredjo</p>
-            <p class="footer-tahun">Maret 2025 · Menjaga Silaturahmi Lintas Generasi</p>
+            <p class="footer-tahun">Mempererat dan Menjaga Silaturahmi</p>
         </footer>
     </main>
 </div>
@@ -468,6 +469,9 @@ window.initArisanPage = async function() {
         const btnReset = document.querySelector('.nav-item[onclick*="resetSemuaDataArisan"]');
         if (btnReset) btnReset.style.display = 'none';
     }
+
+    // Tampilkan info user dan level di topbar
+    updateTopbarUser();
 
     // 1. Inisialisasi dropdown periode
     populatePeriodeSelectors();

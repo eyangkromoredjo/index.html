@@ -100,6 +100,15 @@ window.simpanNominal = async function() {
     await window.updateLabelNominal();
     window.tutupModal('modal-nominal');
     toast('Nominal iuran disimpan.');
+    
+    // Reset tampilan daftar anggota ke semula
+    filterAktif = 'semua';
+    const searchInput = document.getElementById('search-anggota');
+    if (searchInput) searchInput.value = '';
+    document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('aktif'));
+    const btnSemua = document.querySelector('.fbtn[onclick*="semua"]');
+    if (btnSemua) btnSemua.classList.add('aktif');
+    window.renderAnggota();
 };
 
 window.updateLabelNominal = async function() {
@@ -253,6 +262,19 @@ window.toggleIzinDaftar = async function(id, val) {
   window.renderAnggota();
 };
 
+window.updateLevelAnggota = async function(id, newLevel) {
+  if (!HAK_AKSES[penggunaLogin.level]?.kelolaAkun) return toast("Hanya Admin yang bisa mengelola level.");
+  
+  const d = await window.ambilData();
+  const a = d.find(x => String(x.id) === String(id));
+  if(!a) return;
+
+  a.level = newLevel;
+  await simpanSatu(a);
+  window.renderAnggota();
+  toast(`Level ${a.nama} diperbarui menjadi ${newLevel.toUpperCase()}.`);
+};
+
 // 5. UI & RENDER
 window.renderAnggota = async function() {
   const data = await window.ambilData();
@@ -359,7 +381,7 @@ window.renderAnggota = async function() {
             const trahParent = data.find(m => String(m.id) === String(sId) && isTrah(m));
             if (trahParent) ortu = trahParent;
           }
-          genCardsHtml += `<div class="family-header" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
+          genCardsHtml += `<div class="family-header collapsed" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
         }
         lastParentId = pId;
       }
@@ -377,7 +399,7 @@ window.renderAnggota = async function() {
 
     const isInduk = String(g) === '0';
     const lbl = g === 'wafat' ? '🪦 Yang Telah Wafat' : `✦ Generasi ${isInduk ? '0 (Induk)' : g}`;
-    htmlOutput += `<div class="gen-section">
+    htmlOutput += `<div class="gen-section collapsed">
       <div class="gen-label" onclick="this.parentElement.classList.toggle('collapsed')"><span>${lbl}</span></div>
       <div class="anggota-grid">${genCardsHtml}</div>
     </div>`;
@@ -446,10 +468,19 @@ function kartu(a, allData) {
       <div class="a-badges">${badgeStatus}${badgeTrah}${badgeAkun}</div>
       ${canManage ? `
         <div onclick="event.stopPropagation()" style="margin-top:10px; border-top:1px dashed rgba(201,168,76,0.2); padding-top:5px;">
-          <label style="font-size:0.75rem; cursor:pointer;">
-            <input type="checkbox" ${a.bolehDaftar ? 'checked' : ''} onchange="window.toggleIzinDaftar('${a.id}', this.checked)"> Izin Akses Login
-          </label>
-          ${a.password ? `<p style="font-size:0.65rem; color:var(--em)">Pass: ${a.password}</p>` : ''}
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:5px;">
+            <label style="font-size:0.75rem; cursor:pointer;">
+              <input type="checkbox" ${a.bolehDaftar ? 'checked' : ''} onchange="window.toggleIzinDaftar('${a.id}', this.checked)"> Izin Akses Login
+            </label>
+            ${a.bolehDaftar ? `
+              <select style="font-size:0.7rem; padding:1px 4px; background:var(--cs); color:var(--kr); border:1px solid var(--em); border-radius:4px; cursor:pointer;" onchange="window.updateLevelAnggota('${a.id}', this.value)">
+                <option value="anggota" ${a.level === 'anggota' ? 'selected' : ''}>Anggota</option>
+                <option value="pengurus" ${a.level === 'pengurus' ? 'selected' : ''}>Pengurus</option>
+                <option value="admin" ${a.level === 'admin' ? 'selected' : ''}>Admin</option>
+              </select>
+            ` : ''}
+          </div>
+          ${a.password ? `<p style="font-size:0.65rem; color:var(--em); margin-top:3px;">Pass: ${a.password}</p>` : ''}
         </div>
       ` : ''}
       ${canEdit ? `
@@ -896,5 +927,13 @@ window.simpanAnggota = async function() {
   await set(ref(db, "anggota/" + obj.id), obj);
   toast(id ? 'Data berhasil diperbarui.' : 'Anggota baru ditambahkan.');
   window.tutupModal('modal-anggota');
+  
+  // Reset tampilan ke semula setelah simpan
+  filterAktif = 'semua';
+  const searchInput = document.getElementById('search-anggota');
+  if (searchInput) searchInput.value = '';
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('aktif'));
+  const btnSemua = document.querySelector('.fbtn[onclick*="semua"]');
+  if (btnSemua) btnSemua.classList.add('aktif');
   window.renderAnggota();
 };
