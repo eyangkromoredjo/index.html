@@ -1,6 +1,6 @@
 import { db } from './firebase-config.js';
 import { ref, get, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { formatRp, toast } from './utils.js';
+import { formatRp, toast, cleanNumber, applyMask } from './utils.js';
 
 // 1. KONFIGURASI AKUN MASTER & HAK AKSES
 const AKUN_MASTER = [
@@ -23,6 +23,20 @@ window.ambilData = async function() {
   const snapshot = await get(ref(db, "anggota"));
   return snapshot.exists() ? Object.values(snapshot.val()) : [];
 };
+
+async function catatLog(aksi, detail = "") {
+  if (!penggunaLogin) return;
+  try {
+    const logRef = push(ref(db, "logs"));
+    await set(logRef, {
+      waktu: Date.now(),
+      nama: penggunaLogin.username,
+      level: penggunaLogin.level,
+      aksi: aksi,
+      detail: detail
+    });
+  } catch (e) { console.error("Gagal mencatat log:", e); }
+}
 
 async function simpanSatu(anggota) {
   await set(ref(db, "anggota/" + anggota.id), anggota);
@@ -63,20 +77,116 @@ function proceedLogin(akun) {
   document.getElementById('halaman-app').classList.add('aktif');
   
   // Setup UI berdasarkan level
+  const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
+  const roleText = levelMap[akun.level] || akun.level;
   document.getElementById('nav-pengurus').style.display = 'block';
   document.getElementById('btn-keluar-sidebar').style.display = 'block';
-  document.getElementById('sidebar-level').textContent = akun.level.toUpperCase();
-  document.getElementById('topbar-user').innerHTML = `${akun.level}<br>${akun.nama}`;
+  document.getElementById('sidebar-level').textContent = roleText;
+  document.getElementById('topbar-user').innerHTML = `${roleText}<br>${akun.username}`;
   
   const canAdd = HAK_AKSES[akun.level]?.tambah;
   if(document.getElementById('btn-tambah-anggota')) 
     document.getElementById('btn-tambah-anggota').style.display = canAdd ? 'flex' : 'none';
 
+  const navLogs = document.getElementById('nav-logs');
+  if(navLogs) navLogs.style.display = akun.level === 'admin' ? 'block' : 'none';
+
+  const navBukuBesar = document.getElementById('nav-bukubesar');
+  if(navBukuBesar) navBukuBesar.style.display = akun.level === 'anggota' ? 'none' : 'flex';
+
+  const navLaporan = document.getElementById('nav-laporan');
+  // Kontrol visibilitas sub-laporan untuk anggota
+  const isAnggota = akun.level === 'anggota';
+
+  // Kontrol visibilitas sub-manajemen arisan untuk anggota (Dashboard)
+  ['sub-nav-iuran-arisan', 'sub-nav-pengeluaran-arisan', 'sub-nav-tipe-arisan', 'sub-nav-penerima-arisan'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAnggota ? 'none' : 'flex';
+  });
+
+  ['sub-nav-iuran', 'sub-nav-pengeluaran', 'sub-nav-siklus', 'sub-nav-putaran'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = isAnggota ? 'none' : 'flex';
+  });
+
   const btnClearLedger = document.getElementById('btn-bersihkan-ledger');
   if(btnClearLedger) btnClearLedger.style.display = HAK_AKSES[akun.level]?.hapus ? 'inline-block' : 'none';
 
+  const accessBox = document.getElementById('dash-admin-access');
+  if(accessBox) accessBox.style.display = akun.level === 'admin' ? 'block' : 'none';
+
+  const btnClearLogs = document.getElementById('btn-bersihkan-log');
+  if(btnClearLogs) btnClearLogs.style.display = akun.level === 'admin' ? 'inline-block' : 'none';
+
+  applyMask('input-nominal');
+  applyMask('trx-jumlah');
+
   startRealtimeStats();
   toast('Selamat datang, ' + akun.nama);
+  catatLog("Login", "Masuk ke aplikasi");
+}
+
+window.toggleArisanSubmenu = function() {
+  const submenu = document.getElementById('arisan-submenu');
+  const chevron = document.getElementById('arisan-chevron');
+  const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+  
+  if (isClosed) {
+    submenu.style.maxHeight = '500px';
+    submenu.style.opacity = '1';
+    submenu.style.marginBottom = '0.5rem';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    submenu.style.maxHeight = '0px';
+    submenu.style.opacity = '0';
+    submenu.style.marginBottom = '0';
+    chevron.style.transform = 'rotate(-90deg)';
+  }
+};
+
+window.toggleLaporanSubmenu = function() {
+  const submenu = document.getElementById('laporan-submenu');
+  const chevron = document.getElementById('laporan-chevron');
+  const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+
+  if (isClosed) {
+    submenu.style.maxHeight = '500px';
+    submenu.style.opacity = '1';
+    submenu.style.marginBottom = '0.5rem';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    submenu.style.maxHeight = '0px';
+    submenu.style.opacity = '0';
+    submenu.style.marginBottom = '0';
+    chevron.style.transform = 'rotate(-90deg)';
+  }
+};
+
+function renderAccessCards(dataAnggota) {
+  const body = document.getElementById('access-table-body');
+  if (!body || penggunaLogin?.level !== 'admin') return;
+
+  let html = '';
+  // 1. Tampilkan Akun Master Statis
+  AKUN_MASTER.forEach(a => {
+    html += `
+      <tr>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.75rem; vertical-align: middle;"><strong>${a.nama}</strong><br><small style="opacity:0.6;">@${a.username}</small></td>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); vertical-align: middle;"><span class="badge" style="background:var(--em); color:var(--ct); font-size:0.55rem; padding: 2px 6px; border-radius:4px; font-family:'Cinzel'; font-weight:bold;">${a.level.toUpperCase()}</span></td>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.65rem; opacity: 0.7; font-style: italic; vertical-align: middle;">Akun Master Sistem</td>
+      </tr>`;
+  });
+
+  // 2. Tampilkan Anggota yang memiliki akses login
+  dataAnggota.filter(a => a.bolehDaftar).forEach(a => {
+    html += `
+      <tr>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.75rem; vertical-align: middle;"><strong>${a.panggilan || a.nama}</strong></td>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); vertical-align: middle;"><span class="badge" style="background:rgba(201,168,76,0.1); color:var(--em); font-size:0.55rem; padding: 2px 6px; border:1px solid rgba(201,168,76,0.3); border-radius:4px; font-family:'Cinzel'; font-weight:bold;">${(a.level || 'anggota').toUpperCase()}</span></td>
+        <td style="padding: 0.7rem 0.8rem; border-bottom: 1px solid rgba(201,168,76,0.1); font-size: 0.65rem; opacity: 0.7; font-style: italic; vertical-align: middle;">Anggota Trah</td>
+      </tr>`;
+  });
+  body.innerHTML = html;
 }
 
 window.keluar = function() {
@@ -89,15 +199,16 @@ window.bukaSettingNominal = async function() {
     const snap = await get(ref(db, "settings/arisan"));
     const n = snap.exists() ? snap.val().nominal : 0;
     const inputNominal = document.getElementById('input-nominal');
-    if(inputNominal) inputNominal.value = n || '';
+    if(inputNominal) inputNominal.value = n ? n.toLocaleString('id-ID') : '';
     window.bukaModal('modal-nominal');
 };
 
 window.simpanNominal = async function() {
-    const n = parseInt(document.getElementById('input-nominal').value);
+    const n = cleanNumber(document.getElementById('input-nominal').value);
     if(!n || n < 1) return toast('Masukkan nominal valid.');
     await set(ref(db, "settings/arisan"), { nominal: n });
     await window.updateLabelNominal();
+    catatLog("Update Iuran", "Mengubah nominal iuran menjadi " + formatRp(n));
     window.tutupModal('modal-nominal');
     toast('Nominal iuran disimpan.');
     
@@ -143,6 +254,7 @@ window.simpanPeriode = async function() {
     };
     await set(ref(db, "arisan/" + key), pData);
     window.tutupModal('modal-periode');
+    catatLog("Buat Arisan", "Membuka periode arisan " + key);
     await window.renderPeriode();
     toast('Periode arisan dibuat.');
 };
@@ -220,6 +332,7 @@ window.toggleBayar = async function(pid, aid) {
     const item = list.find(x => String(x.id) === String(aid));
     if(item) item.lunas = !item.lunas;
     await set(ref(db, `arisan/${pid}`), p);
+    catatLog("Update Bayar", `Mengubah status bayar ${item.nama} pada periode ${pid}`);
     window.bukaDetail(pid);
     window.renderPeriode();
 };
@@ -252,6 +365,7 @@ window.toggleIzinDaftar = async function(id, val) {
     a.level = a.level || 'anggota';
     a.bolehDaftar = true;
     toast('Akses Aktif! Username: ' + a.panggilan + ', Pass: ' + a.password);
+    catatLog("Akses Login", "Memberikan izin login ke " + a.nama);
   } else {
     a.bolehDaftar = false;
     a.password = null;
@@ -408,6 +522,7 @@ window.renderAnggota = async function() {
   container.innerHTML = htmlOutput;
 };
 
+
 function kartu(a, allData) {
   const isMale = a.gender === 'L' || a.jenisKelamin === 'L' || a.jenisKelamin === 'Laki-Laki' || a.gender === 'Laki-laki';
   const bday = a.tanggalLahir || a.lahir;
@@ -444,7 +559,8 @@ function kartu(a, allData) {
   const badgeStatus = sudahWafat ? `<span class="badge wafat-b">🪦 Wafat${tWafat ? ' · ' + tWafat : ''}</span>` : `<span class="badge ${a.status || 'aktif'}">${(a.status || 'aktif') === 'aktif' ? 'Aktif' : 'Tidak Aktif'}</span>`;
   const badgeAkun = a.password ? `<span class="badge aktif" style="background:rgba(201,168,76,0.2); border-color:var(--em); color:var(--em); font-weight:bold;">${a.level?.toUpperCase()}</span>` : '';
 
-  const canEdit = HAK_AKSES[penggunaLogin.level]?.edit;
+  const isOwner = a.createdBy === penggunaLogin.username;
+  const canEdit = HAK_AKSES[penggunaLogin.level]?.edit || (penggunaLogin.level === 'anggota' && isOwner);
   const canManage = HAK_AKSES[penggunaLogin.level]?.kelolaAkun;
 
   return `
@@ -585,7 +701,7 @@ window.simpanTransaksi = async function() {
   const id = document.getElementById('trx-id').value;
   const tgl = document.getElementById('trx-tanggal').value;
   const dsk = document.getElementById('trx-deskripsi').value.trim();
-  const jml = parseInt(document.getElementById('trx-jumlah').value);
+  const jml = cleanNumber(document.getElementById('trx-jumlah').value);
   const kat = document.getElementById('trx-kategori').value;
   const tip = document.querySelector('input[name="trx-tipe"]:checked').value;
 
@@ -606,6 +722,7 @@ window.simpanTransaksi = async function() {
 
   window.tutupModal('modal-transaksi');
   toast(id ? 'Transaksi diperbarui.' : 'Transaksi dicatat.');
+  catatLog(id ? "Edit Transaksi" : "Tambah Transaksi", dsk + " (" + formatRp(jml) + ")");
   window.renderBukuBesar();
 };
 
@@ -616,7 +733,7 @@ window.bukaEditTransaksi = async function(id) {
   document.getElementById('trx-id').value = id;
   document.getElementById('trx-tanggal').value = t.tanggal;
   document.getElementById('trx-deskripsi').value = t.deskripsi;
-  document.getElementById('trx-jumlah').value = t.jumlah;
+  document.getElementById('trx-jumlah').value = t.jumlah ? t.jumlah.toLocaleString('id-ID') : '';
   document.getElementById('trx-kategori').value = t.kategori;
   const radio = document.querySelector(`input[name="trx-tipe"][value="${t.tipe}"]`);
   if(radio) radio.checked = true;
@@ -628,6 +745,7 @@ window.hapusTransaksi = async function(id) {
   if (!confirm('Hapus transaksi ini?')) return;
   await remove(ref(db, `transaksi/${id}`));
   toast('Transaksi dihapus.');
+  catatLog("Hapus Transaksi", "ID Transaksi: " + id);
   window.renderBukuBesar();
 };
 
@@ -671,6 +789,7 @@ function startRealtimeStats() {
       genEl.innerHTML = html;
     }
     updateTabunganPribadi(dataAnggotaCached);
+    renderAccessCards(dataAnggotaCached);
   });
 
   onValue(ref(db, "transaksi"), (snapshot) => {
@@ -703,6 +822,49 @@ function startRealtimeStats() {
     updateTabunganPribadi(dataAnggotaCached);
   });
 }
+
+window.renderLogs = async function() {
+  const snap = await get(ref(db, "logs"));
+  const logs = snap.exists() ? Object.values(snap.val()) : [];
+  logs.sort((a, b) => b.waktu - a.waktu);
+  const body = document.getElementById('log-body');
+  if (!body) return;
+  body.innerHTML = logs.map(l => `
+    <tr>
+      <td style="white-space:nowrap; font-size:0.65rem; line-height:1.2; padding: 8px 12px 8px 0; vertical-align: top;">
+        ${new Date(l.waktu).toLocaleDateString('id-ID', {day:'2-digit', month:'2-digit', year:'2-digit'})}<br>
+        <span style="opacity:0.7;">${new Date(l.waktu).toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})}</span>
+      </td>
+      <td style="font-size:0.7rem; line-height:1.2; padding: 8px 12px; vertical-align: top;">
+        <strong style="color:var(--em);">${l.nama}</strong><br><span style="font-size:0.55rem; opacity:0.7;">${l.level.toUpperCase()}</span>
+      </td>
+      <td style="padding: 8px 12px; vertical-align: top;"><span class="badge" style="background:var(--cs); color:var(--em); font-size:0.55rem; padding:2px 5px; border-radius:4px;">${l.aksi}</span></td>
+      <td style="font-size:0.7rem; line-height:1.3; padding: 8px 0 8px 12px; vertical-align: top; min-width:100px;">${l.detail}</td>
+    </tr>
+  `).join('');
+};
+
+window.hapusSemuaLog = async function() {
+  if (penggunaLogin?.level !== 'admin') return toast('Hanya Admin yang dapat menghapus seluruh log.');
+  if (!confirm('Apakah Anda yakin ingin menghapus SELURUH riwayat log aktivitas secara permanen?')) return;
+  
+  const pw = prompt('Masukkan kata sandi otorisasi untuk membersihkan log:');
+  if (pw !== 'bnLm9ufo') {
+    toast('Kata sandi salah. Aksi pembersihan log dibatalkan.');
+    return;
+  }
+
+  try {
+    await remove(ref(db, "logs"));
+    toast('Log aktivitas berhasil dibersihkan.');
+    // Mencatat log aksi pembersihan itu sendiri
+    await catatLog("Bersihkan Log", "Menghapus seluruh riwayat aktivitas sistem");
+    window.renderLogs();
+  } catch (e) {
+    console.error(e);
+    toast('Gagal membersihkan log.');
+  }
+};
 
 function updateTabunganPribadi(members) {
   if (!penggunaLogin || !penggunaLogin.id || !window.arisanGlobalData || !members.length) return;
@@ -740,6 +902,7 @@ window.bukaPanel = function(nama, el) {
   if (el) el.classList.add('aktif');
   if (nama === 'anggota') window.renderAnggota();
   if (nama === 'buku-besar') window.renderBukuBesar();
+  if (nama === 'logs') window.renderLogs();
   window.tutupSidebar(); // Menutup menu setelah memilih item di mobile
 };
 
@@ -764,7 +927,25 @@ window.tutupModal = (id) => document.getElementById(id).classList.remove('aktif'
 // Re-check session on load
 window.addEventListener('load', () => {
   const saved = sessionStorage.getItem('kromoredjo_user');
-  if (saved) proceedLogin(JSON.parse(saved));
+  if (saved) {
+    const akun = JSON.parse(saved);
+    proceedLogin(akun);
+    
+    // Sinkronisasi Panel berdasarkan hash URL (Contoh: #anggota)
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+      const panelMap = { 'anggota': 'anggota', 'logs': 'logs', 'dashboard': 'dashboard' };
+      if (panelMap[hash]) {
+        // Cari elemen navigasi terkait untuk memberikan class 'aktif'
+        const navItems = document.querySelectorAll('.nav-item');
+        let targetNav = null;
+        navItems.forEach(item => {
+          if (item.getAttribute('onclick')?.includes(`'${panelMap[hash]}'`)) targetNav = item;
+        });
+        window.bukaPanel(panelMap[hash], targetNav);
+      }
+    }
+  }
 });
 
 // Integrasi fungsi modal-anggota yang hilang di app.js baru
@@ -829,10 +1010,14 @@ window.updateFormOptions = async function(curParentId = "", curSpouseId = "") {
 };
 
 window.bukaEdit = async function(id) {
-  if (!HAK_AKSES[penggunaLogin.level]?.edit) return toast("Anda tidak memiliki akses ini.");
   const data = await window.ambilData();
   const a = data.find(x => String(x.id) === String(id));
   if(!a) return;
+
+  const isOwner = a.createdBy === penggunaLogin.username;
+  const canEdit = HAK_AKSES[penggunaLogin.level]?.edit || (penggunaLogin.level === 'anggota' && isOwner);
+
+  if (!canEdit) return toast("Anda tidak memiliki akses ini.");
 
   document.getElementById('modal-judul-form').textContent = 'Edit Data Anggota';
   document.getElementById('form-id').value = a.id;
@@ -868,6 +1053,7 @@ window.konfirmasiHapus = async function() {
   await remove(ref(db, "anggota/" + idHapusPending));
   idHapusPending = null;
   window.tutupModal('modal-hapus');
+  catatLog("Hapus Anggota", "Menghapus ID: " + idHapusPending);
   window.renderAnggota();
   toast("Anggota berhasil dihapus.");
 };
@@ -926,6 +1112,7 @@ window.simpanAnggota = async function() {
 
   await set(ref(db, "anggota/" + obj.id), obj);
   toast(id ? 'Data berhasil diperbarui.' : 'Anggota baru ditambahkan.');
+  catatLog(id ? "Edit Anggota" : "Tambah Anggota", nama);
   window.tutupModal('modal-anggota');
   
   // Reset tampilan ke semula setelah simpan

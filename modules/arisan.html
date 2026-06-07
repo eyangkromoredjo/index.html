@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -146,11 +146,17 @@
 
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); transition: 0.3s; }
-            .sidebar.aktif { transform: translateX(0); }
+            .sidebar.buka { transform: translateX(0); }
             .konten-utama { margin-left: 0; }
             .hamburger { display: block; }
             .topbar-judul { margin-left: 1rem; flex: 1; }
         }
+
+        /* STYLE KHUSUS SUBMENU DENGAN ANIMASI GULUNG */
+        #arisan-submenu, #laporan-submenu { transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, margin 0.3s ease; overflow: hidden; }
+        #arisan-submenu .nav-item { border-left: none; opacity: 0.7; padding: 0.6rem 1.5rem 0.6rem 3.2rem; font-size: 0.78rem; min-height: auto; border-bottom: 1px solid rgba(201,168,76,0.05); }
+        #arisan-submenu .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.03); }
+        #arisan-submenu .nav-item.aktif { opacity: 1; color: var(--em); font-weight: 600; background: rgba(201,168,76,0.05); }
     </style>
 </head>
 <script src="../js/database.js"></script>
@@ -165,46 +171,57 @@
             <p class="sidebar-nama">Eyang<br>Kromoredjo</p>
         </div>
         <div class="sidebar-nav">
-            <p class="nav-label">Navigasi Utama</p>
-            <div class="nav-item" onclick="location.href='../dashboard.html'">
-                <span class="ni">🏠</span> Menu Utama
-            </div>
-            <div class="nav-item" onclick="location.href='laporan.html'">
-                <span class="ni">📊</span> Laporan Keuangan
-            </div>
+            <p class="nav-label">Menu Utama</p>
+            <div class="nav-item" onclick="location.href='../dashboard.html'"><span class="ni">🏠</span> Beranda</div>
+            <div id="nav-pengurus-utama" style="display:none">
+                <div class="nav-item" onclick="location.href='../dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
+                
+                <!-- TOMBOL INDUK MANAJEMEN ARISAN -->
+                <div class="nav-item aktif" id="nav-induk-arisan" onclick="window.toggleArisanSubmenu()" style="justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:.8rem;">
+                        <span class="ni">💰</span> Manajemen Arisan
+                    </div>
+                    <span id="arisan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+                </div>
+                
+                <!-- KONTAINER SUB-MENU -->
+                <div id="arisan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0, 0, 0, 0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+                    <div class="nav-item" id="sub-aturan" data-target="panel-aturan" onclick="showPanel('panel-aturan', this)"><span class="ni">📜</span> Aturan</div>
+                    <div class="nav-item aktif" id="sub-peserta" data-target="panel-daftar-peserta" onclick="showPanel('panel-daftar-peserta', this)"><span class="ni">👥</span> Peserta</div>
+                    <div class="nav-item" id="sub-iuran" data-target="panel-cek-pembayaran" onclick="showPanel('panel-cek-pembayaran', this)"><span class="ni">💳</span> Iuran</div>
+                    <div class="nav-item" id="sub-pengeluaran" data-target="panel-pengeluaran" onclick="showPanel('panel-pengeluaran', this)"><span class="ni">📉</span> Pengeluaran</div>
+                    <div class="nav-item" id="sub-tipe" data-target="panel-atur-anggota" onclick="showPanel('panel-atur-anggota', this)"><span class="ni">⚙️</span> Tipe</div>
+                    <div class="nav-item" id="sub-penerima" data-target="panel-jadwal" onclick="showPanel('panel-jadwal', this)"><span class="ni">📅</span> Penerima</div>
+                </div>
 
-            <p class="nav-label" style="margin-top:1rem;">Manajemen Arisan</p>
-            <div class="nav-item" data-target="panel-aturan" onclick="showPanel('panel-aturan', this)">
-                <span class="ni">📜</span> Aturan & Tata Tertib
-            </div>
-            <div class="nav-item aktif" data-target="panel-daftar-peserta" onclick="showPanel('panel-daftar-peserta', this)">
-                <span class="ni">👥</span> Daftar Peserta
-            </div>
-            <div class="nav-item" data-target="panel-cek-pembayaran" onclick="showPanel('panel-cek-pembayaran', this)">
-                <span class="ni">💳</span> Iuran & Presensi
-            </div>
-            <div class="nav-item" data-target="panel-pengeluaran" onclick="showPanel('panel-pengeluaran', this)">
-                <span class="ni">📉</span> Catat Pengeluaran
-            </div>
-            <div class="nav-item" data-target="panel-atur-anggota" onclick="showPanel('panel-atur-anggota', this)">
-                <span class="ni">⚙️</span> Pengaturan Tipe
-            </div>
-            <div class="nav-item" data-target="panel-jadwal" onclick="showPanel('panel-jadwal', this)">
-                <span class="ni">📅</span> Catat Penerima
-            </div>
-            
-            <div class="nav-item" style="color: #e8a0a0; margin-top: 2rem; border-top: 1px solid rgba(232,160,160,0.2); padding-top: 1rem;" onclick="resetSemuaDataArisan()">
-                <span class="ni">⚠️</span> Reset Data Uji
-            </div>
+                <div class="nav-item" id="nav-bukubesar" onclick="location.href='../bukubesar.html'"><span class="ni">📖</span> Buku Besar</div>
+                <div class="nav-item" onclick="location.href='../silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
 
-            <span class="nav-label" style="margin-top:1rem">Masa Depan</span>
-            <div class="nav-item soon">
-                <span class="ni">🎓</span> Tabungan Pendidikan <span class="badge-soon">SOON</span>
+                <!-- TOMBOL INDUK LAPORAN (ACCORDION) -->
+                <div class="nav-item" id="nav-induk-laporan" onclick="window.toggleLaporanSubmenu()" style="justify-content: space-between;">
+                    <div style="display:flex; align-items:center; gap:.8rem;">
+                        <span class="ni">📊</span> Laporan Keuangan
+                    </div>
+                    <span id="laporan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+                </div>
+
+                <!-- KONTAINER SUB-MENU LAPORAN -->
+                <div id="laporan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+                    <div class="nav-item" onclick="location.href='laporan.html#overview'"><span class="ni">📉</span> Ringkasan Saldo</div>
+                    <div class="nav-item" id="sub-laporan-iuran" onclick="location.href='laporan.html#iuran'"><span class="ni">💳</span> Realisasi Iuran</div>
+                    <div class="nav-item" id="sub-laporan-pengeluaran" onclick="location.href='laporan.html#pengeluaran'"><span class="ni">📉</span> Buku Pengeluaran</div>
+                    <div class="nav-item" id="sub-laporan-siklus" onclick="location.href='laporan.html#siklus'"><span class="ni">🔄</span> Siklus Arisan</div>
+                    <div class="nav-item" id="sub-laporan-putaran" onclick="location.href='laporan.html#putaran'"><span class="ni">🏆</span> Laporan Putaran</div>
+                </div>
+
+                <div class="nav-item" id="nav-logs" style="display:none" onclick="location.href='../dashboard.html#logs'"><span class="ni">📋</span> Log Aktivitas</div>
             </div>
         </div>
 
         <div class="sidebar-footer">
-            <button class="tombol-keluar" onclick="location.href='../dashboard.html'">✦ Kembali ke Beranda</button>
+            <p class="sidebar-level" id="sidebar-level"></p>
+            <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="window.keluar()" style="display:none">✦ Keluar</button>
+            <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
         </div>
     </nav>
 
@@ -219,7 +236,7 @@
         <div class="arisan-main">
             <!-- PANEL ATURAN -->
             <div class="panel" id="panel-aturan" style="display:none;">
-                <h3>Aturan & <em>Tata Tertib</em></h3>
+                <h3>Aturan & <em>Kesepakatan</em></h3>
                 <div id="view-aturan" style="background: rgba(107,58,31,0.15); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(201,168,76,0.2);">
                     <div id="text-aturan-display" style="color: var(--kr); line-height: 1.8; white-space: pre-wrap; font-size: 0.95rem;">
                         <p style="font-style: italic; color: var(--cb);">Konten aturan dan tata tertib paguyuban akan segera ditambahkan oleh pengurus.</p>
@@ -450,27 +467,75 @@ window.updateTopbarUser = async function() {
     const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
     if (user) {
         const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
-        const roleText = levelMap[user.level] || '';
-        const topbarUserEl = document.getElementById('topbar-user');
-        if (topbarUserEl) topbarUserEl.innerHTML = `${roleText}<br>${user.nama}`;
+                const roleText = levelMap[user.level] || user.level;
+                const topbarUserEl = document.getElementById('topbar-user');
+                if (topbarUserEl) topbarUserEl.innerHTML = `${roleText}<br>${user.username}`;
     }
 }
 
+window.keluar = function() {
+    sessionStorage.removeItem('kromoredjo_user');
+    window.location.href = '../dashboard.html';
+};
+
 window.initArisanPage = async function() {
-    // Proteksi UI Anggota: Sembunyikan menu yang tidak boleh diakses
     const user = JSON.parse(sessionStorage.getItem('kromoredjo_user'));
-    if (user && user.level === 'anggota') {
+    if (!user) {
+        window.location.href = '../dashboard.html';
+        return;
+    }
+
+    // Sinkronisasi UI Sidebar
+    const navPengurus = document.getElementById('nav-pengurus-utama');
+    if (navPengurus) navPengurus.style.display = 'block';
+
+    const navBukuBesar = document.getElementById('nav-bukubesar');
+    if(navBukuBesar) navBukuBesar.style.display = user.level === 'anggota' ? 'none' : 'flex';
+
+    const navLogs = document.getElementById('nav-logs');
+    if(navLogs) navLogs.style.display = user.level === 'admin' ? 'block' : 'none';
+
+    const btnKeluar = document.getElementById('btn-keluar-sidebar');
+    if (btnKeluar) btnKeluar.style.display = 'block';
+
+    const sidebarLevel = document.getElementById('sidebar-level');
+    if (sidebarLevel) {
+         const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
+         sidebarLevel.textContent = (levelMap[user.level] || user.level).toUpperCase();
+    }
+
+    const isAnggota = user.level === 'anggota';
+    ['sub-laporan-iuran', 'sub-laporan-pengeluaran', 'sub-laporan-siklus', 'sub-laporan-putaran'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = isAnggota ? 'none' : 'flex';
+    });
+
+    window.toggleLaporanSubmenu = function() {
+        const submenu = document.getElementById('laporan-submenu');
+        const chevron = document.getElementById('laporan-chevron');
+        if (submenu.style.maxHeight === '0px' || submenu.style.maxHeight === '') {
+            submenu.style.maxHeight = '500px';
+            submenu.style.opacity = '1';
+            submenu.style.marginBottom = '0.5rem';
+            chevron.style.transform = 'rotate(0deg)';
+        } else {
+            submenu.style.maxHeight = '0px';
+            submenu.style.opacity = '0';
+            submenu.style.marginBottom = '0';
+            chevron.style.transform = 'rotate(-90deg)';
+        }
+    };
+
+    if (user.level === 'anggota') {
         const targets = ['panel-cek-pembayaran', 'panel-pengeluaran', 'panel-atur-anggota', 'panel-jadwal'];
         targets.forEach(t => {
             const btn = document.querySelector(`.nav-item[data-target="${t}"]`);
             if (btn) btn.style.display = 'none';
         });
-        // Sembunyikan tombol reset data uji untuk anggota
         const btnReset = document.querySelector('.nav-item[onclick*="resetSemuaDataArisan"]');
         if (btnReset) btnReset.style.display = 'none';
     }
 
-    // Tampilkan info user dan level di topbar
     updateTopbarUser();
 
     // 1. Inisialisasi dropdown periode
@@ -518,15 +583,46 @@ window.initArisanPage = async function() {
         }
         if (input) input.value = val || "";
     });
+
+    // Sinkronisasi Panel berdasarkan hash URL (Misal: arisan.html#iuran)
+    const hash = window.location.hash.substring(1);
+    if (hash) {
+        const panelMap = { 
+            'aturan': 'panel-aturan', 'peserta': 'panel-daftar-peserta', 
+            'iuran': 'panel-cek-pembayaran', 'pengeluaran': 'panel-pengeluaran', 
+            'tipe': 'panel-atur-anggota', 'penerima': 'panel-jadwal' 
+        };
+        if (panelMap[hash]) {
+            window.showPanel(panelMap[hash], document.getElementById('sub-' + hash));
+        }
+    }
 }
 
+window.toggleArisanSubmenu = function() {
+    const submenu = document.getElementById('arisan-submenu');
+    const chevron = document.getElementById('arisan-chevron');
+    const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+    
+    if (isClosed) {
+        submenu.style.maxHeight = '500px';
+        submenu.style.opacity = '1';
+        submenu.style.marginBottom = '0.5rem';
+        chevron.style.transform = 'rotate(0deg)';
+    } else {
+        submenu.style.maxHeight = '0px';
+        submenu.style.opacity = '0';
+        submenu.style.marginBottom = '0';
+        chevron.style.transform = 'rotate(-90deg)';
+    }
+};
+
 window.bukaSidebar = function() {
-    document.getElementById('sidebar').classList.add('aktif');
+    document.getElementById('sidebar').classList.add('buka');
     document.getElementById('overlay-sb').classList.add('aktif');
 };
 
 window.tutupSidebar = function() {
-    document.getElementById('sidebar').classList.remove('aktif');
+    document.getElementById('sidebar').classList.remove('buka');
     document.getElementById('overlay-sb').classList.remove('aktif');
 };
 
@@ -542,7 +638,12 @@ window.showPanel = function(panelId, el) {
     document.querySelectorAll('.arisan-main .panel').forEach(p => {
         p.style.display = 'none';
     });
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('aktif'));
+    // Hapus status 'aktif' hanya dari item navigasi lain, pertahankan status emas pada induk 'Manajemen Arisan'
+    document.querySelectorAll('.nav-item').forEach(n => {
+        if (!n.onclick?.toString().includes('toggleArisanSubmenu')) {
+            n.classList.remove('aktif');
+        }
+    });
     if (el) el.classList.add('aktif');
 
     target.style.display = '';

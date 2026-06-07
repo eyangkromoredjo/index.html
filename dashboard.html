@@ -6,6 +6,13 @@
   <title>Paguyuban Keluarga Eyang Kromoredjo</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    /* STYLE KHUSUS SUBMENU DASHBOARD */
+    #arisan-submenu, #laporan-submenu { transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; overflow: hidden; }
+    #arisan-submenu .nav-item, #laporan-submenu .nav-item { border-left: none; opacity: 0.7; padding: 0.6rem 1.5rem 0.6rem 3.2rem; font-size: 0.78rem; min-height: auto; border-bottom: 1px solid rgba(201,168,76,0.05); }
+    #arisan-submenu .nav-item:hover, #laporan-submenu .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.03); }
+    #arisan-submenu .nav-item.aktif, #laporan-submenu .nav-item.aktif { opacity: 1; color: var(--em); font-weight: 600; background: rgba(201,168,76,0.05); }
+  </style>
 </head>
 <body>
 
@@ -53,10 +60,46 @@
       <div class="nav-item aktif" onclick="window.bukaPanel('dashboard',this)"><span class="ni">🏠</span> Beranda</div>
       <div id="nav-pengurus" style="display:none">
         <div class="nav-item" onclick="window.bukaPanel('anggota',this)"><span class="ni">👥</span> Anggota</div>
-        <div class="nav-item" onclick="location.href='modules/arisan.html'"><span class="ni">💰</span> Arisan</div>
-        <div class="nav-item" onclick="location.href='bukubesar.html'"><span class="ni">📖</span> Buku Besar</div>
+        
+        <!-- TOMBOL INDUK MANAJEMEN ARISAN (ACCORDION) -->
+        <div class="nav-item" id="nav-induk-arisan" onclick="window.toggleArisanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">💰</span> Manajemen Arisan
+          </div>
+          <span id="arisan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU -->
+        <div id="arisan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/arisan.html#aturan'"><span class="ni">📜</span> Aturan</div>
+          <div class="nav-item" onclick="location.href='modules/arisan.html#peserta'"><span class="ni">👥</span> Peserta</div>
+          <div class="nav-item" id="sub-nav-iuran-arisan" onclick="location.href='modules/arisan.html#iuran'"><span class="ni">💳</span> Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran-arisan" onclick="location.href='modules/arisan.html#pengeluaran'"><span class="ni">📉</span> Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-tipe-arisan" onclick="location.href='modules/arisan.html#tipe'"><span class="ni">⚙️</span> Tipe</div>
+          <div class="nav-item" id="sub-nav-penerima-arisan" onclick="location.href='modules/arisan.html#penerima'"><span class="ni">📅</span> Penerima</div>
+        </div>
+
+        <div class="nav-item" id="nav-bukubesar" onclick="location.href='bukubesar.html'"><span class="ni">📖</span> Buku Besar</div>
         <div class="nav-item" onclick="location.href='silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
-        <div class="nav-item" onclick="location.href='modules/laporan.html'"><span class="ni">📊</span> Laporan</div>
+
+        <!-- TOMBOL INDUK LAPORAN (ACCORDION) -->
+        <div class="nav-item" id="nav-induk-laporan" onclick="window.toggleLaporanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">📊</span> Laporan Keuangan
+          </div>
+          <span id="laporan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU LAPORAN -->
+        <div id="laporan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/laporan.html#overview'"><span class="ni">📉</span> Ringkasan Saldo</div>
+          <div class="nav-item" id="sub-nav-iuran" onclick="location.href='modules/laporan.html#iuran'"><span class="ni">💳</span> Realisasi Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran" onclick="location.href='modules/laporan.html#pengeluaran'"><span class="ni">📉</span> Buku Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-siklus" onclick="location.href='modules/laporan.html#siklus'"><span class="ni">🔄</span> Siklus Arisan</div>
+          <div class="nav-item" id="sub-nav-putaran" onclick="location.href='modules/laporan.html#putaran'"><span class="ni">🏆</span> Laporan Putaran</div>
+        </div>
+
+        <div class="nav-item" id="nav-logs" style="display:none" onclick="window.bukaPanel('logs',this)"><span class="ni">📋</span> Log Aktivitas</div>
       </div>
     </div>
     <div class="sidebar-footer">
@@ -80,7 +123,31 @@
         <p style="font-size:.82rem;color:var(--cb);font-style:italic">Berdiri 1981 · Jakarta</p>
       </div>
 
+      <!-- Info paguyuban -->
+      <div class="dash-info" style="margin-top:1.2rem; margin-bottom:0.5rem">
+        <h3>✦ Tentang Paguyuban</h3>
+        <p>Bermula dari tanah Solo yang kaya budaya, para pendahulu keluarga Kromoredjo merantau ke Jakarta membawa nilai-nilai luhur: kebersamaan, gotong royong, dan silaturahmi yang tak putus. Selama 45 tahun dan lima generasi, paguyuban ini terus tumbuh — bukan sekadar ikatan darah, melainkan ikatan hati.</p>
+      </div>
+
+      <!-- Info Akses (Hanya muncul jika login sebagai Admin) -->
+      <div id="dash-admin-access" style="display:none; margin-top:1.2rem; margin-bottom:.8rem;">
+        <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:0.8rem;font-weight:600">✦ Pengelola Akses Sistem</p>
+        <div class="table-wrapper" style="overflow-x: auto; border: 1px solid rgba(201,168,76,0.6); border-radius: 8px;">
+          <table style="width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.1);">
+            <thead>
+              <tr>
+                <th style="font-family:'Cinzel',serif; font-size:0.55rem; color:var(--em); text-transform:uppercase; padding:0.8rem; text-align:left; background:rgba(0,0,0,0.2); border-bottom:2px solid rgba(201,168,76,0.2);">Nama Pengguna</th>
+                <th style="font-family:'Cinzel',serif; font-size:0.55rem; color:var(--em); text-transform:uppercase; padding:0.8rem; text-align:left; background:rgba(0,0,0,0.2); border-bottom:2px solid rgba(201,168,76,0.2);">Level</th>
+                <th style="font-family:'Cinzel',serif; font-size:0.55rem; color:var(--em); text-transform:uppercase; padding:0.8rem; text-align:left; background:rgba(0,0,0,0.2); border-bottom:2px solid rgba(201,168,76,0.2);">Status Akun</th>
+              </tr>
+            </thead>
+            <tbody id="access-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Stats utama -->
+       <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Anggota Keluarga</p>
       <div class="stats-grid" style="margin-bottom:1rem">
         <div class="stat-card"><p class="stat-lbl">Total Anggota</p><p class="stat-num" id="stat-total">0</p><p class="stat-sub">terdaftar</p></div>
         <div class="stat-card"><p class="stat-lbl">Masih Hidup</p><p class="stat-num" id="stat-aktif">0</p><p class="stat-sub">orang</p></div>
@@ -92,12 +159,6 @@
       <div style="margin-bottom:.6rem">
         <p style="font-family:'Cinzel',serif;font-size:.85rem;letter-spacing:.2em;color:var(--em);text-transform:uppercase;margin-bottom:.8rem;font-weight:600">✦ Anggota per Generasi</p>
         <div class="stats-grid" id="stats-per-gen"></div>
-      </div>
-
-      <!-- Info paguyuban -->
-      <div class="dash-info" style="margin-top:1.2rem">
-        <h3>✦ Tentang Paguyuban</h3>
-        <p>Bermula dari tanah Solo yang kaya budaya, para pendahulu keluarga Kromoredjo merantau ke Jakarta membawa nilai-nilai luhur: kebersamaan, gotong royong, dan silaturahmi yang tak putus. Selama 45 tahun dan lima generasi, paguyuban ini terus tumbuh — bukan sekadar ikatan darah, melainkan ikatan hati.</p>
       </div>
 
       <!-- Info Tabungan Pribadi (Hanya muncul jika login sebagai anggota) -->
@@ -166,6 +227,27 @@
       <div id="daftar-periode"><div class="kosong-info">Belum ada periode arisan. Buat periode baru untuk memulai.</div></div>
     </div>
 
+    <!-- LOG AKTIVITAS -->
+    <div class="panel" id="panel-logs">
+      <div class="panel-header">
+        <h2 class="panel-judul">Log <em>Aktivitas Sistem</em></h2>
+        <button class="btn-sm danger" id="btn-bersihkan-log" onclick="window.hapusSemuaLog()" style="display:none; padding:0.7rem 1.5rem; font-size:0.85rem; height:48px">🗑 Bersihkan Log</button>
+      </div>
+      <div style="margin-top:1rem; overflow-x: auto;">
+        <table class="tabel-bayar">
+          <thead>
+            <tr style="font-size: 0.65rem;">
+              <th>Waktu</th>
+              <th>Pengguna</th>
+              <th>Aksi</th>
+              <th>Detail</th>
+            </tr>
+          </thead>
+          <tbody id="log-body"></tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -179,7 +261,7 @@
     <div class="modal-body">
       <div class="form-group">
         <label>Nominal Iuran per Bulan (Rp)</label>
-        <input type="number" id="input-nominal" placeholder="Contoh: 150000" min="0"/>
+        <input type="text" id="input-nominal" placeholder="Contoh: 150.000" inputmode="numeric"/>
       </div>
     </div>
     <div class="modal-footer">
@@ -409,7 +491,7 @@
         </div>
         <div class="form-group">
           <label>Jumlah (Rp)</label>
-          <input type="number" id="trx-jumlah" placeholder="0" required/>
+          <input type="text" id="trx-jumlah" placeholder="0" inputmode="numeric" required/>
         </div>
       </form>
     </div>

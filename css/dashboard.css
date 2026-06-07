@@ -42,12 +42,15 @@ input:-webkit-autofill:focus {
 
 /* APP */
 #halaman-app{flex-direction:row}
-.sidebar{width:240px;min-height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;transition:transform .3s ease}
+.sidebar{width:240px;height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;transition:transform .3s ease}
 .sidebar-header{padding:1.8rem 1.5rem 1.2rem;border-bottom:1px solid rgba(201,168,76,.12)}
 .sidebar-logo-img{width:45px;height:45px;border-radius:50%;object-fit:cover;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 8px rgba(201,168,76,0.2))}
 .sidebar-logo{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem;font-weight:700}
 .sidebar-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.3}
-.sidebar-nav{flex:1;padding:1rem 0}
+.sidebar-nav{flex:1;padding:1rem 0;overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:rgba(201,168,76,0.3) transparent}
+.sidebar-nav::-webkit-scrollbar{width:4px}
+.sidebar-nav::-webkit-scrollbar-track{background:transparent}
+.sidebar-nav::-webkit-scrollbar-thumb{background:rgba(201,168,76,0.2);border-radius:10px}
 .nav-label {
   font-family: 'Cinzel', serif;
   font-size: 0.85rem; 

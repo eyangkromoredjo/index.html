@@ -1,6 +1,6 @@
 import { db } from './firebase-config.js';
 import { ref, get, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { formatRp, toast } from './utils.js';
+import { formatRp, toast, cleanNumber, applyMask } from './utils.js';
 
 // Define HAK_AKSES and penggunaLogin for this module
 const HAK_AKSES = {
@@ -10,6 +10,20 @@ const HAK_AKSES = {
   guest:    { tambah: false, edit: false, hapus: false, kelolaAkun: false }
 };
 let penggunaLogin = null;
+
+async function catatLog(aksi, detail = "") {
+  if (!penggunaLogin) return;
+  try {
+    const logRef = push(ref(db, "logs"));
+    await set(logRef, {
+      waktu: Date.now(),
+      nama: penggunaLogin.username,
+      level: penggunaLogin.level,
+      aksi: aksi,
+      detail: detail
+    });
+  } catch (e) { console.error("Gagal mencatat log:", e); }
+}
 
 // Helper functions for UI
 window.bukaModal = (id) => document.getElementById(id).classList.add('aktif');
@@ -116,7 +130,7 @@ window.simpanTransaksi = async function() {
   const id = document.getElementById('trx-id').value;
   const tgl = document.getElementById('trx-tanggal').value;
   const dsk = document.getElementById('trx-deskripsi').value.trim();
-  const jml = parseInt(document.getElementById('trx-jumlah').value);
+  const jml = cleanNumber(document.getElementById('trx-jumlah').value);
   const kat = document.getElementById('trx-kategori').value;
   const tip = document.querySelector('input[name="trx-tipe"]:checked').value;
 
@@ -137,6 +151,7 @@ window.simpanTransaksi = async function() {
 
   window.tutupModal('modal-transaksi');
   toast(id ? 'Transaksi diperbarui.' : 'Transaksi dicatat.');
+  catatLog(id ? "Edit Keuangan" : "Tambah Keuangan", dsk + " (" + formatRp(jml) + ")");
   window.renderBukuBesar();
 };
 
@@ -147,7 +162,7 @@ window.bukaEditTransaksi = async function(id) {
   document.getElementById('trx-id').value = id;
   document.getElementById('trx-tanggal').value = t.tanggal;
   document.getElementById('trx-deskripsi').value = t.deskripsi;
-  document.getElementById('trx-jumlah').value = t.jumlah;
+  document.getElementById('trx-jumlah').value = t.jumlah ? t.jumlah.toLocaleString('id-ID') : '';
   document.getElementById('trx-kategori').value = t.kategori;
   const radio = document.querySelector(`input[name="trx-tipe"][value="${t.tipe}"]`);
   if(radio) radio.checked = true;
@@ -159,6 +174,7 @@ window.hapusTransaksi = async function(id) {
   if (!confirm('Hapus transaksi ini?')) return;
   await remove(ref(db, `transaksi/${id}`));
   toast('Transaksi dihapus.');
+  catatLog("Hapus Keuangan", "ID Transaksi: " + id);
   window.renderBukuBesar();
 };
 
@@ -169,6 +185,7 @@ window.hapusSemuaTransaksi = async function() {
   try {
     await remove(ref(db, "transaksi"));
     toast('Buku Besar berhasil dibersihkan.');
+    catatLog("Bersihkan Buku Besar", "Menghapus seluruh data transaksi keuangan");
     window.renderBukuBesar();
   } catch (e) {
     console.error(e);
@@ -201,6 +218,7 @@ window.handleImportLedgerFile = async function(input) {
         await set(newTrxRef, trx);
       }));
       window.tutupModal('modal-transaksi'); // Assuming this modal is for adding single transaction, not import
+      catatLog("Import Keuangan", "Berhasil mengimpor " + result.count + " transaksi dari file");
       toast(result.count + ' transaksi berhasil diimpor ke buku besar.');
       window.renderBukuBesar();
     } catch (err) {
@@ -315,11 +333,18 @@ function initBukuBesarPage() {
   const saved = sessionStorage.getItem('kromoredjo_user');
   if (saved) {
     penggunaLogin = JSON.parse(saved);
+
+    // Proteksi akses: Anggota tidak boleh melihat halaman ini
+    if (penggunaLogin.level === 'anggota') {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
     // Setup UI based on level
     const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota', guest: '👤 Tamu' };
     const roleText = levelMap[penggunaLogin.level] || '';
-    document.getElementById('sidebar-level').textContent = roleText;
-    document.getElementById('topbar-user').innerHTML = `${roleText}<br>${penggunaLogin.nama}`;
+    document.getElementById('sidebar-level').textContent = roleText; // Menambahkan ikon ke footer sidebar
+    document.getElementById('topbar-user').innerHTML = `${roleText}<br>${penggunaLogin.username}`; // Menggunakan username dan menambahkan ikon
     document.getElementById('btn-keluar-sidebar').style.display = 'block';
     // Hide login button if already logged in
     const btnLoginSidebar = document.getElementById('btn-login-sidebar');
@@ -327,6 +352,8 @@ function initBukuBesarPage() {
 
     const btnClearLedger = document.getElementById('btn-bersihkan-ledger');
     if(btnClearLedger) btnClearLedger.style.display = HAK_AKSES[penggunaLogin.level]?.hapus ? 'inline-block' : 'none';
+
+    applyMask('trx-jumlah');
 
     // Start real-time listener for transactions
     onValue(ref(db, "transaksi"), () => {

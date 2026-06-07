@@ -14,17 +14,23 @@
     .sidebar{width:240px;min-height:100vh;background:var(--cs);border-right:1px solid rgba(201,168,76,.15);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100}
     .sidebar-header{padding:1.8rem 1.5rem 1.2rem;border-bottom:1px solid rgba(201,168,76,.12)}
     .sidebar-logo-img{width:45px;height:45px;border-radius:50%;object-fit:cover;margin-bottom:1rem;display:block;filter:drop-shadow(0 0 8px rgba(201,168,76,0.2))}
-    .sidebar-logo{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem}
+    .sidebar-logo{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase;margin-bottom:.3rem;font-weight:700}
     .sidebar-nama{font-family:'Playfair Display',serif;font-size:1rem;color:var(--kr);line-height:1.3}
     .sidebar-nav{flex:1;padding:1rem 0}
-    .nav-label{font-family:'Cinzel',serif;font-size:.5rem;letter-spacing:.35em;color:rgba(201,168,76,.4);text-transform:uppercase;padding:.8rem 1.5rem .4rem}
+    .nav-label{font-family:'Cinzel',serif;font-size:0.85rem;font-weight:800;letter-spacing:0.2em;color:var(--em);text-transform:uppercase;padding:1.5rem 1.5rem 0.5rem;border-bottom:2px solid rgba(201,168,76,0.3);margin-bottom:0.8rem;display:block;text-shadow:1px 1px 2px rgba(0,0,0,0.5)}
     .nav-item{display:flex;align-items:center;gap:.8rem;padding:.75rem 1.5rem;cursor:pointer;color:rgba(245,236,215,.6);font-size:.85rem;transition:all .25s;border-left:2px solid transparent}
     .nav-item:hover{color:var(--kr);background:rgba(201,168,76,.06)}
     .nav-item.aktif{color:var(--em);border-left-color:var(--em);background:rgba(201,168,76,.08)}
     .nav-item .ni{font-size:1rem;width:1.2rem;text-align:center}
     .konten-utama{margin-left:240px;flex:1;min-height:100vh;padding:2rem}
-    .topbar{padding:1.2rem 2rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50;margin:-2rem -2rem 2rem -2rem; gap: 1rem;}
-    .topbar-judul{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.3em;color:var(--em);text-transform:uppercase}
+    .topbar{padding:1.2rem 2.5rem;border-bottom:1px solid rgba(201,168,76,.1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(59,31,14,.95);backdrop-filter:blur(10px);z-index:50;margin:-2rem -2rem 2rem -2rem; gap: 1rem;}
+    .topbar-judul{font-family:'Cinzel',serif;font-size:1.1rem;letter-spacing:.15em;color:var(--em);text-transform:uppercase;font-weight:600}
+    .topbar-user{font-size:.9rem;color:var(--cb);font-style:italic;text-align:right;line-height:1.2; margin-right: 0.5rem;}
+
+    .sidebar-footer{padding:1.2rem 1.5rem;border-top:1px solid rgba(201,168,76,.12);margin-top:auto}
+    .sidebar-level{font-family:'Cinzel',serif;font-size:.7rem;letter-spacing:.2em;color:var(--em);text-align:center;margin-bottom:.8rem;font-weight:700}
+    .tombol-keluar{width:100%;padding:.6rem;background:transparent;border:1px solid rgba(201,168,76,.5);color:var(--cb);font-family:'Cinzel',serif;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .3s;font-weight:700}
+    .tombol-keluar:hover{border-color:var(--em);color:var(--em)}
 
     /* SILSILAH INTERAKTIF STYLES */
     .silsilah-container {
@@ -90,8 +96,14 @@
       .konten-utama { margin-left: 0; padding: 1.2rem; }
       .hamburger { display: block; }
       .topbar { padding: 1.2rem 1.5rem; }
-      .topbar-judul { margin-left: 1rem; flex: 1; font-size: 0.6rem; letter-spacing: 0.2em; }
+      .topbar-judul { margin-left: 1rem; flex: 1; }
     }
+
+    /* STYLE KHUSUS SUBMENU */
+    #arisan-submenu, #laporan-submenu { transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; overflow: hidden; }
+    #arisan-submenu .nav-item, #laporan-submenu .nav-item { border-left: none; opacity: 0.7; padding: 0.6rem 1.5rem 0.6rem 3.2rem; font-size: 0.78rem; min-height: auto; border-bottom: 1px solid rgba(201,168,76,0.05); }
+    #arisan-submenu .nav-item:hover, #laporan-submenu .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.03); }
+    #arisan-submenu .nav-item.aktif, #laporan-submenu .nav-item.aktif { opacity: 1; color: var(--em); font-weight: 600; background: rgba(201,168,76,0.05); }
   </style>
   <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
@@ -108,12 +120,53 @@
     <div class="sidebar-nav">
       <p class="nav-label">Menu Utama</p>
       <div class="nav-item" onclick="location.href='dashboard.html'"><span class="ni">🏠</span> Beranda</div>
-      <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
-      <div class="nav-item" onclick="location.href='dashboard.html#arisan'"><span class="ni">💰</span> Arisan</div>
-      <div class="nav-item aktif" onclick="tutupSidebar()"><span class="ni">🌳</span> Silsilah</div>
+      <div id="nav-pengurus" style="display:none">
+        <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
+        
+        <!-- TOMBOL INDUK MANAJEMEN ARISAN -->
+        <div class="nav-item" id="nav-induk-arisan" onclick="window.toggleArisanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">💰</span> Manajemen Arisan
+          </div>
+          <span id="arisan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU -->
+        <div id="arisan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/arisan.html#aturan'"><span class="ni">📜</span> Aturan</div>
+          <div class="nav-item" onclick="location.href='modules/arisan.html#peserta'"><span class="ni">👥</span> Peserta</div>
+          <div class="nav-item" id="sub-nav-iuran-arisan" onclick="location.href='modules/arisan.html#iuran'"><span class="ni">💳</span> Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran-arisan" onclick="location.href='modules/arisan.html#pengeluaran'"><span class="ni">📉</span> Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-tipe-arisan" onclick="location.href='modules/arisan.html#tipe'"><span class="ni">⚙️</span> Tipe</div>
+          <div class="nav-item" id="sub-nav-penerima-arisan" onclick="location.href='modules/arisan.html#penerima'"><span class="ni">📅</span> Penerima</div>
+        </div>
+
+        <div class="nav-item" id="nav-bukubesar" onclick="location.href='bukubesar.html'"><span class="ni">📖</span> Buku Besar</div>
+        <div class="nav-item aktif" onclick="tutupSidebar()"><span class="ni">🌳</span> Silsilah</div>
+
+        <!-- TOMBOL INDUK LAPORAN -->
+        <div class="nav-item" id="nav-induk-laporan" onclick="window.toggleLaporanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">📊</span> Laporan Keuangan
+          </div>
+          <span id="laporan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU LAPORAN -->
+        <div id="laporan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/laporan.html#overview'"><span class="ni">📉</span> Ringkasan Saldo</div>
+          <div class="nav-item" id="sub-nav-iuran" onclick="location.href='modules/laporan.html#iuran'"><span class="ni">💳</span> Realisasi Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran" onclick="location.href='modules/laporan.html#pengeluaran'"><span class="ni">📉</span> Buku Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-siklus" onclick="location.href='modules/laporan.html#siklus'"><span class="ni">🔄</span> Siklus Arisan</div>
+          <div class="nav-item" id="sub-nav-putaran" onclick="location.href='modules/laporan.html#putaran'"><span class="ni">🏆</span> Laporan Putaran</div>
+        </div>
+        <div class="nav-item" id="nav-logs" style="display:none" onclick="location.href='dashboard.html#logs'"><span class="ni">📋</span> Log Aktivitas</div>
+      </div>
     </div>
-    <div style="padding: 1.2rem 1.5rem; border-top: 1px solid rgba(201,168,76,0.12);">
-      <p style="font-size: 0.5rem; color: var(--cb); text-align: center; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Creator: Budi Purwanto bin Tukimin · Maret 2025</p>
+    <div class="sidebar-footer">
+      <p class="sidebar-level" id="sidebar-level"></p>
+      <button id="btn-keluar-sidebar" class="tombol-keluar" onclick="window.keluar()" style="display:none">✦ Keluar</button>
+      <p style="font-size: 0.5rem; color: var(--cb); text-align: center; margin-top: 1rem; opacity: 0.6; font-family: 'Cinzel'; letter-spacing: 1px;">Sistem oleh Budi Purwanto bin Tukimin · 2025</p>
     </div>
   </nav>
 
@@ -121,7 +174,7 @@
     <div class="topbar">
       <button class="hamburger" onclick="bukaSidebar()">☰</button>
       <p class="topbar-judul">Pohon Silsilah <em>Keluarga</em></p>
-      <a href="dashboard.html" style="color:var(--em); text-decoration:none; font-size:0.7rem; font-family:'Cinzel'">← Kembali ke Dashboard</a>
+      <p class="topbar-user" id="topbar-user"></p>
     </div>
 
     <div class="silsilah-container">
@@ -143,13 +196,74 @@
   window.bukaSidebar = () => { document.getElementById('sidebar').classList.add('buka'); document.getElementById('overlay-sidebar').classList.add('aktif'); };
   window.tutupSidebar = () => { document.getElementById('sidebar').classList.remove('buka'); document.getElementById('overlay-sidebar').classList.remove('aktif'); };
 
+  window.toggleArisanSubmenu = function() {
+    const submenu = document.getElementById('arisan-submenu');
+    const chevron = document.getElementById('arisan-chevron');
+    const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+    if (isClosed) {
+      submenu.style.maxHeight = '500px';
+      submenu.style.opacity = '1';
+      submenu.style.marginBottom = '0.5rem';
+      chevron.style.transform = 'rotate(0deg)';
+    } else {
+      submenu.style.maxHeight = '0px';
+      submenu.style.opacity = '0';
+      submenu.style.marginBottom = '0';
+      chevron.style.transform = 'rotate(-90deg)';
+    }
+  };
+
+  window.toggleLaporanSubmenu = function() {
+    const submenu = document.getElementById('laporan-submenu');
+    const chevron = document.getElementById('laporan-chevron');
+    const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+    if (isClosed) {
+      submenu.style.maxHeight = '500px';
+      submenu.style.opacity = '1';
+      submenu.style.marginBottom = '0.5rem';
+      chevron.style.transform = 'rotate(0deg)';
+    } else {
+      submenu.style.maxHeight = '0px';
+      submenu.style.opacity = '0';
+      submenu.style.marginBottom = '0';
+      chevron.style.transform = 'rotate(-90deg)';
+    }
+  };
+
+  window.keluar = function() {
+    sessionStorage.removeItem('kromoredjo_user');
+    window.location.href = 'dashboard.html';
+  };
+
   // Proteksi Halaman
   window.addEventListener('load', () => {
     const saved = sessionStorage.getItem('kromoredjo_user');
     if (!saved) {
       location.href = 'dashboard.html';
     } else {
-      window.penggunaLogin = JSON.parse(saved);
+      const user = JSON.parse(saved);
+      window.penggunaLogin = user;
+      
+      // Setup UI Silsilah
+      const levelMap = { admin: '👑 Admin', pengurus: '🛡️ Pengurus', anggota: '🔑 Anggota' };
+      const roleText = levelMap[user.level] || user.level;
+      document.getElementById('sidebar-level').textContent = roleText;
+      document.getElementById('topbar-user').innerHTML = `${roleText}<br>${user.username}`;
+      document.getElementById('btn-keluar-sidebar').style.display = 'block';
+      document.getElementById('nav-pengurus').style.display = 'block';
+      
+      const isAnggota = user.level === 'anggota';
+      ['sub-nav-iuran-arisan', 'sub-nav-pengeluaran-arisan', 'sub-nav-tipe-arisan', 'sub-nav-penerima-arisan'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = isAnggota ? 'none' : 'flex';
+      });
+      ['sub-nav-iuran', 'sub-nav-pengeluaran', 'sub-nav-siklus', 'sub-nav-putaran'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = isAnggota ? 'none' : 'flex';
+      });
+      const navLogs = document.getElementById('nav-logs');
+      if(navLogs) navLogs.style.display = user.level === 'admin' ? 'block' : 'none';
+
       startRealtimeSilsilah();
     }
   });
