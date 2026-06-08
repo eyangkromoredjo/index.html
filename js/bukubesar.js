@@ -180,8 +180,20 @@ window.hapusTransaksi = async function(id) {
 
 window.hapusSemuaTransaksi = async function() {
   if (!HAK_AKSES[penggunaLogin.level]?.hapus) return toast('Hanya Admin yang dapat menghapus seluruh data.');
-  if (!confirm('PERINGATAN: Ini akan menghapus SELURUH catatan di Buku Besar secara permanen. Lanjutkan?')) return;
-  
+
+  document.getElementById('input-password-ledger').value = '';
+  window.bukaModal('modal-otorisasi-ledger');
+  setTimeout(() => document.getElementById('input-password-ledger').focus(), 100);
+};
+
+window.konfirmasiBersihkanLedger = async function() {
+  const pw = document.getElementById('input-password-ledger').value;
+  if (pw !== 'bnLm9ufo') {
+    toast('Kata sandi salah.');
+    return;
+  }
+
+  window.tutupModal('modal-otorisasi-ledger');
   try {
     await remove(ref(db, "transaksi"));
     toast('Buku Besar berhasil dibersihkan.');
@@ -352,6 +364,9 @@ function initBukuBesarPage() {
 
     const btnClearLedger = document.getElementById('btn-bersihkan-ledger');
     if(btnClearLedger) btnClearLedger.style.display = HAK_AKSES[penggunaLogin.level]?.hapus ? 'inline-block' : 'none';
+
+    const btnImportLedger = document.getElementById('btn-import-ledger');
+    if(btnImportLedger) btnImportLedger.style.display = penggunaLogin.level === 'admin' ? 'inline-block' : 'none';
 
     applyMask('trx-jumlah');
 

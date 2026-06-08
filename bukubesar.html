@@ -47,7 +47,7 @@
         <h2 class="panel-judul">Buku Besar <em>Keuangan</em></h2>
         <div style="display:flex;gap:.75rem;flex-wrap:wrap;align-items:center">
           <button class="btn-tambah" onclick="window.resetTrxForm(); window.bukaModal('modal-transaksi')">+ Transaksi Baru</button>
-          <button class="btn-tambah" style="background:rgba(201,168,76,.14);color:var(--kr);border-color:rgba(201,168,76,.25);" onclick="window.importLedgerFile()">+ Import Excel</button>
+          <button id="btn-import-ledger" class="btn-tambah" style="display:none; background:rgba(201,168,76,.14);color:var(--kr);border-color:rgba(201,168,76,.25);" onclick="window.importLedgerFile()">+ Import Excel</button>
           <button class="btn-sm danger" id="btn-bersihkan-ledger" onclick="window.hapusSemuaTransaksi()" style="display:none; padding:0.7rem 1.5rem; font-size:0.85rem; height:48px">🗑 Bersihkan Data</button>
         </div>
       </div>
@@ -159,6 +159,24 @@
     <div class="modal-footer">
       <button class="btn-batal" onclick="window.tutupModal('modal-transaksi')">Batal</button>
       <button class="btn-simpan" onclick="window.simpanTransaksi()">Simpan Transaksi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL OTORISASI ADMIN (UNTUK BERSIHKAN BUKU BESAR) -->
+<div class="modal-overlay" id="modal-otorisasi-ledger">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <p class="modal-judul">Otorisasi Admin</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-otorisasi-ledger')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="konfirm-teks" style="margin-bottom:1rem">PERINGATAN: Ini akan menghapus SELURUH catatan Buku Besar secara permanen.<br>Masukkan kata sandi otorisasi:</p>
+      <input type="password" id="input-password-ledger" class="search-box" style="width:100%; background:rgba(0,0,0,0.2); border-color:var(--em); color:white; padding:0.8rem" placeholder="Kata sandi..." onkeydown="if(event.key==='Enter') window.konfirmasiBersihkanLedger()">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-otorisasi-ledger')">Batal</button>
+      <button class="btn-hapus-ok" onclick="window.konfirmasiBersihkanLedger()" style="background:var(--em); color:var(--ct); border-color:var(--em); font-weight:bold">Konfirmasi</button>
     </div>
   </div>
 </div>

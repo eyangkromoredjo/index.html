@@ -354,6 +354,24 @@
   </div>
 </div>
 
+<!-- MODAL OTORISASI ADMIN (UNTUK BERSIHKAN LOG) -->
+<div class="modal-overlay" id="modal-otorisasi">
+  <div class="modal-box" style="max-width:380px">
+    <div class="modal-header">
+      <p class="modal-judul">Otorisasi Admin</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-otorisasi')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="konfirm-teks" style="margin-bottom:1rem">PERINGATAN: Ini akan menghapus SELURUH riwayat log aktivitas secara permanen.<br>Masukkan kata sandi otorisasi:</p>
+      <input type="password" id="input-password-otorisasi" class="search-box" style="width:100%; background:rgba(0,0,0,0.2); border-color:var(--em); color:white; padding:0.8rem" placeholder="Kata sandi..." onkeydown="if(event.key==='Enter') window.konfirmasiBersihkanLog()">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-otorisasi')">Batal</button>
+      <button class="btn-hapus-ok" onclick="window.konfirmasiBersihkanLog()" style="background:var(--em); color:var(--ct); border-color:var(--em); font-weight:bold">Konfirmasi</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL FORM ANGGOTA -->
 <div class="modal-overlay" id="modal-anggota">
   <div class="modal-box">

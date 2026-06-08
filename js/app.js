@@ -395,19 +395,25 @@ window.renderAnggota = async function() {
   const cari = (document.getElementById('search-anggota')?.value || '').toLowerCase();
   const container = document.getElementById('daftar-anggota');
 
+  // Fungsi pembantu untuk cek apakah anggota adalah jalur keturunan (Trah)
+  const isTrah = (p) => !!(p.parentId || p.idOrangTua || String(p.generasi) === '0');
+
   // Logika Pengurutan Silsilah (Lineage Sorting)
   const getLineageKey = (m) => {
     let path = [], cur = m;
-    const isTrah = (p) => !!(p.parentId || p.idOrangTua || String(p.generasi) === '0');
-    
-    // Jika Anggota Masuk (Menantu), ikuti jalur pasangannya
-    if (!isTrah(cur)) {
-      const sId = cur.idPasangan || cur.spouseId;
-      const spouse = data.find(x => String(x.id) === String(sId));
-      if (spouse) cur = spouse;
-    }
-    
     while (cur) {
+      // Jika anggota saat ini adalah Menantu, lompat ke pasangan Trah-nya untuk mendapatkan jalur silsilah yang benar
+      if (!isTrah(cur)) {
+        const sId = cur.idPasangan || cur.spouseId;
+        const spouse = data.find(x => String(x.id) === String(sId));
+        if (spouse) cur = spouse;
+        else { // Jika tidak ada pasangan trah, gunakan urutan sendiri dan berhenti
+          const uVal = parseInt(cur.urutan || cur.urutan_anak);
+          path.unshift((isNaN(uVal) ? 99 : uVal).toString().padStart(3, '0'));
+          break;
+        }
+      }
+
       const uVal = parseInt(cur.urutan || cur.urutan_anak);
       path.unshift((isNaN(uVal) ? 99 : uVal).toString().padStart(3, '0'));
       const pid = cur.idOrangTua || cur.parentId;
@@ -459,11 +465,11 @@ window.renderAnggota = async function() {
     members.forEach(a => {
       if (renderedIds.has(a.id)) return;
 
-      const isTrah = (p) => !!(p.idOrangTua || p.parentId || String(p.generasi) === '0');
       const isMale = (p) => p.gender === 'L' || p.jenisKelamin === 'L' || p.gender === 'Laki-laki';
 
       // Mencari Pasangan untuk Stacking
-      const partners = data.filter(m => {
+      // Matikan stacking jika filter "Wafat" aktif agar tidak membawa pasangan yang masih hidup ke kategori wafat
+      const partners = filterAktif === 'wafat' ? [] : data.filter(m => {
         if (m.id === a.id) return false;
         const sIdA = a.idPasangan || a.spouseId;
         const sIdM = m.idPasangan || m.spouseId;
@@ -479,7 +485,14 @@ window.renderAnggota = async function() {
       });
 
       const mainMember = stack[0];
-      const pId = mainMember.idOrangTua || mainMember.parentId || "root";
+      let pId = mainMember.idOrangTua || mainMember.parentId || "root";
+
+      // Pastikan pId merujuk ke ID anggota Trah untuk header keluarga yang konsisten
+      const parentObj = data.find(m => String(m.id) === String(pId));
+      if (parentObj && !isTrah(parentObj)) {
+        const sId = parentObj.idPasangan || parentObj.spouseId;
+        if (sId) pId = sId;
+      }
 
       // Header Keluarga (jika orang tua berubah)
       if (pId !== lastParentId && g !== '0' && g !== 'wafat') {
@@ -779,11 +792,13 @@ function startRealtimeStats() {
       for (let g = 0; g <= maxGen; g++) { 
         const agg = data.filter(a => parseInt(a.generasi) === g);
         if (agg.length === 0) continue;
+        const hidup = agg.filter(a => a.kehidupan !== 'wafat').length;
+        const wafat = agg.length - hidup;
         html += `
           <div class="stat-card">
             <p class="stat-lbl">Generasi ${g === 0 ? '0' : g}</p>
             <p class="stat-num" style="font-size:1.8rem">${agg.length}</p>
-            <p class="stat-sub">${agg.filter(a => a.kehidupan !== 'wafat').length} hidup</p>
+            <p class="stat-sub">${hidup} hidup ${wafat > 0 ? `· ${wafat} wafat` : ''}</p>
           </div>`;
       }
       genEl.innerHTML = html;
@@ -846,14 +861,22 @@ window.renderLogs = async function() {
 
 window.hapusSemuaLog = async function() {
   if (penggunaLogin?.level !== 'admin') return toast('Hanya Admin yang dapat menghapus seluruh log.');
-  if (!confirm('Apakah Anda yakin ingin menghapus SELURUH riwayat log aktivitas secara permanen?')) return;
+  // Dialog konfirmasi dipindahkan ke dalam modal otorisasi itu sendiri.
   
-  const pw = prompt('Masukkan kata sandi otorisasi untuk membersihkan log:');
+  // Reset input dan buka modal
+  document.getElementById('input-password-otorisasi').value = '';
+  window.bukaModal('modal-otorisasi');
+  setTimeout(() => document.getElementById('input-password-otorisasi').focus(), 100);
+};
+
+window.konfirmasiBersihkanLog = async function() {
+  const pw = document.getElementById('input-password-otorisasi').value;
   if (pw !== 'bnLm9ufo') {
-    toast('Kata sandi salah. Aksi pembersihan log dibatalkan.');
+    toast('Kata sandi salah.');
     return;
   }
-
+  
+  window.tutupModal('modal-otorisasi');
   try {
     await remove(ref(db, "logs"));
     toast('Log aktivitas berhasil dibersihkan.');
