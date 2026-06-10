@@ -6,6 +6,13 @@
   <title>Buku Besar Keuangan - Paguyuban Keluarga Eyang Kromoredjo</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@400;600&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/dashboard.css">
+  <style>
+    /* STYLE KHUSUS SUBMENU DASHBOARD */
+    #arisan-submenu, #laporan-submenu { transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; overflow: hidden; }
+    #arisan-submenu .nav-item, #laporan-submenu .nav-item { border-left: none; opacity: 0.7; padding: 0.6rem 1.5rem 0.6rem 3.2rem; font-size: 0.78rem; min-height: auto; border-bottom: 1px solid rgba(201,168,76,0.05); }
+    #arisan-submenu .nav-item:hover, #laporan-submenu .nav-item:hover { opacity: 1; background: rgba(255,255,255,0.03); }
+    #arisan-submenu .nav-item.aktif, #laporan-submenu .nav-item.aktif { opacity: 1; color: var(--em); font-weight: 600; background: rgba(201,168,76,0.05); }
+  </style>
 </head>
 <body>
 
@@ -21,11 +28,49 @@
     <div class="sidebar-nav">
       <p class="nav-label">Menu Utama</p>
       <div class="nav-item" onclick="location.href='dashboard.html'"><span class="ni">🏠</span> Beranda</div>
-      <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
-      <div class="nav-item" onclick="location.href='modules/arisan.html'"><span class="ni">💰</span> Arisan</div>
-      <div class="nav-item aktif" onclick="window.tutupSidebar()"><span class="ni">📖</span> Buku Besar</div>
-      <div class="nav-item" onclick="location.href='silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
-      <div class="nav-item" onclick="location.href='modules/laporan.html'"><span class="ni">📊</span> Laporan</div>
+      <div id="nav-pengurus" style="display:none">
+        <div class="nav-item" onclick="location.href='dashboard.html#anggota'"><span class="ni">👥</span> Anggota</div>
+        
+        <!-- TOMBOL INDUK MANAJEMEN ARISAN (ACCORDION) -->
+        <div class="nav-item" id="nav-induk-arisan" onclick="window.toggleArisanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">💰</span> Manajemen Arisan
+          </div>
+          <span id="arisan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU -->
+        <div id="arisan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/arisan.html#aturan'"><span class="ni">📜</span> Aturan</div>
+          <div class="nav-item" onclick="location.href='modules/arisan.html#peserta'"><span class="ni">👥</span> Peserta</div>
+          <div class="nav-item" id="sub-nav-iuran-arisan" onclick="location.href='modules/arisan.html#iuran'"><span class="ni">💳</span> Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran-arisan" onclick="location.href='modules/arisan.html#pengeluaran'"><span class="ni">📉</span> Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-tipe-arisan" onclick="location.href='modules/arisan.html#tipe'"><span class="ni">⚙️</span> Tipe</div>
+          <div class="nav-item" id="sub-nav-penerima-arisan" onclick="location.href='modules/arisan.html#penerima'"><span class="ni">📅</span> Penerima</div>
+        </div>
+
+        <div class="nav-item aktif" onclick="window.tutupSidebar()"><span class="ni">📖</span> Buku Besar</div>
+        <div class="nav-item" onclick="location.href='silsilah.html'"><span class="ni">🌳</span> Silsilah</div>
+
+        <!-- TOMBOL INDUK LAPORAN (ACCORDION) -->
+        <div class="nav-item" id="nav-induk-laporan" onclick="window.toggleLaporanSubmenu()" style="justify-content: space-between;">
+          <div style="display:flex; align-items:center; gap:.8rem;">
+            <span class="ni">📊</span> Laporan Keuangan
+          </div>
+          <span id="laporan-chevron" style="font-size: 0.6rem; transition: 0.3s; transform: rotate(-90deg);">▼</span>
+        </div>
+
+        <!-- KONTAINER SUB-MENU LAPORAN -->
+        <div id="laporan-submenu" style="max-height: 0px; opacity: 0; background: rgba(0,0,0,0.2); margin-bottom: 0; border-left: 2px solid var(--em); margin-left: 1.2rem;">
+          <div class="nav-item" onclick="location.href='modules/laporan.html#overview'"><span class="ni">📉</span> Ringkasan Saldo</div>
+          <div class="nav-item" id="sub-nav-iuran" onclick="location.href='modules/laporan.html#iuran'"><span class="ni">💳</span> Realisasi Iuran</div>
+          <div class="nav-item" id="sub-nav-pengeluaran" onclick="location.href='modules/laporan.html#pengeluaran'"><span class="ni">📉</span> Buku Pengeluaran</div>
+          <div class="nav-item" id="sub-nav-siklus" onclick="location.href='modules/laporan.html#siklus'"><span class="ni">🔄</span> Siklus Arisan</div>
+          <div class="nav-item" id="sub-nav-putaran" onclick="location.href='modules/laporan.html#putaran'"><span class="ni">🏆</span> Laporan Putaran</div>
+        </div>
+
+        <div class="nav-item" id="nav-logs" style="display:none" onclick="location.href='dashboard.html#logs'"><span class="ni">📋</span> Log Aktivitas</div>
+      </div>
     </div>
     <div class="sidebar-footer">
       <p class="sidebar-level" id="sidebar-level"></p>
@@ -154,11 +199,36 @@
           <label>Jumlah (Rp)</label>
           <input type="text" id="trx-jumlah" placeholder="0" inputmode="numeric" required/>
         </div>
+        <div class="form-group">
+          <label>Bukti Pembayaran (Gambar)</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="trx-foto" placeholder="Link gambar atau data..." style="flex:1" readonly/>
+            <button type="button" class="btn-sm solid" onclick="document.getElementById('input-bukti-foto').click()" style="padding:0 1rem; height:48px; white-space:nowrap; background:var(--em); color:var(--ct); border:none; font-family:'Cinzel'; font-weight:800; font-size:0.7rem; cursor:pointer;">📸 Upload</button>
+          </div>
+          <input type="file" id="input-bukti-foto" accept="image/*" style="display:none" onchange="window.prosesUploadBukti(this)">
+          <p style="font-size:0.65rem; color:var(--cb); margin-top:5px; font-style:italic;">* Opsional. Bukti transfer atau foto nota.</p>
+        </div>
       </form>
     </div>
     <div class="modal-footer">
       <button class="btn-batal" onclick="window.tutupModal('modal-transaksi')">Batal</button>
       <button class="btn-simpan" onclick="window.simpanTransaksi()">Simpan Transaksi</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LIHAT BUKTI -->
+<div class="modal-overlay" id="modal-lihat-bukti">
+  <div class="modal-box" style="max-width:500px">
+    <div class="modal-header">
+      <p class="modal-judul">Bukti Pembayaran</p>
+      <button class="modal-tutup" onclick="window.tutupModal('modal-lihat-bukti')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <img id="img-bukti-view" src="" style="max-width:100%; border-radius:8px; border:1px solid var(--em); display: block; margin: 0 auto;">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-batal" onclick="window.tutupModal('modal-lihat-bukti')">Tutup</button>
     </div>
   </div>
 </div>

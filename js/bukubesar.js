@@ -37,6 +37,78 @@ window.tutupSidebar = () => {
   document.getElementById('overlay-sb').classList.remove('aktif');
 };
 
+window.toggleArisanSubmenu = function() {
+  const submenu = document.getElementById('arisan-submenu');
+  const chevron = document.getElementById('arisan-chevron');
+  const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+  
+  if (isClosed) {
+    submenu.style.maxHeight = '500px';
+    submenu.style.opacity = '1';
+    submenu.style.marginBottom = '0.5rem';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    submenu.style.maxHeight = '0px';
+    submenu.style.opacity = '0';
+    submenu.style.marginBottom = '0';
+    chevron.style.transform = 'rotate(-90deg)';
+  }
+};
+
+window.toggleLaporanSubmenu = function() {
+  const submenu = document.getElementById('laporan-submenu');
+  const chevron = document.getElementById('laporan-chevron');
+  const isClosed = !submenu.style.maxHeight || submenu.style.maxHeight === '0px';
+
+  if (isClosed) {
+    submenu.style.maxHeight = '500px';
+    submenu.style.opacity = '1';
+    submenu.style.marginBottom = '0.5rem';
+    chevron.style.transform = 'rotate(0deg)';
+  } else {
+    submenu.style.maxHeight = '0px';
+    submenu.style.opacity = '0';
+    submenu.style.marginBottom = '0';
+    chevron.style.transform = 'rotate(-90deg)';
+  }
+};
+
+window.prosesUploadBukti = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      const max = 800;
+      if (width > height && width > max) { height *= max / width; width = max; }
+      else if (height > max) { width *= max / height; height = max; }
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      // Kompresi ke JPEG 0.7 untuk menghemat penyimpanan Firebase RTDB
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+      document.getElementById('trx-foto').value = dataUrl;
+      toast("Bukti berhasil diproses.");
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+window.lihatBukti = async function(id) {
+  const snapshot = await get(ref(db, `transaksi/${id}`));
+  if (snapshot.exists() && snapshot.val().foto) {
+    document.getElementById('img-bukti-view').src = snapshot.val().foto;
+    window.bukaModal('modal-lihat-bukti');
+  } else {
+    toast("Bukti tidak ditemukan.");
+  }
+};
+
 // ══ LOGIKA BUKU BESAR (LEDGER) ══
 window.renderBukuBesar = async function() {
   const snapshot = await get(ref(db, "transaksi"));
@@ -77,11 +149,12 @@ window.renderBukuBesar = async function() {
   list.forEach(t => {
     const isMasuk = t.tipe === 'masuk';
     if (isMasuk) totalMasuk += t.jumlah; else totalKeluar += t.jumlah;
+    const fotoHtml = t.foto ? `<br><button class="btn-sm" style="margin-top:5px; font-size:0.65rem; padding:2px 8px;" onclick="window.lihatBukti('${t.id}')">🖼️ Lihat Bukti</button>` : '';
 
     html += `
       <tr>
         <td style="white-space:nowrap">${new Date(t.tanggal).toLocaleDateString('id-ID')}</td>
-        <td>${t.deskripsi}<br><small style="color:var(--cb); font-size:0.7rem">Oleh: ${t.inputOleh || 'Admin'}</small></td>
+        <td>${t.deskripsi}${fotoHtml}<br><small style="color:var(--cb); font-size:0.7rem">Oleh: ${t.inputOleh || 'Admin'}</small></td>
         <td><span class="badge" style="background:rgba(201,168,76,0.1); color:var(--el)">${t.kategori}</span></td>
         <td class="txt-masuk">${isMasuk ? formatRp(t.jumlah) : '-'}</td>
         <td class="txt-keluar">${!isMasuk ? formatRp(t.jumlah) : '-'}</td>
@@ -120,6 +193,7 @@ window.resetTrxForm = function() {
   document.getElementById('trx-tanggal').value = new Date().toISOString().split('T')[0];
   document.getElementById('trx-deskripsi').value = '';
   document.getElementById('trx-jumlah').value = '';
+  document.getElementById('trx-foto').value = '';
   document.getElementById('trx-kategori').value = 'Sosial';
   const radioMasuk = document.querySelector('input[name="trx-tipe"][value="masuk"]');
   if(radioMasuk) radioMasuk.checked = true;
@@ -132,12 +206,13 @@ window.simpanTransaksi = async function() {
   const dsk = document.getElementById('trx-deskripsi').value.trim();
   const jml = cleanNumber(document.getElementById('trx-jumlah').value);
   const kat = document.getElementById('trx-kategori').value;
+  const fot = document.getElementById('trx-foto').value;
   const tip = document.querySelector('input[name="trx-tipe"]:checked').value;
 
   if (!tgl || !dsk || isNaN(jml)) return toast('Harap isi semua field transaksi.');
 
   const trxData = {
-    tanggal: tgl, deskripsi: dsk, jumlah: jml, kategori: kat, tipe: tip,
+    tanggal: tgl, deskripsi: dsk, jumlah: jml, kategori: kat, tipe: tip, foto: fot,
     inputOleh: penggunaLogin.nama, updatedAt: Date.now()
   };
 
@@ -163,6 +238,7 @@ window.bukaEditTransaksi = async function(id) {
   document.getElementById('trx-tanggal').value = t.tanggal;
   document.getElementById('trx-deskripsi').value = t.deskripsi;
   document.getElementById('trx-jumlah').value = t.jumlah ? t.jumlah.toLocaleString('id-ID') : '';
+  document.getElementById('trx-foto').value = t.foto || '';
   document.getElementById('trx-kategori').value = t.kategori;
   const radio = document.querySelector(`input[name="trx-tipe"][value="${t.tipe}"]`);
   if(radio) radio.checked = true;
@@ -359,8 +435,14 @@ function initBukuBesarPage() {
     document.getElementById('topbar-user').innerHTML = `${roleText}<br>${penggunaLogin.username}`; // Menggunakan username dan menambahkan ikon
     document.getElementById('btn-keluar-sidebar').style.display = 'block';
     // Hide login button if already logged in
+    const navPengurus = document.getElementById('nav-pengurus');
+    if(navPengurus) navPengurus.style.display = 'block';
+
     const btnLoginSidebar = document.getElementById('btn-login-sidebar');
     if (btnLoginSidebar) btnLoginSidebar.style.display = 'none';
+
+    const navLogs = document.getElementById('nav-logs');
+    if(navLogs) navLogs.style.display = penggunaLogin.level === 'admin' ? 'block' : 'none';
 
     const btnClearLedger = document.getElementById('btn-bersihkan-ledger');
     if(btnClearLedger) btnClearLedger.style.display = HAK_AKSES[penggunaLogin.level]?.hapus ? 'inline-block' : 'none';
