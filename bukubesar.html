@@ -140,6 +140,7 @@
             <tr>
               <th>Tanggal</th>
               <th>Keterangan</th>
+              <th style="text-align:center">Bukti</th>
               <th>Kategori</th>
               <th>Masuk</th>
               <th>Keluar</th>
@@ -204,6 +205,7 @@
           <div style="display:flex; gap:8px;">
             <input type="text" id="trx-foto" placeholder="Link gambar atau data..." style="flex:1" readonly/>
             <button type="button" class="btn-sm solid" onclick="document.getElementById('input-bukti-foto').click()" style="padding:0 1rem; height:48px; white-space:nowrap; background:var(--em); color:var(--ct); border:none; font-family:'Cinzel'; font-weight:800; font-size:0.7rem; cursor:pointer;">📸 Upload</button>
+            <button type="button" id="btn-hapus-foto" class="btn-sm danger" onclick="window.hapusFotoBukti()" style="padding:0 1rem; height:48px; display:none; border-color:rgba(232,160,160,0.4); color:#e8a0a0">🗑</button>
           </div>
           <input type="file" id="input-bukti-foto" accept="image/*" style="display:none" onchange="window.prosesUploadBukti(this)">
           <p style="font-size:0.65rem; color:var(--cb); margin-top:5px; font-style:italic;">* Opsional. Bukti transfer atau foto nota.</p>

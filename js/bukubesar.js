@@ -92,11 +92,21 @@ window.prosesUploadBukti = function(input) {
       // Kompresi ke JPEG 0.7 untuk menghemat penyimpanan Firebase RTDB
       const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
       document.getElementById('trx-foto').value = dataUrl;
+      const btnHapus = document.getElementById('btn-hapus-foto');
+      if(btnHapus) btnHapus.style.display = 'block';
       toast("Bukti berhasil diproses.");
     };
     img.src = e.target.result;
   };
   reader.readAsDataURL(file);
+};
+
+window.hapusFotoBukti = function() {
+  document.getElementById('trx-foto').value = '';
+  document.getElementById('input-bukti-foto').value = '';
+  const btnHapus = document.getElementById('btn-hapus-foto');
+  if(btnHapus) btnHapus.style.display = 'none';
+  toast("Foto bukti dihapus.");
 };
 
 window.lihatBukti = async function(id) {
@@ -149,12 +159,13 @@ window.renderBukuBesar = async function() {
   list.forEach(t => {
     const isMasuk = t.tipe === 'masuk';
     if (isMasuk) totalMasuk += t.jumlah; else totalKeluar += t.jumlah;
-    const fotoHtml = t.foto ? `<br><button class="btn-sm" style="margin-top:5px; font-size:0.65rem; padding:2px 8px;" onclick="window.lihatBukti('${t.id}')">🖼️ Lihat Bukti</button>` : '';
+    const fotoHtml = t.foto ? `<button class="btn-sm" style="font-size:0.65rem; padding:4px 8px;" onclick="window.lihatBukti('${t.id}')">🖼️ Lihat</button>` : '<span style="opacity:0.3; font-size:0.7rem">-</span>';
 
     html += `
       <tr>
         <td style="white-space:nowrap">${new Date(t.tanggal).toLocaleDateString('id-ID')}</td>
-        <td>${t.deskripsi}${fotoHtml}<br><small style="color:var(--cb); font-size:0.7rem">Oleh: ${t.inputOleh || 'Admin'}</small></td>
+        <td>${t.deskripsi}<br><small style="color:var(--cb); font-size:0.7rem">Oleh: ${t.inputOleh || 'Admin'}</small></td>
+        <td style="text-align:center">${fotoHtml}</td>
         <td><span class="badge" style="background:rgba(201,168,76,0.1); color:var(--el)">${t.kategori}</span></td>
         <td class="txt-masuk">${isMasuk ? formatRp(t.jumlah) : '-'}</td>
         <td class="txt-keluar">${!isMasuk ? formatRp(t.jumlah) : '-'}</td>
@@ -167,7 +178,7 @@ window.renderBukuBesar = async function() {
 
   const body = document.getElementById('ledger-body');
   if (body) {
-    body.innerHTML = html || '<tr><td colspan="6" style="text-align:center; padding:2rem; opacity:0.5">Belum ada transaksi.</td></tr>';
+    body.innerHTML = html || '<tr><td colspan="7" style="text-align:center; padding:2rem; opacity:0.5">Belum ada transaksi.</td></tr>';
     document.getElementById('ledger-total-masuk').textContent = formatRp(totalMasuk);
     document.getElementById('ledger-total-keluar').textContent = formatRp(totalKeluar);
     const saldo = totalMasuk - totalKeluar;
@@ -194,6 +205,8 @@ window.resetTrxForm = function() {
   document.getElementById('trx-deskripsi').value = '';
   document.getElementById('trx-jumlah').value = '';
   document.getElementById('trx-foto').value = '';
+  const btnHapus = document.getElementById('btn-hapus-foto');
+  if(btnHapus) btnHapus.style.display = 'none';
   document.getElementById('trx-kategori').value = 'Sosial';
   const radioMasuk = document.querySelector('input[name="trx-tipe"][value="masuk"]');
   if(radioMasuk) radioMasuk.checked = true;
@@ -239,6 +252,8 @@ window.bukaEditTransaksi = async function(id) {
   document.getElementById('trx-deskripsi').value = t.deskripsi;
   document.getElementById('trx-jumlah').value = t.jumlah ? t.jumlah.toLocaleString('id-ID') : '';
   document.getElementById('trx-foto').value = t.foto || '';
+  const btnHapus = document.getElementById('btn-hapus-foto');
+  if(btnHapus) btnHapus.style.display = t.foto ? 'block' : 'none';
   document.getElementById('trx-kategori').value = t.kategori;
   const radio = document.querySelector(`input[name="trx-tipe"][value="${t.tipe}"]`);
   if(radio) radio.checked = true;
