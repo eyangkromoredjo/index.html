@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -364,7 +364,10 @@
                        <div id="total-wajib" style="font-family: 'Cinzel', serif; font-size: 1.2rem; color: var(--kr); font-weight: bold;">Rp 0</div>
                    </div>
                 </div>
-                <button class="btn-primary" style="margin-top:1.5rem;" onclick="savePresensi()">Simpan Presensi & Iuran</button>
+                <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                    <button class="btn-primary" onclick="savePresensi()">Simpan Presensi & Iuran</button>
+                    <button class="btn-primary" style="background: #25D366; color: white;" onclick="window.copyIuranWA()">📤 Salin Ringkasan WA</button>
+                </div>
 
                 <!-- Tabel Ringkasan Iuran Per Periode -->
                 <div class="table-wrapper" style="margin-top:2.5rem;">
@@ -1260,6 +1263,40 @@ window.toggleAllPayments = function(setChecked) {
     document.querySelectorAll('#pay-tbody input.pay-chk, #pay-tbody input.hadir-chk').forEach(cb => cb.checked = !!setChecked);
     handlePaymentToggle();
 }
+
+window.copyIuranWA = function() {
+    const periode = getPeriodeFromSelectors('pay');
+    const cari = (document.getElementById("search-pay")?.value || "").toLowerCase();
+
+    const rows = Array.from(document.querySelectorAll('#pay-tbody tr'));
+    if (rows.length === 0 || (rows.length === 1 && rows[0].innerText.includes("Tidak ada"))) {
+        return showToast("Tidak ada data untuk disalin.", "error");
+    }
+
+    let text = `*Ringkasan Iuran Arisan PKEK*\n`;
+    text += `Periode: *${periode}*\n`;
+    if (cari) text += `Filter Nama: "${cari}"\n`;
+    text += `--------------------------------\n`;
+
+    let lunas = [];
+    let belum = [];
+
+    rows.forEach(row => {
+        const nama = row.cells[0].innerText.trim();
+        const payChk = row.querySelector('.pay-chk');
+        if (payChk) {
+            if (payChk.checked) lunas.push(nama);
+            else belum.push(nama);
+        }
+    });
+
+    text += `\n✅ *LUNAS (${lunas.length})*:\n` + (lunas.map((n, i) => `${i+1}. ${n}`).join('\n') || '-') + `\n\n`;
+    text += `❌ *BELUM LUNAS (${belum.length})*:\n` + (belum.map((n, i) => `${i+1}. ${n}`).join('\n') || '-');
+
+    navigator.clipboard.writeText(text).then(() => {
+        showToast("Ringkasan WA berhasil disalin!", "success", 1200);
+    });
+};
 
 function savePresensi() {
     // Fungsi ini dipanggil dari tombol "Simpan Presensi & Iuran"

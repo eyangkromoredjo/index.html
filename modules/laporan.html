@@ -224,6 +224,26 @@
             <div id="section-pengeluaran" class="report-section" style="display:none">
                 <div class="panel">
                     <h3>Buku Besar <em>Pengeluaran Sosial</em></h3>
+                    <div class="filter-section" style="align-items: flex-start;">
+                        <div class="form-group" style="flex: 1; min-width: 160px;">
+                            <label>Mulai Bulan & Tahun</label>
+                            <div style="display:flex; gap:8px;">
+                                <select id="filter-pengeluaran-start-month" class="form-control" onchange="window.renderPengeluaranReport()"></select>
+                                <select id="filter-pengeluaran-start-year" class="form-control" onchange="window.renderPengeluaranReport()"></select>
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 160px;">
+                            <label>Sampai Bulan & Tahun</label>
+                            <div style="display:flex; gap:8px;">
+                                <select id="filter-pengeluaran-end-month" class="form-control" onchange="window.renderPengeluaranReport()"></select>
+                                <select id="filter-pengeluaran-end-year" class="form-control" onchange="window.renderPengeluaranReport()"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn-wa" style="background: rgba(201, 168, 76, 0.15); color: var(--em); border-color: rgba(201, 168, 76, 0.4); padding: 0.5rem 1rem; font-size: 0.75rem; height: 38px; display: flex; align-items: center;" onclick="resetPengeluaranFilter()">Reset</button>
+                        </div>
+                    </div>
                     <div class="table-wrapper">
                         <table>
                             <thead>
@@ -235,6 +255,31 @@
                                 </tr>
                             </thead>
                             <tbody id="body-report-pengeluaran"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: LAPORAN PER PUTARAN -->
+            <div id="section-putaran" class="report-section" style="display:none">
+                <div class="panel">
+                    <h3>🏆 Laporan <em>Saldo Per Putaran</em></h3>
+                    <div class="grid-stats">
+                        <div class="card-stat"><span class="stat-label">Saldo Pokok</span><div class="stat-value" id="val-putaran-pokok">Rp 0</div></div>
+                        <div class="card-stat"><span class="stat-label">Saldo Sosial</span><div class="stat-value" id="val-putaran-sosial">Rp 0</div></div>
+                        <div class="card-stat"><span class="stat-label">Saldo Tabungan</span><div class="stat-value" id="val-putaran-tabungan">Rp 0</div></div>
+                    </div>
+                    <div class="table-wrapper" style="margin-top:1rem;">
+                        <table>
+                            <thead>
+                                <tr><th>Keterangan</th><th class="text-right">Nominal</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Total Seluruh Iuran Masuk</td><td class="text-right" id="row-putaran-masuk">Rp 0</td></tr>
+                                <tr><td>Total Arisan Keluar (Pemenang)</td><td class="text-right" id="row-putaran-pemenang" style="color:#e8a0a0">Rp 0</td></tr>
+                                <tr><td>Total Bantuan Sosial Keluar</td><td class="text-right" id="row-putaran-keluar" style="color:#e8a0a0">Rp 0</td></tr>
+                                <tr style="background:rgba(201,168,76,0.1); font-weight:bold;"><td>SALDO KAS SAAT INI (MENGENDAP)</td><td class="text-right" id="row-putaran-saldo" style="color:var(--em)">Rp 0</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -339,6 +384,7 @@
             onValue(ref(db, "transaksi"), (snap) => {
                 const val = snap.val();
                 window.dataMaster.transaksi = val ? Object.values(val) : [];
+                populatePeriodeFilter(); // Call here to ensure transactions are loaded
                 checkAndRender();
             });
 
@@ -369,10 +415,10 @@
             if (window.dataMaster.anggota.length > 0) {
                 renderOverview();
                 populatePeriodeFilter();
-                renderIuranReport();
-                renderPengeluaranReport();
+                window.renderIuranReport();
+                window.renderPengeluaranReport();
                 renderSiklusReport();
-                renderPutaranReport();
+                window.renderPutaranReport();
             }
         }
 
@@ -403,19 +449,49 @@
             const endSelect = document.getElementById('filter-periode-end');
             if (!startSelect || !endSelect) return;
             
-            const currentStart = startSelect.value;
             const listIuran = Array.isArray(window.dataMaster.arisan.iuran_bulanan) ? window.dataMaster.arisan.iuran_bulanan : Object.values(window.dataMaster.arisan.iuran_bulanan || {});
+            
+            const psM = document.getElementById('filter-pengeluaran-start-month');
+            const psY = document.getElementById('filter-pengeluaran-start-year');
+            const peM = document.getElementById('filter-pengeluaran-end-month');
+            const peY = document.getElementById('filter-pengeluaran-end-year');
+
             const periods = listIuran.map(e => e.periode).sort();
             const displayPeriods = [...periods].reverse();
             
             if (periods.length === 0) {
                 startSelect.innerHTML = '<option value="">Belum ada data</option>';
                 endSelect.innerHTML = '<option value="">-</option>';
+                if (psM) psM.innerHTML = '<option value="">-</option>';
+                if (psY) psY.innerHTML = '<option value="">-</option>';
                 return;
             }
-            const html = displayPeriods.map(p => `<option value="${p}">${p}</option>`).join('');
-            startSelect.innerHTML = html;
-            endSelect.innerHTML = '<option value="">Hanya Satu Pertemuan</option>' + html;
+            
+            const iuranHtml = displayPeriods.map(p => `<option value="${p}">${p}</option>`).join('');
+            startSelect.innerHTML = iuranHtml;
+            endSelect.innerHTML = '<option value="">Hanya Satu Pertemuan</option>' + iuranHtml;
+
+            // Populate Pengeluaran Filter
+            const monthNames = ['01','02','03','04','05','06','07','08','09','10','11','12'];
+            // Ambil semua tahun unik dari data transaksi, bukan hanya dari periode iuran arisan
+            const allTransactionYears = Array.from(new Set(window.dataMaster.transaksi.map(t => {
+                if (!t.tanggal) return null;
+                const d = new Date(t.tanggal);
+                return isNaN(d.getTime()) ? null : d.getFullYear().toString();
+            }).filter(Boolean))).sort().reverse();
+
+            const mHtml = '<option value="">Semua</option>' + monthNames.map(m => `<option value="${m}">${m}</option>`).join('');
+            const yHtml = '<option value="">Semua</option>' + allTransactionYears.map(y => `<option value="${y}">${y}</option>`).join('');
+
+            if (psM) psM.innerHTML = mHtml;
+            if (psY) psY.innerHTML = yHtml;
+            if (peM) peM.innerHTML = mHtml;
+            if (peY) peY.innerHTML = yHtml;
+
+            // Default: Sampai bulan ini
+            const now = new Date();
+            if (peM && !peM.value) peM.value = String(now.getMonth() + 1).padStart(2, '0'); // Only set if not already set
+            if (peY && !peY.value) peY.value = String(now.getFullYear()); // Only set if not already set
         }
 
         window.renderIuranReport = function() {
@@ -564,12 +640,45 @@
             document.getElementById('row-putaran-saldo').textContent = formatRp((tSosialMasuk - tKeluarSosial) + tTabunganMasuk + (tPokokMasuk - tPokokKeluar));
         }
 
-        function renderPengeluaranReport() {
+        window.renderPengeluaranReport = function() {
             const tbody = document.getElementById('body-report-pengeluaran');
+            if (!tbody) return;
+
             // Ambil data pengeluaran dari Buku Besar (transaksi)
-            const data = window.dataMaster.transaksi.filter(t => t.tipe === 'keluar');
-            if (data.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center">Belum ada pengeluaran</td></tr>'; return; }
-            
+            let data = window.dataMaster.transaksi.filter(t => t.tipe === 'keluar');
+
+            // Ambil nilai dari dropdown filter
+            const sM = document.getElementById('filter-pengeluaran-start-month')?.value;
+            const sY = document.getElementById('filter-pengeluaran-start-year')?.value;
+            const eM = document.getElementById('filter-pengeluaran-end-month')?.value;
+            const eY = document.getElementById('filter-pengeluaran-end-year')?.value;
+
+            // Hanya terapkan filter jika ada setidaknya satu filter yang dipilih (bukan semua 'Semua')
+            if (sY || eY || sM || eM) { 
+                // Konstruksi string YYYY-MM untuk perbandingan
+                // Default ke nilai sangat awal/akhir jika 'Semua' (string kosong) dipilih
+                let startLimit = (sY || '1900') + '-' + (sM || '01');
+                let endLimit = (eY || '2100') + '-' + (eM || '12');
+
+                // Pastikan startLimit tidak lebih besar dari endLimit (tukar jika perlu untuk user-friendliness)
+                if (startLimit > endLimit) {
+                    [startLimit, endLimit] = [endLimit, startLimit]; // Tukar nilai
+                }
+                
+                data = data.filter(t => {
+                    if (!t.tanggal) return false; // Abaikan transaksi tanpa tanggal
+                    const tPeriod = t.tanggal.substring(0, 7); // Ambil format YYYY-MM dari tanggal transaksi
+                    return tPeriod >= startLimit && tPeriod <= endLimit;
+                });
+            }
+
+            data.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
+            if (data.length === 0) { 
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center">Belum ada pengeluaran untuk periode ini</td></tr>'; 
+                return; 
+            }
+
             tbody.innerHTML = data.map(t => `<tr>
                 <td>${new Date(t.tanggal).toLocaleDateString('id-ID')}</td>
                 <td style="font-family:'Cinzel'">${t.kategori}</td>
@@ -628,72 +737,102 @@
             if(btn) btn.classList.add('active');
         }
 
-        window.copyReportToWA = function() {
-            try {
-                const periode = document.getElementById('filter-periode')?.value || "Terbaru";
-                const saldo = document.getElementById('val-saldo-akhir')?.textContent || "Rp 0";
-                const arisanData = window.dataMaster.arisan || {};
-                const listIuran = Array.isArray(arisanData.iuran_bulanan) ? arisanData.iuran_bulanan : Object.values(arisanData.iuran_bulanan || {});
-                const entry = listIuran.find(e => e.periode === periode);
-                
-                let text = `📜 *LAPORAN KEUANGAN PKEK*\n`;
-                text += `📅 Periode: ${periode}\n`;
-                text += `💰 *Saldo Kas: ${saldo}*\n\n`;
+window.copyReportToWA = function() {
+    const activeSection = Array.from(document.querySelectorAll('.report-section')).find(s => s.style.display !== 'none');
+    if (!activeSection) return;
 
-                if (entry) {
-                    const listPay = Array.isArray(entry.pembayaran) ? entry.pembayaran : Object.values(entry.pembayaran || {});
-                    const lunas = listPay.filter(p => p.paid).length;
+    let text = "";
+    const id = activeSection.id;
 
-                    text += `*Arisan Pokok*\n`;
-                    text += `✅ Lunas: ${lunas} Orang\n`;
+    if (id === 'section-overview') {
+        text = `📉 *RINGKASAN SALDO PKEK*\n`;
+        text += `--------------------------------\n`;
+        text += `💰 Total Kas: ${document.getElementById('val-saldo-akhir').innerText}\n`;
+        text += `🏮 Dana Sosial: ${document.getElementById('val-saldo-sosial').innerText}\n`;
+        text += `🎓 Dana Tabungan: ${document.getElementById('val-saldo-tabungan').innerText}\n`;
+        text += `📉 Total Pengeluaran: ${document.getElementById('val-total-keluar').innerText}\n`;
+    } 
+    else if (id === 'section-iuran') {
+        const start = document.getElementById('filter-periode-start').value;
+        const end = document.getElementById('filter-periode-end').value || start;
+        text = `💳 *REALISASI IURAN PKEK*\n`;
+        text += `Periode: *${start === end ? start : start + ' s/d ' + end}*\n`;
+        text += `🏆 Penerima: ${document.getElementById('val-period-winner').innerText}\n`;
+        text += `💰 Total Masuk: ${document.getElementById('val-period-total').innerText}\n`;
+        text += `--------------------------------\n`;
+        
+        const rows = Array.from(document.querySelectorAll('#body-report-iuran tr'));
+        rows.forEach((row, i) => {
+            const nama = row.cells[0].querySelector('div').innerText;
+            const status = row.cells[1].innerText;
+            const total = row.cells[5].innerText;
+            text += `${i+1}. ${status === 'LUNAS' ? '✅' : '❌'} ${nama} (${total})\n`;
+        });
+    }
+    else if (id === 'section-pengeluaran') {
+        const sM = document.getElementById('filter-pengeluaran-start-month')?.value;
+        const sY = document.getElementById('filter-pengeluaran-start-year')?.value;
+        const eM = document.getElementById('filter-pengeluaran-end-month')?.value;
+        const eY = document.getElementById('filter-pengeluaran-end-year')?.value;
 
-                    const listBelumPokok = listPay.filter(p => {
-                        if (p.paid) return false;
-                        const m = window.dataMaster.anggota.find(x => String(x.id) === String(p.memberId));
-                        return m && m.tipeArisan === 'pokok';
-                    });
-                    
-                    const belum = listBelumPokok.length;
-                    text += `❌ Belum Bayar: ${belum} Orang\n`;
-                    
-                    if (belum > 0) {
-                        text += `*Daftar:*\n`;
-                        listBelumPokok.forEach((p, i) => {
-                            const m = window.dataMaster.anggota.find(x => String(x.id) === String(p.memberId));
-                            if (m) text += `${i+1}. ${m.nama}\n`;
-                        });
-                    }
+        let pText = 'Semua Waktu';
+        let start = (sM && sY) ? `${sM}/${sY}` : (sY || sM || '');
+        let end = (eM && eY) ? `${eM}/${eY}` : (eY || eM || '');
+        if (start || end) pText = (start && end && start !== end) ? `${start} s/d ${end}` : (start || end);
 
-                    const listAllEx = Array.isArray(arisanData.pengeluaran) ? arisanData.pengeluaran : Object.values(arisanData.pengeluaran || {});
-                    const listExFiltered = listAllEx.filter(ex => ex.periode === periode);
-                    if (listExFiltered.length > 0) {
-                        text += `\n💸 *Pengeluaran Periode:*\n`;
-                        let subTotalEx = 0;
-                        listExFiltered.forEach(ex => {
-                            text += `• ${ex.desc}: -${formatRp(ex.amount)}\n`;
-                            subTotalEx += (parseInt(ex.amount) || 0);
-                        });
-                        text += `*Total Keluar:* -${formatRp(subTotalEx)}\n`;
-                    }
-                }
+        text = `📉 *BUKU PENGELUARAN SOSIAL*\n`;
+        text += `Periode: *${pText}*\n`;
+        text += `--------------------------------\n`;
+        
+        const rows = Array.from(document.querySelectorAll('#body-report-pengeluaran tr'));
+        if (rows.length === 0 || (rows.length === 1 && rows[0].innerText.includes("Belum ada"))) {
+            text += "Tidak ada data pengeluaran.\n";
+        } else {
+            rows.forEach((row) => {
+                if (row.cells.length < 4) return;
+                text += `• ${row.cells[0].innerText} | ${row.cells[2].innerText} | *${row.cells[3].innerText}*\n`;
+            });
+        }
+    }
+    else if (id === 'section-siklus') {
+        text = `🔄 *SIKLUS PEMENANG ARISAN*\n`;
+        text += `✅ Sudah Dapat: ${document.getElementById('val-cycle-done').innerText}\n`;
+        text += `❌ Belum Dapat: ${document.getElementById('val-cycle-todo').innerText}\n`;
+        text += `--------------------------------\n`;
+        text += `*DAFTAR ANTRIAN:*\n`;
+        const rows = Array.from(document.querySelectorAll('#body-report-siklus tr'));
+        rows.forEach((row, i) => {
+            text += `${i+1}. ${row.cells[0].innerText}\n`;
+        });
+    }
+    else if (id === 'section-putaran') {
+        text = `🏆 *LAPORAN SALDO PER PUTARAN*\n`;
+        text += `--------------------------------\n`;
+        text += `🔹 Saldo Pokok: ${document.getElementById('val-putaran-pokok').innerText}\n`;
+        text += `🔹 Saldo Sosial: ${document.getElementById('val-putaran-sosial').innerText}\n`;
+        text += `🔹 Saldo Tabungan: ${document.getElementById('val-putaran-tabungan').innerText}\n`;
+        text += `--------------------------------\n`;
+        text += `💰 *TOTAL KAS MENGENDAP: ${document.getElementById('row-putaran-saldo').innerText}*\n`;
+    }
 
-                text += `\n_Generated by Sistem PKEK_`;
+    text += `\n_Generated by Sistem PKEK_`;
 
-                // Coba salin menggunakan navigator jika tersedia dan dalam konteks aman (HTTPS)
-                if (navigator.clipboard && window.isSecureContext) {
-                    navigator.clipboard.writeText(text).then(() => {
-                        alert("Laporan berhasil disalin ke clipboard! Silakan paste di WhatsApp.");
-                    }).catch(() => {
-                        window.copyToClipboardFallback(text);
-                    });
-                } else {
-                    window.copyToClipboardFallback(text);
-                }
-            } catch (error) {
-                console.error("Error copy WA:", error);
-                alert("Gagal menyalin laporan. Pastikan data sudah termuat sepenuhnya.");
-            }
-        };
+    navigator.clipboard.writeText(text).then(() => {
+        alert("Ringkasan " + activeSection.querySelector('h3')?.innerText.replace('<em>','').replace('</em>','') + " berhasil disalin!");
+    });
+};
+
+        window.resetPengeluaranFilter = function() {
+            const now = new Date();
+            const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+            const currentYear = String(now.getFullYear());
+
+            document.getElementById('filter-pengeluaran-start-month').value = ''; // 'Semua'
+            document.getElementById('filter-pengeluaran-start-year').value = ''; // 'Semua'
+            document.getElementById('filter-pengeluaran-end-month').value = currentMonth;
+            document.getElementById('filter-pengeluaran-end-year').value = currentYear;
+            window.renderPengeluaranReport();
+        }
 
         window.copyToClipboardFallback = function(str) {
             const el = document.createElement('textarea');

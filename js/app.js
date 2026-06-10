@@ -16,7 +16,7 @@ const HAK_AKSES = {
 };
 
 let penggunaLogin = null;
-let filterAktif = 'semua', idHapusPending = null;
+let filterAktif = 'semua', idHapusPending = null, semuaTerbuka = false;
 
 // 2. FUNGSI DATABASE UTAMA
 window.ambilData = async function() {
@@ -214,6 +214,7 @@ window.simpanNominal = async function() {
     
     // Reset tampilan daftar anggota ke semula
     filterAktif = 'semua';
+    semuaTerbuka = false;
     const searchInput = document.getElementById('search-anggota');
     if (searchInput) searchInput.value = '';
     document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('aktif'));
@@ -508,7 +509,7 @@ window.renderAnggota = async function() {
             const trahParent = data.find(m => String(m.id) === String(sId) && isTrah(m));
             if (trahParent) ortu = trahParent;
           }
-          genCardsHtml += `<div class="family-header collapsed" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
+          genCardsHtml += `<div class="family-header ${filterAktif === 'semua' && semuaTerbuka ? '' : 'collapsed'}" onclick="this.classList.toggle('collapsed')"><span>✦✦ Keluarga ${ortu.nama}</span></div>`;
         }
         lastParentId = pId;
       }
@@ -526,7 +527,7 @@ window.renderAnggota = async function() {
 
     const isInduk = String(g) === '0';
     const lbl = g === 'wafat' ? '🪦 Yang Telah Wafat' : `✦ Generasi ${isInduk ? '0 (Induk)' : g}`;
-    htmlOutput += `<div class="gen-section collapsed">
+    htmlOutput += `<div class="gen-section ${filterAktif === 'semua' && semuaTerbuka ? '' : 'collapsed'}">
       <div class="gen-label" onclick="this.parentElement.classList.toggle('collapsed')"><span>${lbl}</span></div>
       <div class="anggota-grid">${genCardsHtml}</div>
     </div>`;
@@ -930,6 +931,18 @@ window.bukaPanel = function(nama, el) {
 };
 
 window.filterGen = function(gen, el) {
+  if (gen === 'semua') {
+    // Jika sebelumnya sudah di 'semua', maka toggle status buka/tutup untuk header generasi/keluarga
+    if (filterAktif === 'semua') {
+      semuaTerbuka = !semuaTerbuka;
+    } else {
+      semuaTerbuka = true; // Default saat baru masuk ke tab 'Semua', agar langsung terbuka
+    }
+  } else {
+    // Untuk gen1, gen2, dst atau wafat, tidak otomatis buka header generasi/keluarga
+    semuaTerbuka = false;
+  }
+
   filterAktif = gen;
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('aktif'));
   if (el) el.classList.add('aktif');
@@ -1140,6 +1153,7 @@ window.simpanAnggota = async function() {
   
   // Reset tampilan ke semula setelah simpan
   filterAktif = 'semua';
+  semuaTerbuka = false;
   const searchInput = document.getElementById('search-anggota');
   if (searchInput) searchInput.value = '';
   document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('aktif'));
