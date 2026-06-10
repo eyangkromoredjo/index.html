@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -1192,7 +1192,7 @@ function populatePeriodeSelectors() {
     const now = new Date();
     const currentYear = now.getFullYear();
     const years = [];
-    for (let y = currentYear - 1; y <= currentYear + 10; y++) years.push(y);
+    for (let y = 2021; y <= currentYear + 10; y++) years.push(y);
 
     ['pay','jadwal','exp'].forEach(prefix => {
         const mEl = document.getElementById(`${prefix}-month`); // Perbaikan ID
